@@ -3,10 +3,10 @@ from typing import Optional
 
 
 class Settings(BaseSettings):
-    DB_HOST: str = "localhost"
+    DB_HOST: str = "mysql.sqlpub.com"
     DB_PORT: int = 3306
-    DB_USER: str = "root"
-    DB_PASSWORD: str = ""
+    DB_USER: str = "chase_zhang"
+    DB_PASSWORD: str = "pwy7vdiY73RgCIYx"
     DB_NAME: str = "stock_review"
     
     APP_NAME: str = "Stock Dashboard"

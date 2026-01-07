@@ -150,20 +150,30 @@ document.addEventListener('DOMContentLoaded', function() {
 async function fetchData() {
     showLoading();
     
-    const params = new URLSearchParams({
+    const params = {
         page: currentPage,
         page_size: 20,
         sort_by: currentSortBy,
-        sort_order: currentSortOrder,
-        stock_code: document.getElementById('stockCode').value,
-        stock_name: document.getElementById('stockName').value,
-        min_overall_score: document.getElementById('minScore').value,
-        max_overall_score: document.getElementById('maxScore').value,
-        recommendation: document.getElementById('recommendation').value
-    });
+        sort_order: currentSortOrder
+    };
+    
+    const stockCode = document.getElementById('stockCode').value;
+    if (stockCode) params.stock_code = stockCode;
+    
+    const stockName = document.getElementById('stockName').value;
+    if (stockName) params.stock_name = stockName;
+    
+    const minScore = document.getElementById('minScore').value;
+    if (minScore) params.min_overall_score = minScore;
+    
+    const maxScore = document.getElementById('maxScore').value;
+    if (maxScore) params.max_overall_score = maxScore;
+    
+    const recommendation = document.getElementById('recommendation').value;
+    if (recommendation) params.recommendation = recommendation;
     
     try {
-        const response = await fetch(`/api/screening?${params}`);
+        const response = await fetch(`/api/screening?${new URLSearchParams(params)}`);
         const data = await response.json();
         
         renderTop3(data.top3);

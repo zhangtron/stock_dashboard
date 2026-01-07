@@ -1,4 +1,5 @@
 from fastapi import APIRouter, Depends, Query
+from typing import Optional
 from sqlalchemy.orm import Session
 from app.database import get_db
 from app.crud import get_screening_list, get_top3_by_overall_score
@@ -11,12 +12,12 @@ router = APIRouter(prefix="/screening", tags=["基本面选股"])
 async def get_screening_data(
     page: int = Query(1, ge=1, description="页码"),
     page_size: int = Query(20, ge=1, le=100, description="每页数量"),
-    stock_code: str = Query(None, description="股票代码"),
-    stock_name: str = Query(None, description="股票名称"),
-    min_overall_score: float = Query(None, ge=0, le=100, description="最小综合得分"),
-    max_overall_score: float = Query(None, ge=0, le=100, description="最大综合得分"),
-    pass_filters: bool = Query(None, description="是否通过筛选"),
-    recommendation: str = Query(None, description="投资建议"),
+    stock_code: Optional[str] = Query(None, description="股票代码"),
+    stock_name: Optional[str] = Query(None, description="股票名称"),
+    min_overall_score: Optional[float] = Query(None, ge=0, le=100, description="最小综合得分"),
+    max_overall_score: Optional[float] = Query(None, ge=0, le=100, description="最大综合得分"),
+    pass_filters: Optional[bool] = Query(None, description="是否通过筛选"),
+    recommendation: Optional[str] = Query(None, description="投资建议"),
     sort_by: str = Query("overall_score", description="排序字段"),
     sort_order: str = Query("desc", description="排序方向 (asc/desc)"),
     db: Session = Depends(get_db)
@@ -38,12 +39,12 @@ async def get_screening_data(
     params = ScreeningFilterParams(
         page=page,
         page_size=page_size,
-        stock_code=stock_code,
-        stock_name=stock_name,
-        min_overall_score=min_overall_score,
-        max_overall_score=max_overall_score,
+        stock_code=stock_code if stock_code else None,
+        stock_name=stock_name if stock_name else None,
+        min_overall_score=float(min_overall_score) if min_overall_score and min_overall_score.strip() else None,
+        max_overall_score=float(max_overall_score) if max_overall_score and max_overall_score.strip() else None,
         pass_filters=pass_filters,
-        recommendation=recommendation,
+        recommendation=recommendation if recommendation and recommendation.strip() else None,
         sort_by=sort_by,
         sort_order=sort_order
     )
