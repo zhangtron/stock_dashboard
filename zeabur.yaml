@@ -1,0 +1,24 @@
+services:
+  - type: web
+    name: stock-dashboard
+    env: python
+    plan: free
+    buildCommand: pip install -r requirements.txt
+    runCommand: uvicorn app.main:app --host 0.0.0.0 --port $PORT
+    envVars:
+      - key: DB_HOST
+        value: mysql.sqlpub.com
+      - key: DB_PORT
+        value: "3306"
+      - key: DB_USER
+        value: chase_zhang
+      - key: DB_PASSWORD
+        value: ${DB_PASSWORD}
+      - key: DB_NAME
+        value: stock_review
+      - key: APP_NAME
+        value: Stock Dashboard
+      - key: APP_ENV
+        value: production
+      - key: DEBUG
+        value: "False"
