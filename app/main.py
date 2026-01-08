@@ -34,7 +34,14 @@ async def screening_page(request: Request):
 
 @app.get("/health", summary="健康检查")
 async def health_check():
-    return {"status": "healthy", "app_name": settings.APP_NAME}
+    try:
+        from app.database import engine
+        from sqlalchemy import text
+        with engine.connect() as conn:
+            conn.execute(text("SELECT 1"))
+        return {"status": "healthy", "app_name": settings.APP_NAME, "database": "connected"}
+    except Exception as e:
+        return {"status": "unhealthy", "app_name": settings.APP_NAME, "database": "disconnected", "error": str(e)}
 
 
 if __name__ == "__main__":

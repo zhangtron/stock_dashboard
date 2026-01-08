@@ -10,8 +10,8 @@ class Settings(BaseSettings):
     DB_NAME: str = "stock_review"
     
     APP_NAME: str = "Stock Dashboard"
-    APP_ENV: str = "development"
-    DEBUG: bool = True
+    APP_ENV: str = "production"
+    DEBUG: bool = False
     
     HOST: str = "0.0.0.0"
     PORT: int = 8000
