@@ -1,7 +1,7 @@
 from fastapi import APIRouter, Depends, Query
 from typing import Optional
 from sqlalchemy.orm import Session
-from app.database import get_db
+from app.cache_database import get_cache_db
 from app.crud import get_screening_list, get_top3_by_overall_score
 from app.schemas import ScreeningFilterParams, ScreeningResponse
 
@@ -20,11 +20,11 @@ async def get_screening_data(
     recommendation: Optional[str] = Query(None, description="投资建议"),
     sort_by: str = Query("overall_score", description="排序字段"),
     sort_order: str = Query("desc", description="排序方向 (asc/desc)"),
-    db: Session = Depends(get_db)
+    db: Session = Depends(get_cache_db)
 ):
     """
-    获取基本面选股数据列表，支持筛选、排序、分页
-    
+    从本地缓存获取基本面选股数据列表，支持筛选、排序、分页
+
     - **page**: 页码，从1开始
     - **page_size**: 每页数量，1-100
     - **stock_code**: 股票代码（模糊搜索）
@@ -48,12 +48,12 @@ async def get_screening_data(
         sort_by=sort_by,
         sort_order=sort_order
     )
-    
+
     data, total = get_screening_list(db, params)
     top3 = get_top3_by_overall_score(db)
-    
+
     total_pages = (total + page_size - 1) // page_size if total > 0 else 0
-    
+
     return ScreeningResponse(
         top3=top3,
         data=data,

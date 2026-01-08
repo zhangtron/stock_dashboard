@@ -615,4 +615,4 @@ CREATE INDEX idx_overall_score ON stock_fundamental_screening(overall_score);
 ---
 
 **文档版本**：1.0.0
-**最后更新**：2025-01-07
+**最后更新**：2026-01-08

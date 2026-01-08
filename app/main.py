@@ -4,12 +4,18 @@ from fastapi.staticfiles import StaticFiles
 from fastapi.templating import Jinja2Templates
 from app.routers import screening
 from app.config import settings
+from app.data_sync import init_cache_db, sync_data_from_remote, get_sync_status
+from app.sync_scheduler import init_scheduler, shutdown_scheduler, get_scheduler_status
 import os
+import logging
+
+logging.basicConfig(level=logging.INFO)
+logger = logging.getLogger(__name__)
 
 app = FastAPI(
     title=settings.APP_NAME,
     description="股票基本面选股数据看板",
-    version="1.0.0"
+    version="1.0.1"
 )
 
 app.include_router(screening.router, prefix="/api")
@@ -20,6 +26,42 @@ templates_dir = os.path.join(static_dir, "templates")
 
 app.mount("/static", StaticFiles(directory=static_dir), name="static")
 templates = Jinja2Templates(directory=templates_dir)
+
+
+@app.on_event("startup")
+async def startup_event():
+    """应用启动时的初始化操作"""
+    try:
+        logger.info("正在初始化本地缓存数据库...")
+        init_cache_db()
+
+        logger.info("正在启动定时任务调度器...")
+        init_scheduler()
+
+        sync_status = get_sync_status()
+        if not sync_status['has_data']:
+            logger.info("本地缓存为空，执行首次数据同步...")
+            result = sync_data_from_remote()
+            if result['success']:
+                logger.info(f"首次同步完成，共同步 {result['record_count']} 条记录")
+            else:
+                logger.warning(f"首次同步失败: {result.get('error', 'Unknown error')}")
+
+        logger.info("应用启动完成！")
+
+    except Exception as e:
+        logger.error(f"应用启动初始化失败: {e}")
+
+
+@app.on_event("shutdown")
+async def shutdown_event():
+    """应用关闭时的清理操作"""
+    try:
+        logger.info("正在关闭定时任务调度器...")
+        shutdown_scheduler()
+        logger.info("应用关闭完成！")
+    except Exception as e:
+        logger.error(f"应用关闭时出错: {e}")
 
 
 @app.get("/", response_class=HTMLResponse, summary="首页")
@@ -42,6 +84,22 @@ async def health_check():
         return {"status": "healthy", "app_name": settings.APP_NAME, "database": "connected"}
     except Exception as e:
         return {"status": "unhealthy", "app_name": settings.APP_NAME, "database": "disconnected", "error": str(e)}
+
+
+@app.get("/api/sync/status", summary="获取同步状态")
+async def get_sync_status_api():
+    """获取数据同步状态"""
+    from app.data_sync import get_sync_status
+    from app.sync_scheduler import get_scheduler_status
+    try:
+        sync_status = get_sync_status()
+        scheduler_status = get_scheduler_status()
+        return {
+            "sync": sync_status,
+            "scheduler": scheduler_status
+        }
+    except Exception as e:
+        return {"error": str(e)}
 
 
 if __name__ == "__main__":

@@ -41,3 +41,6 @@ Thumbs.db
 
 # Logs
 *.log
+
+# Local Cache Database
+app/static/data/*.db
