@@ -81,7 +81,7 @@ cp .env.example .env
 DB_HOST=mysql.sqlpub.com
 DB_PORT=3306
 DB_USER=chase_zhang
-DB_PASSWORD=pwy7vdiY73RgCIYx
+DB_PASSWORD=your_database_password
 DB_NAME=stock_review
 APP_NAME=Stock Dashboard
 APP_ENV=development
@@ -174,7 +174,7 @@ git push -u origin main
 3. **配置环境变量**
    在Zeabur项目设置中添加以下环境变量：
    ```
-   DB_PASSWORD = pwy7vdiY73RgCIYx
+   DB_PASSWORD = your_database_password
    ```
    其他配置已在 zeabur.yaml 中预设。
 

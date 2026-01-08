@@ -49,7 +49,7 @@ git push -u origin main
 
 | 环境变量 | 值 | 说明 |
 |---------|-----|------|
-| DB_PASSWORD | pwy7vdiY73RgCIYx | 数据库密码（重要！） |
+| DB_PASSWORD | your_database_password | 数据库密码（重要！） |
 
 **注意**：不要在代码中提交数据库密码，始终使用环境变量。
 
@@ -182,7 +182,7 @@ primary_region = "hkg"
   DB_HOST = "mysql.sqlpub.com"
   DB_PORT = "3306"
   DB_USER = "chase_zhang"
-  DB_PASSWORD = "pwy7vdiY73RgCIYx"
+  DB_PASSWORD = "your_database_password"
   DB_NAME = "stock_review"
 
 [http_service]
@@ -237,7 +237,7 @@ fly ips allocate-v4 cicpa.fun
 
 在Render的"Environment"部分添加：
 ```
-DB_PASSWORD = pwy7vdiY73RgCIYx
+DB_PASSWORD = your_database_password
 ```
 
 #### 步骤4：部署
@@ -287,7 +287,7 @@ docker run -d \
   -p 8000:8000 \
   -e DB_HOST=mysql.sqlpub.com \
   -e DB_USER=chase_zhang \
-  -e DB_PASSWORD=pwy7vdiY73RgCIYx \
+  -e DB_PASSWORD=your_database_password \
   -e DB_NAME=stock_review \
   stock-dashboard
 ```
@@ -306,7 +306,7 @@ services:
       - DB_HOST=mysql.sqlpub.com
       - DB_PORT=3306
       - DB_USER=chase_zhang
-      - DB_PASSWORD=pwy7vdiY73RgCIYx
+      - DB_PASSWORD=your_database_password
       - DB_NAME=stock_review
       - DEBUG=False
 ```
@@ -367,7 +367,7 @@ docker-compose up -d
 DB_HOST=mysql.sqlpub.com
 DB_PORT=3306
 DB_USER=chase_zhang
-DB_PASSWORD=pwy7vdiY73RgCIYx
+DB_PASSWORD=your_database_password
 DB_NAME=stock_review
 
 # 应用配置
