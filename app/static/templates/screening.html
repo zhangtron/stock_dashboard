@@ -21,6 +21,22 @@
     <div class="header-title">
         <h1>股票基本面选股数据看板</h1>
     </div>
+    <div class="header-search">
+        <div class="search-box">
+            <i class="bi bi-search search-icon"></i>
+            <input 
+                type="text" 
+                id="headerSearch" 
+                placeholder="搜索股票代码或名称"
+                autocomplete="off"
+            >
+            <button class="search-clear" id="searchClear" style="display: none;">
+                <i class="bi bi-x"></i>
+            </button>
+        </div>
+        <div class="search-suggestions" id="searchSuggestions" style="display: none;">
+        </div>
+    </div>
     <div class="header-actions">
         <button id="theme-toggle-desktop" class="theme-toggle-desktop">
             <i class="bi bi-palette"></i>

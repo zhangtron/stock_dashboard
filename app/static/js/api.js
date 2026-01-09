@@ -139,6 +139,45 @@ class API {
       throw error;
     }
   }
+  
+  /**
+   * 获取搜索建议
+   * @param {string} query - 搜索关键词
+   * @param {number} limit - 返回数量
+   * @returns {Promise<Object>} 建议列表
+   */
+  static async getSearchSuggestions(query, limit = 10) {
+    const queryParams = this.buildQueryParams({ q: query, limit });
+    const url = `${this.BASE_URL}/api/screening/search/suggestions?${queryParams}`;
+    
+    try {
+      const response = await this.fetch(url);
+      const data = await response.json();
+      return data;
+    } catch (error) {
+      console.error('获取搜索建议失败:', error);
+      throw error;
+    }
+  }
+  
+  /**
+   * 获取综合排名前N的股票
+   * @param {number} limit - 返回数量
+   * @returns {Promise<Object>} 前N名股票列表
+   */
+  static async getTopStocks(limit = 8) {
+    const queryParams = this.buildQueryParams({ limit });
+    const url = `${this.BASE_URL}/api/screening/top-stocks?${queryParams}`;
+    
+    try {
+      const response = await this.fetch(url);
+      const data = await response.json();
+      return data;
+    } catch (error) {
+      console.error('获取前N名股票失败:', error);
+      throw error;
+    }
+  }
 }
 
 // 导出到全局作用域

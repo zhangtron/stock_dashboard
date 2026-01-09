@@ -7,6 +7,8 @@ class Events {
     currentPage: 1,
     sortBy: 'overall_score',
     sortOrder: 'desc',
+    searchKeyword: '',
+    searchDebounceTimer: null,
   };
   
   /**
@@ -18,6 +20,7 @@ class Events {
     this.bindFilterEvents();
     this.bindPaginationEvents();
     this.bindMobileNavigation();
+    this.bindSearchEvents();
   }
   
   /**
@@ -147,11 +150,15 @@ class Events {
       sort_order: this.state.sortOrder,
     };
     
-    const stockCode = document.getElementById('stockCode')?.value?.trim();
-    if (stockCode) params.stock_code = stockCode;
-    
-    const stockName = document.getElementById('stockName')?.value?.trim();
-    if (stockName) params.stock_name = stockName;
+    if (this.state.searchKeyword) {
+      params.search = this.state.searchKeyword;
+    } else {
+      const stockCode = document.getElementById('stockCode')?.value?.trim();
+      if (stockCode) params.stock_code = stockCode;
+      
+      const stockName = document.getElementById('stockName')?.value?.trim();
+      if (stockName) params.stock_name = stockName;
+    }
     
     const minScore = document.getElementById('minScore')?.value;
     if (minScore) params.min_overall_score = minScore;
@@ -202,6 +209,8 @@ class Events {
     const minScore = document.getElementById('minScore');
     const maxScore = document.getElementById('maxScore');
     const recommendation = document.getElementById('recommendation');
+    const headerSearch = document.getElementById('headerSearch');
+    const searchClear = document.getElementById('searchClear');
     
     if (stockCode) stockCode.value = '';
     if (stockName) stockName.value = '';
@@ -209,6 +218,166 @@ class Events {
     if (maxScore) maxScore.value = '';
     if (recommendation) recommendation.value = '';
     
+    if (headerSearch) headerSearch.value = '';
+    if (searchClear) searchClear.style.display = 'none';
+    
+    this.state.searchKeyword = '';
+    this.state.currentPage = 1;
+    this.fetchData();
+  }
+  
+  /**
+   * 绑定搜索事件
+   */
+  static bindSearchEvents() {
+    const searchBox = document.querySelector('.search-box');
+    const searchInput = document.getElementById('headerSearch');
+    const searchClear = document.getElementById('searchClear');
+    const suggestionsContainer = document.getElementById('searchSuggestions');
+    
+    if (!searchBox || !searchInput) return;
+    
+    searchBox.addEventListener('click', async () => {
+      if (!searchInput.value.trim()) {
+        await this.fetchTopStocks();
+      }
+    });
+    
+    if (suggestionsContainer) {
+      suggestionsContainer.addEventListener('mouseleave', (e) => {
+        Components.hideSearchSuggestions();
+      });
+    }
+    
+    searchInput.addEventListener('input', (e) => {
+      const keyword = e.target.value.trim();
+      
+      if (searchClear) {
+        searchClear.style.display = keyword ? 'flex' : 'none';
+      }
+      
+      if (this.state.searchDebounceTimer) {
+        clearTimeout(this.state.searchDebounceTimer);
+      }
+      
+      if (!keyword) {
+        Components.hideSearchSuggestions();
+        this.clearSearchFilter();
+        return;
+      }
+      
+      Components.showSearchSuggestionsLoading();
+      
+      this.state.searchDebounceTimer = setTimeout(async () => {
+        await this.fetchSearchSuggestions(keyword);
+      }, 500);
+    });
+    
+    searchInput.addEventListener('keydown', (e) => {
+      if (e.key === 'Enter') {
+        e.preventDefault();
+        const keyword = searchInput.value.trim();
+        
+        if (keyword) {
+          if (this.state.searchDebounceTimer) {
+            clearTimeout(this.state.searchDebounceTimer);
+          }
+          
+          this.applySearchFilter(keyword);
+        }
+      }
+      
+      if (e.key === 'Escape') {
+        Components.hideSearchSuggestions();
+      }
+    });
+    
+    if (searchClear) {
+      searchClear.addEventListener('click', () => {
+        searchInput.value = '';
+        searchClear.style.display = 'none';
+        Components.hideSearchSuggestions();
+        this.clearSearchFilter();
+        searchInput.focus();
+      });
+    }
+    
+    document.addEventListener('click', (e) => {
+      if (!searchBox || !suggestionsContainer) return;
+      
+      if (!searchBox.contains(e.target) && 
+          !suggestionsContainer.contains(e.target)) {
+        Components.hideSearchSuggestions();
+      }
+    });
+    
+    document.addEventListener('click', (e) => {
+      const suggestionItem = e.target.closest('.suggestion-item');
+      
+      if (suggestionItem) {
+        const stockCode = suggestionItem.dataset.code;
+        const stockName = suggestionItem.dataset.name;
+        
+        Components.openThsF10(stockCode);
+        
+        searchInput.value = stockCode;
+        if (searchClear) {
+          searchClear.style.display = 'flex';
+        }
+        Components.hideSearchSuggestions();
+        this.applySearchFilter(stockCode);
+      }
+    });
+  }
+  
+  /**
+   * 获取搜索建议
+   */
+  static async fetchSearchSuggestions(keyword) {
+    try {
+      const data = await API.getSearchSuggestions(keyword);
+      Components.renderSearchSuggestions(data.suggestions);
+    } catch (error) {
+      console.error('获取搜索建议失败:', error);
+      const container = document.getElementById('searchSuggestions');
+      if (container) {
+        container.innerHTML = `
+          <div class="suggestion-empty">
+            加载失败，请重试
+          </div>
+        `;
+        container.style.display = 'block';
+      }
+    }
+  }
+  
+  /**
+   * 获取前N名股票
+   */
+  static async fetchTopStocks() {
+    try {
+      const data = await API.getTopStocks(8);
+      Components.renderSearchSuggestions(data.suggestions);
+    } catch (error) {
+      console.error('获取前N名股票失败:', error);
+    }
+  }
+  
+  /**
+   * 应用搜索筛选
+   */
+  static applySearchFilter(keyword) {
+    this.state.searchKeyword = keyword;
+    this.state.currentPage = 1;
+    Components.hideSearchSuggestions();
+    this.fetchData();
+  }
+  
+  /**
+   * 清空搜索筛选
+   */
+  static clearSearchFilter() {
+    this.state.searchKeyword = '';
     this.state.currentPage = 1;
     this.fetchData();
   }

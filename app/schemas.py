@@ -29,6 +29,7 @@ class ScreeningFilterParams(BaseModel):
     page_size: int = Field(20, ge=1, le=100, description="每页数量")
     stock_code: Optional[str] = Field(None, description="股票代码")
     stock_name: Optional[str] = Field(None, description="股票名称")
+    search: Optional[str] = Field(None, description="搜索关键词（代码或名称，OR逻辑）")
     min_overall_score: Optional[float] = Field(None, ge=0, le=100, description="最小综合得分")
     max_overall_score: Optional[float] = Field(None, ge=0, le=100, description="最大综合得分")
     pass_filters: Optional[bool] = Field(None, description="是否通过筛选")
@@ -44,3 +45,12 @@ class ScreeningResponse(BaseModel):
     page: int = Field(1, description="当前页")
     page_size: int = Field(20, description="每页数量")
     total_pages: int = Field(0, description="总页数")
+
+
+class SearchSuggestionItem(BaseModel):
+    stock_code: str = Field(..., description="股票代码")
+    stock_name: Optional[str] = Field(None, description="股票名称")
+
+
+class SearchSuggestionsResponse(BaseModel):
+    suggestions: List[SearchSuggestionItem] = Field(default_factory=list, description="搜索建议列表")

@@ -250,6 +250,81 @@ class Components {
       </tr>
     `;
   }
+  
+  /**
+   * 渲染搜索建议
+   * @param {Array} suggestions - 建议列表
+   */
+  static renderSearchSuggestions(suggestions) {
+    const container = document.getElementById('searchSuggestions');
+    if (!container) return;
+    
+    if (!suggestions || suggestions.length === 0) {
+      container.innerHTML = `
+        <div class="suggestion-empty">
+          未找到相关股票
+        </div>
+      `;
+      container.style.display = 'block';
+      return;
+    }
+    
+    container.innerHTML = suggestions.map(item => `
+      <div class="suggestion-item" data-code="${item.stock_code}" data-name="${item.stock_name}">
+        <span class="suggestion-code">${item.stock_code}</span>
+        <span class="suggestion-name">${item.stock_name}</span>
+        <i class="bi bi-box-arrow-up-right suggestion-arrow"></i>
+      </div>
+    `).join('');
+    
+    container.style.display = 'block';
+  }
+  
+  /**
+   * 显示搜索建议加载状态
+   */
+  static showSearchSuggestionsLoading() {
+    const container = document.getElementById('searchSuggestions');
+    if (!container) return;
+    
+    container.innerHTML = `
+      <div class="suggestion-loading">
+        <i class="bi bi-arrow-repeat"></i>
+        <span>加载中...</span>
+      </div>
+    `;
+    container.style.display = 'block';
+  }
+  
+  /**
+   * 隐藏搜索建议
+   */
+  static hideSearchSuggestions() {
+    const container = document.getElementById('searchSuggestions');
+    if (container) {
+      container.style.display = 'none';
+    }
+  }
+  
+  /**
+   * 提取纯数字股票代码（去除后缀）
+   * @param {string} stockCode - 完整股票代码（如 "600519.SH"）
+   * @returns {string} 纯数字代码（如 "600519"）
+   */
+  static extractStockCode(stockCode) {
+    const match = stockCode.match(/^(\d+)(?:\.\w+)?$/);
+    return match ? match[1] : stockCode;
+  }
+  
+  /**
+   * 跳转到同花顺 F10
+   * @param {string} stockCode - 股票代码
+   */
+  static openThsF10(stockCode) {
+    const pureCode = this.extractStockCode(stockCode);
+    const url = `http://basic.10jqka.com.cn/${pureCode}/finance.html`;
+    window.open(url, '_blank');
+  }
 }
 
 // 导出到全局作用域
