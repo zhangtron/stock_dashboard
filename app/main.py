@@ -80,6 +80,26 @@ async def about_page(request: Request):
     return templates.TemplateResponse("about.html", {"request": request})
 
 
+@app.get("/favicon.ico", include_in_schema=False)
+async def favicon():
+    """网站图标"""
+    from fastapi.responses import FileResponse
+    import os
+    base_dir = os.path.dirname(os.path.abspath(__file__))
+    favicon_path = os.path.join(base_dir, "app", "static", "favicon", "favicon.ico")
+    return FileResponse(favicon_path)
+
+
+@app.get("/favicon-96x96.png", include_in_schema=False)
+async def favicon_96():
+    """高清图标"""
+    from fastapi.responses import FileResponse
+    import os
+    base_dir = os.path.dirname(os.path.abspath(__file__))
+    favicon_path = os.path.join(base_dir, "app", "static", "favicon", "favicon-96x96.png")
+    return FileResponse(favicon_path)
+
+
 @app.get("/health", summary="健康检查")
 async def health_check():
     from app.database import engine
