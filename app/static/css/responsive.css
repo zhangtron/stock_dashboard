@@ -1,0 +1,412 @@
+/* 移动端适配（< 768px） */
+@media (max-width: 767px) {
+  /* 容器布局 */
+  .container {
+    flex-direction: column;
+  }
+  
+  /* 侧边栏隐藏，默认不显示 */
+  .sidebar {
+    width: 100%;
+    display: none;
+    position: fixed;
+    top: var(--header-height-mobile);
+    left: 0;
+    right: 0;
+    height: calc(100vh - var(--header-height-mobile));
+    z-index: var(--z-sidebar);
+    padding: var(--spacing-md);
+  }
+  
+  .sidebar.active {
+    display: flex;
+  }
+  
+  /* 主内容区 */
+  .main-content {
+    padding: var(--spacing-md);
+    padding-top: calc(var(--header-height-mobile) + var(--spacing-md));
+  }
+  
+  /* 桌面端导航隐藏 */
+  .desktop-header {
+    display: none;
+  }
+  
+  /* 移动端顶部导航 */
+  .mobile-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: var(--spacing-sm) var(--spacing-md);
+    height: var(--header-height-mobile);
+    background: var(--glass-bg);
+    backdrop-filter: blur(var(--glass-blur));
+    -webkit-backdrop-filter: blur(var(--glass-blur));
+    box-shadow: var(--shadow-md);
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    width: 100%;
+    z-index: var(--z-header);
+  }
+  
+  /* 汉堡菜单 */
+  .hamburger {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-around;
+    width: 24px;
+    height: 24px;
+    cursor: pointer;
+    transition: all var(--transition-normal);
+  }
+  
+  .hamburger span {
+    width: 100%;
+    height: 2px;
+    background: var(--text-primary);
+    border-radius: 2px;
+    transition: all var(--transition-normal);
+  }
+  
+  .hamburger.active span:nth-child(1) {
+    transform: rotate(45deg) translate(6px, 6px);
+  }
+  
+  .hamburger.active span:nth-child(2) {
+    opacity: 0;
+  }
+  
+  .hamburger.active span:nth-child(3) {
+    transform: rotate(-45deg) translate(6px, -6px);
+  }
+  
+  /* 移动端标题 */
+  .mobile-header .header-title {
+    flex: 1;
+    justify-content: center;
+  }
+  
+  .mobile-header .header-title h1 {
+    font-size: 16px;
+  }
+  
+  /* 搜索框隐藏 */
+  .search-box {
+    display: none;
+  }
+  
+  /* 语言选择器隐藏 */
+  .lang-selector {
+    display: none;
+  }
+  
+  /* 桌面端主题切换按钮隐藏 */
+  .theme-toggle-desktop {
+    display: none;
+  }
+  
+  /* Top 3 卡片：单列布局 */
+  .cards-container {
+    grid-template-columns: 1fr;
+    gap: var(--spacing-md);
+  }
+  
+  .card {
+    padding: var(--spacing-md);
+    box-shadow: var(--shadow-sm);
+  }
+  
+  .card:active {
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.15);
+  }
+  
+  .card-price {
+    font-size: 28px;
+  }
+  
+  /* 筛选条件：单列布局 */
+  .filter-container {
+    padding: var(--spacing-md);
+  }
+  
+  .filter-row {
+    flex-direction: column;
+    gap: var(--spacing-sm);
+  }
+  
+  .filter-item {
+    min-width: 100%;
+  }
+  
+  /* 输入框高度调整 */
+  input[type="text"],
+  input[type="number"],
+  select {
+    height: var(--input-height-mobile);
+  }
+  
+  /* 筛选按钮：堆叠布局 */
+  .filter-actions {
+    flex-direction: column-reverse;
+    gap: var(--spacing-sm);
+  }
+  
+  .btn {
+    width: 100%;
+    height: var(--button-height-mobile);
+  }
+  
+  /* 表格：简化为仅显示3列 */
+  .table-container {
+    padding: var(--spacing-md);
+    overflow-x: auto;
+  }
+  
+  .stock-table {
+    font-size: 12px;
+    min-width: 100%;
+  }
+  
+  .stock-table th,
+  .stock-table td {
+    padding: var(--spacing-xs);
+  }
+  
+  /* 隐藏非核心列 */
+  .stock-table th:nth-child(n+4),
+  .stock-table td:nth-child(n+4) {
+    display: none;
+  }
+  
+  /* 只显示：股票代码、股票名称、综合得分 */
+  .stock-table th:nth-child(-n+3),
+  .stock-table td:nth-child(-n+3) {
+    display: table-cell;
+  }
+  
+  /* 分页 */
+  .pagination .page-link {
+    min-width: 32px;
+    height: 32px;
+    font-size: 12px;
+  }
+  
+  /* 浮动主题切换按钮 */
+  .theme-toggle-float {
+    display: flex;
+  }
+  
+  /* 装饰圆形缩小 */
+  .decoration-1 {
+    width: 200px;
+    height: 200px;
+  }
+  
+  .decoration-2 {
+    width: 250px;
+    height: 250px;
+  }
+  
+  .decoration-3 {
+    width: 150px;
+    height: 150px;
+  }
+}
+
+/* 平板端适配（768px - 1024px） */
+@media (min-width: 768px) and (max-width: 1024px) {
+  /* 侧边栏宽度调整 */
+  .sidebar {
+    width: 180px;
+    padding: var(--spacing-md);
+  }
+  
+  /* 侧边栏 Logo 字体缩小 */
+  .logo {
+    font-size: 16px;
+  }
+  
+  .logo-icon {
+    font-size: 20px;
+  }
+  
+  /* 导航项字体缩小 */
+  .nav-item {
+    font-size: 13px;
+    padding: var(--spacing-xs) var(--spacing-sm);
+  }
+  
+  /* 主内容区 padding 减小 */
+  .main-content {
+    padding: var(--spacing-md);
+  }
+  
+  /* 桌面端导航高度调整 */
+  .desktop-header {
+    padding: var(--spacing-sm) var(--spacing-md);
+  }
+  
+  /* 搜索框宽度减小 */
+  .search-box {
+    width: 200px;
+  }
+  
+  /* Top 3 卡片：双列布局 */
+  .cards-container {
+    grid-template-columns: repeat(2, 1fr);
+  }
+  
+  /* 筛选条件：3列布局 */
+  .filter-item {
+    min-width: calc(33.333% - var(--spacing-sm));
+  }
+  
+  /* 表格：显示前6列 */
+  .stock-table th:nth-child(7),
+  .stock-table td:nth-child(7),
+  .stock-table th:nth-child(8),
+  .stock-table td:nth-child(8),
+  .stock-table th:nth-child(9),
+  .stock-table td:nth-child(9) {
+    display: none;
+  }
+  
+  /* 浮动主题切换按钮隐藏 */
+  .theme-toggle-float {
+    display: none;
+  }
+  
+  /* 汉堡菜单隐藏 */
+  .hamburger {
+    display: none;
+  }
+  
+  /* 移动端导航隐藏 */
+  .mobile-header {
+    display: none;
+  }
+}
+
+/* 桌面端适配（> 1024px） */
+@media (min-width: 1025px) {
+  /* Top 3 卡片：三列布局 */
+  .cards-container {
+    grid-template-columns: repeat(3, 1fr);
+  }
+  
+  /* 筛选条件：5列布局 */
+  .filter-item {
+    min-width: calc(20% - var(--spacing-sm));
+  }
+  
+  /* 浮动主题切换按钮隐藏 */
+  .theme-toggle-float {
+    display: none;
+  }
+  
+  /* 汉堡菜单隐藏 */
+  .hamburger {
+    display: none;
+  }
+  
+  /* 移动端导航隐藏 */
+  .mobile-header {
+    display: none;
+  }
+  
+  /* 桌面端导航显示 */
+  .desktop-header {
+    display: flex;
+  }
+  
+  /* 桌面端主题切换按钮显示 */
+  .theme-toggle-desktop {
+    display: flex;
+  }
+}
+
+/* 大屏幕适配（> 1440px） */
+@media (min-width: 1441px) {
+  /* 主内容区最大宽度 */
+  .main-content {
+    max-width: 1400px;
+    margin: 0 auto;
+  }
+}
+
+/* 横屏手机适配 */
+@media (max-width: 767px) and (orientation: landscape) {
+  /* 顶部导航高度减小 */
+  .mobile-header {
+    height: 48px;
+  }
+  
+  .sidebar {
+    top: 48px;
+    height: calc(100vh - 48px);
+  }
+  
+  /* 卡片字体缩小 */
+  .card-price {
+    font-size: 24px;
+  }
+  
+  .card-name {
+    font-size: 16px;
+  }
+}
+
+/* 超小屏幕适配（< 375px） */
+@media (max-width: 374px) {
+  /* 按钮高度减小 */
+  .btn {
+    height: 40px;
+    font-size: 13px;
+  }
+  
+  /* 输入框高度减小 */
+  input[type="text"],
+  input[type="number"],
+  select {
+    height: 40px;
+  }
+  
+  /* 表格字体进一步缩小 */
+  .stock-table {
+    font-size: 11px;
+  }
+}
+
+/* 打印样式 */
+@media print {
+  .sidebar,
+  .mobile-header,
+  .desktop-header,
+  .filter-section,
+  .pagination-container,
+  .theme-toggle-float {
+    display: none !important;
+  }
+  
+  .main-content {
+    padding: 0;
+  }
+  
+  .card,
+  .table-container {
+    box-shadow: none;
+    backdrop-filter: none;
+  }
+  
+  .stock-table {
+    font-size: 10px;
+  }
+  
+  .stock-table th,
+  .stock-table td {
+    padding: 4px;
+  }
+}

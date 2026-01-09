@@ -1,114 +1,70 @@
 <!DOCTYPE html>
-<html lang="zh-CN">
+<html lang="zh-CN" data-theme="teal">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>股票基本面选股数据看板</title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css">
-    <style>
-        body {
-            background-color: #f8f9fa;
-        }
-        .top3-card {
-            border: 2px solid #ffd700;
-            border-radius: 10px;
-            background: linear-gradient(135deg, #fff9e6 0%, #ffffff 100%);
-            box-shadow: 0 4px 15px rgba(255, 215, 0, 0.3);
-        }
-        .score-high {
-            color: #198754;
-            font-weight: bold;
-        }
-        .score-medium {
-            color: #ffc107;
-            font-weight: bold;
-        }
-        .score-low {
-            color: #dc3545;
-            font-weight: bold;
-        }
-        .recommendation-strong_buy {
-            background-color: #d1e7dd;
-            color: #0f5132;
-        }
-        .recommendation-buy {
-            background-color: #cff4fc;
-            color: #055160;
-        }
-        .recommendation-hold {
-            background-color: #fff3cd;
-            color: #664d03;
-        }
-        .recommendation-avoid {
-            background-color: #f8d7da;
-            color: #842029;
-        }
-        .table-responsive-custom {
-            overflow-x: auto;
-        }
-        .table th {
-            cursor: pointer;
-            user-select: none;
-        }
-        .table th:hover {
-            background-color: #e9ecef;
-        }
-        .sort-icon::after {
-            content: '⇅';
-            margin-left: 5px;
-            opacity: 0.3;
-        }
-        .sort-asc::after {
-            content: '↑';
-            opacity: 1;
-        }
-        .sort-desc::after {
-            content: '↓';
-            opacity: 1;
-        }
-        .loading-overlay {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background-color: rgba(255, 255, 255, 0.8);
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            z-index: 9999;
-        }
-        .trophy-icon {
-            color: #ffd700;
-            font-size: 1.5rem;
-        }
-    </style>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css" rel="stylesheet">
+    <link rel="stylesheet" href="/static/css/variables-updated.css">
+    <link rel="stylesheet" href="/static/css/base.css">
+    <link rel="stylesheet" href="/static/css/layout.css">
+    <link rel="stylesheet" href="/static/css/components.css">
+    <link rel="stylesheet" href="/static/css/responsive.css">
     {% block extra_css %}{% endblock %}
 </head>
 <body>
-    <nav class="navbar navbar-expand-lg navbar-dark bg-primary">
-        <div class="container">
-            <a class="navbar-brand" href="/">
-                <i class="bi bi-graph-up-arrow me-2"></i>
-                股票基本面选股数据看板
-            </a>
-        </div>
-    </nav>
-    
-    <div class="container mt-4">
-        {% block content %}{% endblock %}
+    <!-- 背景圆形色块 - 视差效果 -->
+    <div class="background-shapes">
+        <div class="bg-shape bg-shape-cyan-1"></div>
+        <div class="bg-shape bg-shape-cyan-2"></div>
+        <div class="bg-shape bg-shape-blue-1"></div>
+        <div class="bg-shape bg-shape-blue-2"></div>
+        <div class="bg-shape bg-shape-blue-3"></div>
     </div>
     
-    <footer class="mt-5 py-3 bg-light text-center">
-        <div class="container">
-            <p class="mb-0 text-muted">
-                &copy; 2025 股票基本面选股数据看板
-            </p>
-        </div>
-    </footer>
+    <div class="container">
+        <!-- 侧边栏 -->
+        <aside class="sidebar" id="sidebar">
+            <div class="logo">
+                <span class="logo-text">股票看板</span>
+            </div>
+            <nav class="nav-items">
+                <a href="/" class="nav-item active">
+                    <i class="bi bi-pie-chart"></i>
+                    <span>数据看板</span>
+                </a>
+                <a href="#" class="nav-item">
+                    <i class="bi bi-star"></i>
+                    <span>我的收藏</span>
+                </a>
+                <a href="#" class="nav-item">
+                    <i class="bi bi-gear"></i>
+                    <span>设置</span>
+                </a>
+                <a href="#" class="nav-item">
+                    <i class="bi bi-info-circle"></i>
+                    <span>关于</span>
+                </a>
+            </nav>
+        </aside>
+        
+        <!-- 主内容区 -->
+        <main class="main-content">
+            {% block content %}{% endblock %}
+        </main>
+    </div>
     
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <!-- 浮动主题切换按钮（移动端） -->
+    <button id="theme-toggle-float" class="theme-toggle-float" style="display: none;">
+        <i class="bi bi-palette"></i>
+    </button>
+    
+    <script src="/static/js/theme.js"></script>
+    <script src="/static/js/api.js"></script>
+    <script src="/static/js/skeleton.js"></script>
+    <script src="/static/js/components.js"></script>
+    <script src="/static/js/events.js"></script>
+    <script src="/static/js/parallax.js"></script>
     {% block extra_js %}{% endblock %}
 </body>
 </html>

@@ -1,0 +1,467 @@
+/* 卡片组件 - 基于 Readdy.ai 设计 */
+.card {
+  background: var(--glass-bg-xl);
+  backdrop-filter: blur(var(--glass-blur));
+  -webkit-backdrop-filter: blur(var(--glass-blur));
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  border-radius: var(--radius-xl);
+  padding: var(--spacing-lg);
+  transition: transform var(--transition-normal), box-shadow var(--transition-normal);
+  box-shadow: var(--shadow-lg);
+}
+
+.card:hover {
+  transform: scale(1.02);
+  box-shadow: var(--shadow-xl);
+}
+
+/* Top 3 卡片 - 毛玻璃效果（与侧边栏同色） */
+.card-1,
+.card-2,
+.card-3 {
+  background: var(--glass-bg-xl);
+  backdrop-filter: blur(var(--glass-blur-light));
+  -webkit-backdrop-filter: blur(var(--glass-blur-light));
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  box-shadow: var(--shadow-md), inset 0 1px 0 rgba(255, 255, 255, 0.3);
+}
+
+.card-1:hover,
+.card-2:hover,
+.card-3:hover {
+  box-shadow: var(--shadow-lg);
+  transform: scale(1.02);
+}
+
+/* Top 3 卡片容器 */
+.cards-container {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: var(--spacing-md);
+}
+
+/* 卡片排名 */
+.card-rank {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--spacing-xs);
+  margin-bottom: var(--spacing-sm);
+  font-size: 24px;
+  color: rgba(83, 79, 79, 0.9);
+  background: transparent;
+  padding: var(--spacing-xs) var(--spacing-sm);
+  border-radius: var(--radius-md);
+  font-weight: bold; 
+}
+
+.rank-icon {
+  font-size: 24px;
+  color: rgba(255, 255, 255, 0.9);
+}
+
+.rank-extra-icon {
+  font-size: 14px;
+  margin-left: 4px;
+}
+
+.card-1 .rank-icon {
+  color: var(--rank-1-color);
+  /* text-shadow: 0 0 10px rgba(255, 215, 0, 0.3); */
+}
+
+.card-2 .rank-icon {
+  color: var(--rank-2-color);
+  /* text-shadow: 0 0 10px rgba(192, 192, 192, 0.3); */
+}
+
+.card-3 .rank-icon {
+  color: var(--rank-3-color);
+  /* text-shadow: 0 0 10px rgba(205, 127, 50, 0.3); */
+}
+
+/* 卡片内容 */
+.card-code {
+  font-size: 14px;
+  font-weight: 700;
+  color: #6a6363;
+  margin-bottom: var(--spacing-xs);
+}
+
+.card-name {
+  font-size: 18px;
+  font-weight: 700;
+  color: #2b2828;
+  margin-bottom: var(--spacing-sm);
+}
+
+.card-price {
+  font-size: 32px;
+  font-weight: 700;
+  color: var(--primary-color);
+  margin-bottom: var(--spacing-sm);
+  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+}
+
+.card-tag {
+  display: inline-block;
+  padding: var(--spacing-xs) var(--spacing-sm);
+  background: rgba(255, 255, 255, 0.3);
+  color: #ffffff;
+  border-radius: var(--radius-full);
+  font-size: 12px;
+  font-weight: 500;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+/* 筛选容器 - 毛玻璃效果 */
+.filter-container {
+  padding: var(--spacing-lg);
+  background: var(--glass-bg);
+  backdrop-filter: blur(var(--glass-blur-light));
+  -webkit-backdrop-filter: blur(var(--glass-blur-light));
+  border: 1px solid rgba(255,255, 255, 0.2);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-md);
+  color: #000000;
+}
+
+.filter-row {
+  display: flex;
+  gap: var(--spacing-md);
+  flex-wrap: wrap;
+  margin-bottom: var(--spacing-md);
+}
+
+.filter-item {
+  flex: 1;
+  min-width: 150px;
+}
+
+.filter-item label {
+  display: block;
+  margin-bottom: var(--spacing-xs);
+  font-size: 14px;
+  color: var(--text-secondary);
+  font-weight: 500;
+}
+
+/* 输入框 - 基于 Readdy.ai 设计 */
+input[type="text"],
+input[type="number"],
+select {
+  width: 100%;
+  padding: var(--spacing-sm) var(--spacing-md) var(--spacing-sm) var(--spacing-xl);
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  border-radius: var(--radius-md);
+  outline: none;
+  background: var(--glass-bg);
+  backdrop-filter: blur(var(--glass-blur-light));
+  -webkit-backdrop-filter: blur(var(--glass-blur-light));
+  transition: all var(--transition-fast);
+  font-size: 14px;
+  height: var(--input-height-desktop);
+  color: #ffffff;
+}
+
+input[type="text"]::placeholder,
+input[type="number"]::placeholder {
+  color: rgba(11, 10, 10, 0.5);
+}
+
+input[type="text"]:focus,
+input[type="number"]:focus,
+select:focus {
+  border-color: var(--primary-color);
+  background: var(--glass-bg-xl);
+  box-shadow: 0 0 0 3px var(--primary-light);
+}
+
+select {
+  cursor: pointer;
+  appearance: none;
+}
+
+select:focus {
+  outline: none;
+}
+
+/* 直接通过唯一id设置，简洁且优先级更高 */
+#recommendation {
+  color: rgba(11, 10, 10, 0.5);
+}
+
+/* 筛选按钮 */
+.filter-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: var(--spacing-sm);
+
+
+}
+
+/* 按钮组件 - 基于 Readdy.ai 设计 */
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--spacing-xs);
+  padding: var(--spacing-sm) var(--spacing-md);
+  border-radius: var(--radius-md);
+  border: none;
+  cursor: pointer;
+  transition: all var(--transition-fast);
+  font-size: 14px;
+  font-weight: 500;
+  height: var(--button-height-desktop);
+}
+
+.btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.btn-primary {
+  background: var(--primary-color);
+  color: var(--white);
+  border: none;
+}
+
+.btn-primary:hover:not(:disabled) {
+  background: var(--primary-dark);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  transform: translateY(-1px);
+}
+
+.btn-primary:active:not(:disabled) {
+  transform: translateY(0);
+}
+
+.btn-secondary {
+  background: transparent;
+  color: var(--white);
+  border: 1px solid rgba(255, 255, 255, 0.4);
+}
+
+.btn-secondary:hover:not(:disabled) {
+  background: var(--glass-bg);
+  border-color: var(--primary-color);
+  color: var(--primary-color);
+  transform: translateY(-1px);
+}
+
+.btn-secondary:active:not(:disabled) {
+  transform: translateY(0);
+}
+
+/* 按钮图标 */
+.btn i {
+  font-size: 16px;
+}
+
+/* 表格容器 - 毛玻璃效果 */
+.table-container {
+  padding: var(--spacing-lg);
+  background: var(--glass-bg);
+  backdrop-filter: blur(var(--glass-blur-light));
+  -webkit-backdrop-filter: blur(var(--glass-blur-light));
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-md);
+  overflow-x: auto;
+}
+
+/* 表格样式 - 基于 Readdy.ai 设计 */
+.stock-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 14px;
+  background: transparent;
+}
+
+/* 表头行 - 渐变背景 */
+.stock-table thead tr {
+  background: var(--header-gradient);
+  backdrop-filter: blur(var(--glass-blur-light));
+  -webkit-backdrop-filter: blur(var(--glass-blur-light));
+}
+
+.stock-table th {
+  background: transparent;
+  color: #ffffff;
+  padding: var(--spacing-sm);
+  font-weight: 600;
+  text-align: left;
+  position: sticky;
+  top: 0;
+  z-index: 10;
+  border-radius: var(--radius-sm);
+  border: none;
+}
+
+.stock-table th.sort-icon {
+  cursor: pointer;
+  user-select: none;
+  transition: filter var(--transition-fast);
+}
+
+.stock-table th.sort-icon:hover {
+  filter: brightness(1.1);
+}
+
+.stock-table th i {
+  margin-left: var(--spacing-xs);
+  font-size: 12px;
+  opacity: 0.5;
+}
+
+.stock-table td {
+  padding: var(--spacing-sm);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+  color: #ffffff;
+  backdrop-filter: blur(var(--glass-blur-extra-light));
+  -webkit-backdrop-filter: blur(var(--glass-blur-extra-light));
+}
+
+.stock-table tbody tr {
+  transition: all var(--transition-fast);
+}
+
+.stock-table tbody tr:hover {
+  background: rgba(0, 0, 0, 0.3);
+  cursor: pointer;
+}
+
+.stock-table th.sort-icon {
+  cursor: pointer;
+  user-select: none;
+  transition: background var(--transition-fast);
+}
+
+.stock-table th.sort-icon:hover {
+  filter: brightness(1.1);
+}
+
+.stock-table th i {
+  margin-left: var(--spacing-xs);
+  font-size: 12px;
+  opacity: 0.8;
+  transition: transform var(--transition-fast);
+}
+
+.stock-table th.sort-asc i {
+  transform: rotate(180deg);
+}
+
+.stock-table th.sort-desc i {
+  transform: rotate(0deg);
+}
+
+.stock-table td {
+  padding: var(--spacing-sm);
+  border-bottom: 1px solid var(--border-color);
+  color: var(--text-primary);
+}
+
+.stock-table tbody tr {
+  transition: background var(--transition-fast);
+}
+
+.stock-table tbody tr:hover {
+  background: var(--primary-light);
+  cursor: pointer;
+}
+
+/* 得分颜色 */
+.score-high {
+  color: var(--score-high-color);
+  font-weight: 700;
+}
+
+.card-price.score-high {
+  color: var(--primary-color);
+  font-weight: 700;
+}
+
+.score-medium {
+  color: var(--score-medium-color);
+  font-weight: 700;
+}
+
+.score-low {
+  color: var(--score-low-color);
+  font-weight: 700;
+}
+
+/* 推荐标签 */
+.recommendation-strong-buy {
+  background: var(--primary-light);
+  color: var(--primary-color);
+}
+
+.recommendation-buy {
+  background: var(--recommendation-buy-bg);
+  color: var(--recommendation-buy-text);
+}
+
+.recommendation-hold {
+  background: var(--recommendation-hold-bg);
+  color: var(--recommendation-hold-text);
+}
+
+.recommendation-avoid {
+  background: var(--recommendation-avoid-bg);
+  color: var(--recommendation-avoid-text);
+}
+
+/* 分页 */
+.pagination-container {
+  display: flex;
+  justify-content: center;
+  margin-top: var(--spacing-lg);
+}
+
+.pagination {
+  display: flex;
+  gap: var(--spacing-xs);
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.pagination .page-item {
+  display: inline-block;
+}
+
+.pagination .page-link {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 36px;
+  height: 36px;
+  padding: var(--spacing-xs) var(--spacing-sm);
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-md);
+  background: var(--white);
+  color: var(--text-primary);
+  text-decoration: none;
+  font-size: 14px;
+  transition: all var(--transition-fast);
+}
+
+.pagination .page-link:hover {
+  background: var(--primary-light);
+  border-color: var(--primary-color);
+  color: var(--primary-color);
+}
+
+.pagination .page-item.active .page-link {
+  background: var(--primary-color);
+  border-color: var(--primary-color);
+  color: var(--white);
+}
+
+.pagination .page-item.disabled .page-link {
+  opacity: 0.5;
+  cursor: not-allowed;
+}

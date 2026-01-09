@@ -1,0 +1,138 @@
+/* CSS 变量系统 - 支持双主题 */
+
+/* Teal 主题（默认） */
+:root {
+  --primary-color: #00BFA5;
+  --primary-dark: #00A992;
+  --primary-light: rgba(0, 191, 165, 0.1);
+  
+  /* 渐变背景 */
+  --bg-gradient-start: #e0f7fa;
+  --bg-gradient-mid: #b2ebf2;
+  --bg-gradient-end: #80deea;
+  
+  /* 表头渐变 */
+  --header-gradient-start: #00BFA5;
+  --header-gradient-end: #2196F3;
+  
+  /* 毛玻璃效果 */
+  --glass-bg: rgba(255, 255, 255, 0.8);
+  --glass-bg-xl: rgba(255, 255, 255, 0.7);
+  --glass-blur: 10px;
+  --glass-blur-xl: 20px;
+  
+  /* 颜色 */
+  --text-primary: #212121;
+  --text-secondary: #757575;
+  --text-muted: #999999;
+  --border-color: #E0E0E0;
+  --white: #ffffff;
+  
+  /* 圆角 */
+  --radius-sm: 4px;
+  --radius-md: 8px;
+  --radius-lg: 12px;
+  --radius-full: 9999px;
+  
+  /* 间距（基于8px） */
+  --spacing-xs: 4px;
+  --spacing-sm: 8px;
+  --spacing-md: 16px;
+  --spacing-lg: 24px;
+  --spacing-xl: 32px;
+  
+  /* 阴影 */
+  --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.1);
+  --shadow-md: 0 4px 10px rgba(0, 0, 0, 0.05);
+  --shadow-lg: 0 8px 16px rgba(0, 0, 0, 0.08);
+  
+  /* 过渡 */
+  --transition-fast: 0.2s ease;
+  --transition-normal: 0.3s ease;
+  
+  /* 字体 */
+  --font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+  
+  /* 高度 */
+  --header-height-mobile: 56px;
+  --header-height-desktop: 64px;
+  --button-height-mobile: 44px;
+  --button-height-desktop: 36px;
+  --input-height-mobile: 44px;
+  --input-height-desktop: 40px;
+  
+  /* Z-index */
+  --z-sidebar: 100;
+  --z-header: 50;
+  --z-modal: 1000;
+  --z-dropdown: 200;
+  --z-sticky: 10;
+}
+
+/* 红色主题 */
+[data-theme="red"] {
+  --primary-color: #E53935;
+  --primary-dark: #C62828;
+  --primary-light: rgba(229, 57, 53, 0.1);
+  
+  /* 渐变背景 */
+  --bg-gradient-start: #ffebee;
+  --bg-gradient-mid: #ffcdd2;
+  --bg-gradient-end: #ef9a9a;
+  
+  /* 推荐等级颜色 */
+  --rank-1-color: #FF6B6B;
+  --rank-2-color: #FFA07A;
+  --rank-3-color: #FFD700;
+  
+  /* 得分等级颜色 */
+  --score-high-color: #C62828;
+  --score-medium-color: #FF8A65;
+  --score-low-color: #90A4AE;
+  
+  /* 投资建议颜色 */
+  --recommendation-strong-buy-bg: rgba(198, 40, 40, 0.1);
+  --recommendation-strong-buy-text: #C62828;
+  
+  --recommendation-buy-bg: rgba(229, 57, 53, 0.1);
+  --recommendation-buy-text: #E53935;
+  
+  --recommendation-hold-bg: rgba(255, 138, 101, 0.1);
+  --recommendation-hold-text: #FF8A65;
+  
+  --recommendation-avoid-bg: rgba(144, 164, 174, 0.1);
+  --recommendation-avoid-text: #90A4AE;
+  
+  /* 表头渐变 */
+  --header-gradient-start: #E53935;
+  --header-gradient-end: #9C27B0;
+}
+
+/* 推荐等级颜色 */
+:root {
+  --rank-1-color: #FFD700;
+  --rank-2-color: #C0C0C0;
+  --rank-3-color: #CD7F32;
+}
+
+/* 得分等级颜色 */
+:root {
+  --score-high-color: #198754;
+  --score-medium-color: #ffc107;
+  --score-low-color: #dc3545;
+}
+
+/* 投资建议颜色 */
+:root {
+  --recommendation-strong-buy-bg: rgba(25, 135, 84, 0.1);
+  --recommendation-strong-buy-text: #198754;
+  
+  --recommendation-buy-bg: rgba(0, 191, 165, 0.1);
+  --recommendation-buy-text: #00BFA5;
+  
+  --recommendation-hold-bg: rgba(255, 193, 7, 0.1);
+  --recommendation-hold-text: #ffc107;
+  
+  --recommendation-avoid-bg: rgba(220, 53, 69, 0.1);
+  --recommendation-avoid-text: #dc3545;
+}

@@ -1,0 +1,497 @@
+/* 基础样式重置 */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  font-family: var(--font-family);
+  background: linear-gradient(135deg, var(--bg-gradient-start) 0%, var(--bg-gradient-mid) 50%, var(--bg-gradient-end) 100%);
+  min-height: 100vh;
+  color: var(--text-primary);
+  position: relative;
+  overflow-x: hidden;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* 滚动条样式 */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--primary-color);
+  border-radius:4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: var(--primary-dark);
+}
+
+/* 文本选择颜色 */
+::selection {
+  background: var(--primary-color);
+  color: var(--white);
+}
+
+/* 背景圆形色块 - 视差效果 */
+.background-shapes {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  z-index: -1;
+  overflow: hidden;
+  pointer-events: none;
+}
+
+.bg-shape {
+  position: absolute;
+  border-radius: 50%;
+  filter: blur(80px);
+  opacity: 0.6;
+  transition: transform 0.3s ease-out;
+  will-change: transform;
+}
+
+/* 青色圆形 */
+.bg-shape-cyan-1 {
+  width: 400px;
+  height: 400px;
+  background: rgba(0, 191, 165, 0.3);
+  top: 10%;
+  left: -100px;
+}
+
+.bg-shape-cyan-2 {
+  width: 300px;
+  height: 300px;
+  background: rgba(0, 191, 165, 0.25);
+  top: 60%;
+  right: -50px;
+}
+
+/* 蓝色圆形 */
+.bg-shape-blue-1 {
+  width: 500px;
+  height: 500px;
+  background: rgba(33, 150, 243, 0.3);
+  bottom: -100px;
+  left: 20%;
+}
+
+.bg-shape-blue-2 {
+  width: 350px;
+  height: 350px;
+  background: rgba(33, 150, 243, 0.25);
+  top: 30%;
+  right: 30%;
+}
+
+.bg-shape-blue-3 {
+  width: 250px;
+  height: 250px;
+  background: rgba(33, 150, 243, 0.2);
+  top: 80%;
+  left: 60%;
+}
+
+/* 红色主题的圆形色块 */
+[data-theme="red"] .bg-shape-cyan-1 {
+  background: rgba(229, 57, 53, 0.3);
+}
+
+[data-theme="red"] .bg-shape-cyan-2 {
+  background: rgba(229, 57, 53, 0.25);
+}
+
+[data-theme="red"] .bg-shape-blue-1 {
+  background: rgba(156, 39, 176, 0.3);
+}
+
+[data-theme="red"] .bg-shape-blue-2 {
+  background: rgba(156, 39, 176, 0.25);
+}
+
+[data-theme="red"] .bg-shape-blue-3 {
+  background: rgba(156, 39, 176, 0.2);
+}
+
+/* 滚动条样式 */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--primary-color);
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: var(--primary-dark);
+}
+
+/* 文本选择颜色 */
+::selection {
+  background: var(--primary-color);
+  color: var(--white);
+}
+
+/* 装饰模糊圆形 */
+.decoration {
+  position: absolute;
+  border-radius: 50%;
+  filter: blur(100px);
+  z-index: -1;
+  pointer-events: none;
+}
+
+.decoration-1 {
+  width: 300px;
+  height: 300px;
+  background: var(--primary-light);
+  top: -100px;
+  left: -100px;
+}
+
+.decoration-2 {
+  width: 400px;
+  height: 400px;
+  background: var(--primary-light);
+  bottom: -200px;
+  right: -200px;
+}
+
+.decoration-3 {
+  width: 250px;
+  height: 250px;
+  background: var(--primary-light);
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+}
+
+/* 毛玻璃效果类 */
+.glass {
+  background: var(--glass-bg);
+  backdrop-filter: blur(var(--glass-blur));
+  -webkit-backdrop-filter: blur(var(--glass-blur));
+  border-radius: var(--radius-md);
+  box-shadow: var(--shadow-md);
+}
+
+.glass-xl {
+  background: var(--glass-bg-xl);
+  backdrop-filter: blur(var(--glass-blur-xl));
+  -webkit-backdrop-filter: blur(var(--glass-blur-xl));
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-lg);
+}
+
+/* 标题样式 */
+h1, h2, h3, h4, h5, h6 {
+  font-weight: 600;
+  color: var(--text-primary);
+}
+
+h1 {
+  font-size: 18px;
+}
+
+h2 {
+  font-size: 16px;
+}
+
+h3 {
+  font-size: 14px;
+}
+
+/* 文本样式 */
+.text-primary {
+  color: var(--primary-color) !important;
+}
+
+.text-secondary {
+  color: var(--text-secondary) !important;
+}
+
+.text-muted {
+  color: var(--text-muted) !important;
+}
+
+.text-center {
+  text-align: center;
+}
+
+.text-left {
+  text-align: left;
+}
+
+.text-right {
+  text-align: right;
+}
+
+/* 链接样式 */
+a {
+  color: var(--primary-color);
+  text-decoration: none;
+  transition: color var(--transition-fast);
+}
+
+a:hover {
+  color: var(--primary-dark);
+}
+
+/* 列表样式 */
+ul, ol {
+  list-style: none;
+}
+
+/* 图片样式 */
+img {
+  max-width: 100%;
+  height: auto;
+  display: block;
+}
+
+/* 辅助类 */
+.d-none {
+  display: none !important;
+}
+
+.d-flex {
+  display: flex !important;
+}
+
+.d-inline-flex {
+  display: inline-flex !important;
+}
+
+.flex-column {
+  flex-direction: column !important;
+}
+
+.align-items-center {
+  align-items: center !important;
+}
+
+.justify-content-center {
+  justify-content: center !important;
+}
+
+.justify-content-between {
+  justify-content: space-between !important;
+}
+
+.mb-1 {
+  margin-bottom: var(--spacing-sm) !important;
+}
+
+.mb-2 {
+  margin-bottom: var(--spacing-md) !important;
+}
+
+.mb-3 {
+  margin-bottom: var(--spacing-lg) !important;
+}
+
+.me-1 {
+  margin-right: var(--spacing-sm) !important;
+}
+
+.me-2 {
+  margin-right: var(--spacing-md) !important;
+}
+
+.ms-2 {
+  margin-left: var(--spacing-md) !important;
+}
+
+/* 图标样式 */
+i {
+  display: inline-block;
+  vertical-align: middle;
+}
+
+/* 主题切换按钮浮动 */
+.theme-toggle-float {
+  position: fixed;
+  bottom: var(--spacing-lg);
+  right: var(--spacing-lg);
+  width: 50px;
+  height: 50px;
+  border-radius: var(--radius-full);
+  background: var(--glass-bg);
+  backdrop-filter: blur(var(--glass-blur));
+  -webkit-backdrop-filter: blur(var(--glass-blur));
+  border: 2px solid var(--primary-color);
+  box-shadow: var(--shadow-lg);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 24px;
+  color: var(--primary-color);
+  transition: all var(--transition-normal);
+  z-index: var(--z-sticky);
+}
+
+.theme-toggle-float:hover {
+  transform: scale(1.1);
+  box-shadow: 0 12px 24px rgba(0, 0, 0, 0.15);
+}
+
+.theme-toggle-float:active {
+  transform: scale(0.95);
+}
+
+/* 工具提示 */
+.tooltip {
+  position: relative;
+  display: inline-block;
+}
+
+.tooltip::after {
+  content: attr(data-tooltip);
+  position: absolute;
+  bottom: 100%;
+  left: 50%;
+  transform: translateX(-50%);
+  padding: var(--spacing-xs) var(--spacing-sm);
+  background: var(--text-primary);
+  color: var(--white);
+  font-size: 12px;
+  border-radius: var(--radius-sm);
+  white-space: nowrap;
+  opacity: 0;
+  visibility: hidden;
+  transition: all var(--transition-fast);
+  pointer-events: none;
+}
+
+.tooltip:hover::after {
+  opacity: 1;
+  visibility: visible;
+}
+
+/* 加载动画 */
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.spinner {
+  border: 3px solid rgba(0, 0, 0, 0.1);
+  border-left-color: var(--primary-color);
+  border-radius: 50%;
+  width: 20px;
+  height: 20px;
+  animation: spin 0.8s linear infinite;
+}
+
+/* 骨架屏样式 */
+@keyframes shimmer {
+  0% {
+    background-position: -200% 0;
+  }
+  100% {
+    background-position: 200% 0;
+  }
+}
+
+.skeleton {
+  background: linear-gradient(90deg, 
+    rgba(0, 0, 0, 0.05) 0%, 
+    rgba(0, 0, 0, 0.08) 50%, 
+    rgba(0, 0, 0, 0.05) 100%
+  );
+  background-size: 200% 100%;
+  animation: shimmer 1.5s infinite linear;
+  border-radius: var(--radius-sm);
+}
+
+/* 骨架屏卡片 */
+.skeleton-card {
+  background: var(--glass-bg);
+  backdrop-filter: blur(var(--glass-blur));
+  -webkit-backdrop-filter: blur(var(--glass-blur));
+  border-radius: var(--radius-lg);
+  padding: var(--spacing-md);
+  box-shadow: var(--shadow-md);
+}
+
+.skeleton-card .skeleton {
+  margin-bottom: var(--spacing-sm);
+}
+
+.skeleton-title {
+  height: 24px;
+  width: 60%;
+  margin-bottom: var(--spacing-sm);
+}
+
+.skeleton-text {
+  height: 16px;
+  width: 80%;
+  margin-bottom: var(--spacing-xs);
+}
+
+.skeleton-text-short {
+  height: 16px;
+  width: 40%;
+  margin-bottom: var(--spacing-xs);
+}
+
+.skeleton-price {
+  height: 40px;
+  width: 50%;
+  margin-bottom: var(--spacing-sm);
+}
+
+.skeleton-tag {
+  height: 24px;
+  width: 80px;
+  border-radius: var(--radius-full);
+}
+
+/* 骨架屏表格 */
+.skeleton-table-row {
+  display: flex;
+  align-items: center;
+  padding: var(--spacing-sm);
+  border-bottom: 1px solid var(--border-color);
+}
+
+.skeleton-table-row .skeleton {
+  flex: 1;
+  margin: 0 var(--spacing-xs);
+  height: 16px;
+}
+
+/* 骨架屏分页 */
+.skeleton-pagination {
+  display: flex;
+  justify-content: center;
+  gap: var(--spacing-xs);
+  margin-top: var(--spacing-lg);
+}
+
+.skeleton-pagination .skeleton {
+  width: 36px;
+  height: 36px;
+  border-radius: var(--radius-md);
+}

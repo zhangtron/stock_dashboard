@@ -1,79 +1,97 @@
 {% extends "base.html" %}
 
 {% block content %}
-<div id="loading" class="loading-overlay d-none">
-    <div class="spinner-border text-primary" role="status">
-        <span class="visually-hidden">Loading...</span>
+<!-- 移动端顶部导航 -->
+<header class="mobile-header">
+    <div class="hamburger" id="hamburger">
+        <span></span>
+        <span></span>
+        <span></span>
     </div>
-</div>
-
-<div class="row mb-4">
-    <div class="col-12">
-        <h2 class="text-center"><i class="bi bi-star-fill trophy-icon me-2"></i>Top 3 推荐股票</h2>
+    <div class="header-title">
+        <h1>股票看板</h1>
     </div>
-</div>
+    <div class="header-actions">
+        <i class="bi bi-search"></i>
+    </div>
+</header>
 
-<div class="row mb-4" id="top3-section">
-    <div class="col-md-4 mb-3">
-        <div class="card top3-card">
-            <div class="card-body text-center">
-                <h5 class="card-title text-warning"><i class="bi bi-trophy-fill me-2"></i>第1名</h5>
-                <div id="top3-0" class="text-center">
-                    <p class="mb-1"><small class="text-muted">加载中...</small></p>
+<!-- 桌面端顶部导航 -->
+<header class="desktop-header glass">
+    <div class="header-title">
+        <h1>股票基本面选股数据看板</h1>
+    </div>
+    <div class="header-actions">
+        <button id="theme-toggle-desktop" class="theme-toggle-desktop">
+            <i class="bi bi-palette"></i>
+        </button>
+    </div>
+</header>
+
+<!-- Top 3 推荐股票 -->
+<section class="top-3">
+    <h2 class="section-title">
+        <i class="bi bi-star-fill section-icon"></i>
+        Top 3 推荐股票
+    </h2>
+    <div class="cards-container">
+        <div class="card card-1">
+            <div class="card-rank">
+                <span class="rank-icon">🥇</span>
+                <span>第1名</span>
+            </div>
+            <div id="top3-0" class="card-content text-center">
+                <p class="mb-1 text-muted">加载中...</p>
+            </div>
+        </div>
+            <div class="card card-2">
+                <div class="card-rank">
+                    <span class="rank-icon">🥈</span>
+                    <span>第2名</span>
                 </div>
+            <div id="top3-1" class="card-content text-center">
+                <p class="mb-1 text-muted">加载中...</p>
+            </div>
+        </div>
+        <div class="card card-3">
+            <div class="card-rank">
+                <span class="rank-icon">🥉</span>
+                <span>第3名</span>
+            </div>
+            <div id="top3-2" class="card-content text-center">
+                <p class="mb-1 text-muted">加载中...</p>
             </div>
         </div>
     </div>
-    <div class="col-md-4 mb-3">
-        <div class="card top3-card">
-            <div class="card-body text-center">
-                <h5 class="card-title text-secondary"><i class="bi bi-medal me-2"></i>第2名</h5>
-                <div id="top3-1" class="text-center">
-                    <p class="mb-1"><small class="text-muted">加载中...</small></p>
-                </div>
-            </div>
-        </div>
-    </div>
-    <div class="col-md-4 mb-3">
-        <div class="card top3-card">
-            <div class="card-body text-center">
-                <h5 class="card-title text-danger"><i class="bi bi-award me-2"></i>第3名</h5>
-                <div id="top3-2" class="text-center">
-                    <p class="mb-1"><small class="text-muted">加载中...</small></p>
-                </div>
-            </div>
-        </div>
-    </div>
-</div>
+</section>
 
-<div class="row mb-4">
-    <div class="col-12">
-        <h3><i class="bi bi-funnel me-2"></i>筛选条件</h3>
-    </div>
-</div>
-
-<div class="card mb-4">
-    <div class="card-body">
-        <div class="row g-3">
-            <div class="col-md-3">
-                <label for="stockCode" class="form-label">股票代码</label>
-                <input type="text" class="form-control" id="stockCode" placeholder="输入股票代码">
+<!-- 筛选条件 -->
+<section class="filter-section">
+    <h2 class="section-title">
+        <i class="bi bi-funnel section-icon"></i>
+        筛选条件
+    </h2>
+    <div class="filter-container glass">
+        <div class="filter-row">
+            <div class="filter-item">
+                <label for="stockCode">股票代码</label>
+                <input type="text" id="stockCode" placeholder="输入股票代码">
             </div>
-            <div class="col-md-3">
-                <label for="stockName" class="form-label">股票名称</label>
-                <input type="text" class="form-control" id="stockName" placeholder="输入股票名称">
+            <div class="filter-item">
+                <label for="stockName">股票名称</label>
+                <input type="text" id="stockName" placeholder="输入股票名称">
             </div>
-            <div class="col-md-2">
-                <label for="minScore" class="form-label">最小得分</label>
-                <input type="number" class="form-control" id="minScore" min="0" max="100" placeholder="0">
+            <div class="filter-item">
+                <label for="minScore">最小得分</label>
+                <input type="number" id="minScore" min="0" max="100" placeholder="0">
             </div>
-            <div class="col-md-2">
-                <label for="maxScore" class="form-label">最大得分</label>
-                <input type="number" class="form-control" id="maxScore" min="0" max="100" placeholder="100">
+            <div class="filter-item">
+                <label for="maxScore">最大得分</label>
+                <input type="number" id="maxScore" min="0" max="100" placeholder="100">
             </div>
-            <div class="col-md-2">
-                <label for="recommendation" class="form-label">投资建议</label>
-                <select class="form-select" id="recommendation">
+            <div class="filter-item">
+                <label for="recommendation">投资建议</label>
+                <select id="recommendation">
                     <option value="">全部</option>
                     <option value="STRONG_BUY">强烈推荐</option>
                     <option value="BUY">买入</option>
@@ -81,257 +99,72 @@
                     <option value="AVOID">回避</option>
                 </select>
             </div>
-            <div class="col-12 text-end">
-                <button class="btn btn-primary" onclick="applyFilter()">
-                    <i class="bi bi-funnel-fill me-1"></i>应用筛选
-                </button>
-                <button class="btn btn-secondary" onclick="resetFilter()">
-                    <i class="bi bi-arrow-counterclockwise me-1"></i>重置
-                </button>
-            </div>
+        </div>
+        <div class="filter-actions">
+            <button class="btn btn-secondary">
+                <i class="bi bi-arrow-counterclockwise"></i>
+                重置
+            </button>
+            <button class="btn btn-primary">
+                <i class="bi bi-funnel-fill"></i>
+                应用筛选
+            </button>
         </div>
     </div>
-</div>
+</section>
 
-<div class="row mb-3">
-    <div class="col-12">
-        <h3><i class="bi bi-table me-2"></i>全部股票列表 <span class="badge bg-secondary" id="totalCount">0</span></h3>
-    </div>
-</div>
-
-<div class="card">
-    <div class="card-body">
-        <div class="table-responsive-custom">
-            <table class="table table-hover table-striped">
-                <thead class="table-dark">
+<!-- 全部股票列表 -->
+<section class="stock-list">
+    <h2 class="section-title">
+        <i class="bi bi-table section-icon"></i>
+        全部股票列表
+        <span class="badge" id="totalCount">0</span>
+    </h2>
+    <div class="table-container glass">
+        <table class="stock-table">
+                <thead>
                     <tr>
-                        <th class="sort-icon" data-sort="stock_code">股票代码</th>
-                        <th class="sort-icon" data-sort="stock_name">股票名称</th>
-                        <th class="sort-icon sort-desc" data-sort="overall_score">综合得分</th>
-                        <th class="sort-icon" data-sort="growth_score">成长能力</th>
-                        <th class="sort-icon" data-sort="profitability_score">盈利能力</th>
-                        <th class="sort-icon" data-sort="solvency_score">偿债能力</th>
-                        <th class="sort-icon" data-sort="cashflow_score">现金流</th>
+                        <th class="sort-icon" data-sort="stock_code">
+                            股票代码 <i class="bi bi-arrow-down-up" style="opacity: 0.5;"></i>
+                        </th>
+                        <th class="sort-icon" data-sort="stock_name">
+                            股票名称 <i class="bi bi-arrow-down-up" style="opacity: 0.5;"></i>
+                        </th>
+                        <th class="sort-icon" data-sort="overall_score">
+                            综合得分 <i class="bi bi-arrow-down-up" style="opacity: 0.5;"></i>
+                        </th>
+                        <th class="sort-icon" data-sort="growth_score">
+                            成长能力 <i class="bi bi-arrow-down-up" style="opacity: 0.5;"></i>
+                        </th>
+                        <th class="sort-icon" data-sort="profitability_score">
+                            盈利能力 <i class="bi bi-arrow-down-up" style="opacity: 0.5;"></i>
+                        </th>
+                        <th class="sort-icon" data-sort="solvency_score">
+                            偿债能力 <i class="bi bi-arrow-down-up" style="opacity: 0.5;"></i>
+                        </th>
+                        <th class="sort-icon" data-sort="cashflow_score">
+                            现金流 <i class="bi bi-arrow-down-up" style="opacity: 0.5;"></i>
+                        </th>
                         <th>投资建议</th>
-                        <th class="sort-icon" data-sort="calc_time">计算时间</th>
+                        <th class="sort-icon" data-sort="calc_time">
+                            计算时间 <i class="bi bi-arrow-down-up" style="opacity: 0.5;"></i>
+                        </th>
                     </tr>
                 </thead>
-                <tbody id="tableBody">
-                    <tr>
-                        <td colspan="9" class="text-center">
-                            <div class="spinner-border text-primary" role="status">
-                                <span class="visually-hidden">Loading...</span>
-                            </div>
-                        </td>
-                    </tr>
-                </tbody>
-            </table>
-        </div>
+            <tbody id="tableBody">
+                <tr>
+                    <td colspan="9" class="text-center">
+                        <i class="bi bi-hourglass-split"></i>
+                        加载中...
+                    </td>
+                </tr>
+            </tbody>
+        </table>
         
-        <nav aria-label="Page navigation" class="mt-3">
-            <ul class="pagination justify-content-center" id="pagination">
-            </ul>
+        <!-- 分页 -->
+        <nav aria-label="Page navigation" class="pagination-container">
+            <ul class="pagination" id="pagination"></ul>
         </nav>
     </div>
-</div>
-{% endblock %}
-
-{% block extra_js %}
-<script>
-let currentPage = 1;
-let currentSortBy = 'overall_score';
-let currentSortOrder = 'desc';
-let debounceTimer;
-
-document.addEventListener('DOMContentLoaded', function() {
-    fetchData();
-});
-
-async function fetchData() {
-    showLoading();
-    
-    const params = {
-        page: currentPage,
-        page_size: 20,
-        sort_by: currentSortBy,
-        sort_order: currentSortOrder
-    };
-    
-    const stockCode = document.getElementById('stockCode').value;
-    if (stockCode) params.stock_code = stockCode;
-    
-    const stockName = document.getElementById('stockName').value;
-    if (stockName) params.stock_name = stockName;
-    
-    const minScore = document.getElementById('minScore').value;
-    if (minScore) params.min_overall_score = minScore;
-    
-    const maxScore = document.getElementById('maxScore').value;
-    if (maxScore) params.max_overall_score = maxScore;
-    
-    const recommendation = document.getElementById('recommendation').value;
-    if (recommendation) params.recommendation = recommendation;
-    
-    try {
-        const response = await fetch(`/api/screening?${new URLSearchParams(params)}`);
-        const data = await response.json();
-        
-        renderTop3(data.top3);
-        renderTable(data.data);
-        renderPagination(data.total, data.page, data.page_size, data.total_pages);
-        document.getElementById('totalCount').textContent = data.total;
-    } catch (error) {
-        console.error('Error fetching data:', error);
-        alert('加载数据失败，请稍后重试');
-    } finally {
-        hideLoading();
-    }
-}
-
-function renderTop3(top3Data) {
-    for (let i = 0; i < 3; i++) {
-        const container = document.getElementById(`top3-${i}`);
-        if (top3Data[i]) {
-            const item = top3Data[i];
-            const scoreClass = getScoreClass(item.overall_score);
-            const recClass = getRecommendationClass(item.recommendation);
-            container.innerHTML = `
-                <h6 class="mb-1">${item.stock_code} - ${item.stock_name}</h6>
-                <h4 class="mb-1 ${scoreClass}">${item.overall_score}</h4>
-                <span class="badge ${recClass}">${getRecommendationText(item.recommendation)}</span>
-            `;
-        } else {
-            container.innerHTML = '<p class="mb-1 text-muted">暂无数据</p>';
-        }
-    }
-}
-
-function renderTable(data) {
-    const tbody = document.getElementById('tableBody');
-    
-    if (data.length === 0) {
-        tbody.innerHTML = '<tr><td colspan="9" class="text-center text-muted">暂无数据</td></tr>';
-        return;
-    }
-    
-    tbody.innerHTML = data.map(item => `
-        <tr>
-            <td><strong>${item.stock_code}</strong></td>
-            <td>${item.stock_name || '-'}</td>
-            <td class="${getScoreClass(item.overall_score)}">${item.overall_score || '-'}</td>
-            <td>${item.growth_score || '-'}</td>
-            <td>${item.profitability_score || '-'}</td>
-            <td>${item.solvency_score || '-'}</td>
-            <td>${item.cashflow_score || '-'}</td>
-            <td><span class="badge ${getRecommendationClass(item.recommendation)}">${getRecommendationText(item.recommendation)}</span></td>
-            <td><small class="text-muted">${item.calc_time ? item.calc_time.slice(0, 10) : '-'}</small></td>
-        </tr>
-    `).join('');
-    
-    updateSortIcons();
-}
-
-function renderPagination(total, page, pageSize, totalPages) {
-    const pagination = document.getElementById('pagination');
-    
-    if (totalPages === 0) {
-        pagination.innerHTML = '';
-        return;
-    }
-    
-    let html = '';
-    
-    html += `<li class="page-item ${page === 1 ? 'disabled' : ''}">
-        <a class="page-link" href="#" onclick="changePage(${page - 1}); return false;">上一页</a>
-    </li>`;
-    
-    for (let i = Math.max(1, page - 2); i <= Math.min(totalPages, page + 2); i++) {
-        html += `<li class="page-item ${i === page ? 'active' : ''}">
-            <a class="page-link" href="#" onclick="changePage(${i}); return false;">${i}</a>
-        </li>`;
-    }
-    
-    html += `<li class="page-item ${page === totalPages ? 'disabled' : ''}">
-        <a class="page-link" href="#" onclick="changePage(${page + 1}); return false;">下一页</a>
-    </li>`;
-    
-    pagination.innerHTML = html;
-}
-
-function changePage(page) {
-    currentPage = page;
-    fetchData();
-}
-
-function applyFilter() {
-    currentPage = 1;
-    fetchData();
-}
-
-function resetFilter() {
-    document.getElementById('stockCode').value = '';
-    document.getElementById('stockName').value = '';
-    document.getElementById('minScore').value = '';
-    document.getElementById('maxScore').value = '';
-    document.getElementById('recommendation').value = '';
-    currentPage = 1;
-    fetchData();
-}
-
-document.querySelectorAll('.sort-icon').forEach(th => {
-    th.addEventListener('click', function() {
-        const sortBy = this.dataset.sort;
-        if (currentSortBy === sortBy) {
-            currentSortOrder = currentSortOrder === 'asc' ? 'desc' : 'asc';
-        } else {
-            currentSortBy = sortBy;
-            currentSortOrder = 'desc';
-        }
-        fetchData();
-    });
-});
-
-function updateSortIcons() {
-    document.querySelectorAll('.sort-icon').forEach(th => {
-        th.classList.remove('sort-asc', 'sort-desc');
-        if (th.dataset.sort === currentSortBy) {
-            th.classList.add(`sort-${currentSortOrder}`);
-        }
-    });
-}
-
-function getScoreClass(score) {
-    if (score >= 80) return 'score-high';
-    if (score >= 60) return 'score-medium';
-    return 'score-low';
-}
-
-function getRecommendationClass(recommendation) {
-    const classes = {
-        'STRONG_BUY': 'recommendation-strong_buy',
-        'BUY': 'recommendation-buy',
-        'HOLD': 'recommendation-hold',
-        'AVOID': 'recommendation-avoid'
-    };
-    return classes[recommendation] || 'bg-secondary';
-}
-
-function getRecommendationText(recommendation) {
-    const texts = {
-        'STRONG_BUY': '强烈推荐',
-        'BUY': '买入',
-        'HOLD': '持有',
-        'AVOID': '回避'
-    };
-    return texts[recommendation] || recommendation || '-';
-}
-
-function showLoading() {
-    document.getElementById('loading').classList.remove('d-none');
-}
-
-function hideLoading() {
-    document.getElementById('loading').classList.add('d-none');
-}
-</script>
+</section>
 {% endblock %}

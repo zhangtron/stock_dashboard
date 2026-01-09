@@ -1,0 +1,148 @@
+/* 基于Readdy.ai设计分析的样式更新 */
+
+/* Teal 主题（默认） */
+:root {
+  --primary-color: #00BFA5;
+  --primary-dark: #00A992;
+  --primary-light: rgba(0, 191, 165, 0.1);
+  
+  /* 渐变背景 */
+  --bg-gradient-start: #e0f7fa;
+  --bg-gradient-mid: #b2ebf2;
+  --bg-gradient-end: #80deea;
+  
+  /* 毛玻璃效果 - 根据Readdy.ai分析 */
+  --glass-bg: rgba(255, 255, 255, 0.4);
+  --glass-bg-xl: rgba(255, 255, 255, 0.6);
+  --glass-blur: 24px;
+  --glass-blur-light: 12px;
+  --glass-blur-extra-light: 4px;
+  
+  /* 阴影系统 - 基于Readdy.ai分析 */
+  --shadow-none: none;
+  --shadow-sm: 0 0 0 rgba(0, 0, 0, 0);
+  --shadow-md: 0 4px 6px -4px rgba(0, 0, 0, 0.1);
+  --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -4px rgba(0, 0, 0, 0.1);
+  
+  /* 圆角系统 */
+  --radius-sm: 4px;
+  --radius-md: 8px;
+  --radius-lg: 12px;
+  --radius-xl: 16px;
+  --radius-full: 9999px;
+  
+  /* 间距系统 */
+  --spacing-xs: 4px;
+  --spacing-sm: 8px;
+  --spacing-md: 16px;
+  --spacing-lg: 24px;
+  --spacing-xl: 32px;
+  --spacing-2xl: 40px;
+  
+  /* 过渡动画 */
+  --transition-fast: 0.15s cubic-bezier(0.4, 0, 0.2, 1);
+  --transition-normal: 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  --transition-slow: 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+  
+  /* 字体系统 */
+  --font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+  
+  /* 高度系统 */
+  --header-height-mobile: 56px;
+  --header-height-desktop: 64px;
+  --button-height-mobile: 44px;
+  --button-height-desktop: 36px;
+  --input-height-mobile: 44px;
+  --input-height-desktop: 40px;
+  
+  /* Z-index */
+  --z-sidebar: 100;
+  --z-header: 150;
+  --z-modal: 1000;
+  --z-dropdown: 200;
+  --z-sticky: 10;
+  --z-decoration: -1;
+  
+  /* 透明度 */
+  --opacity-high: 1.0;
+  --opacity-mid-high: 0.8;
+  --opacity-mid: 0.6;
+  --opacity-mid-low: 0.4;
+  --opacity-low: 0.2;
+  
+  /* 颜色 */
+  --text-primary: #000000;
+  --text-secondary: rgba(0, 0, 0, 0.7);
+  --text-muted: rgba(0, 0, 0, 0.5);
+  --border-color: rgba(0, 0, 0, 0.1);
+  --white: #ffffff;
+  
+  /* Top 3 卡片渐变 - 根据Readdy.ai版本8 */
+  --card-1-gradient: linear-gradient(135deg, #FFEDFB 0%, #FAB349 100%);
+  --card-2-gradient: linear-gradient(135deg, #AFF006 0%, #9894E1 100%);
+  --card-3-gradient: linear-gradient(135deg, #7BF2E9 0%, #B55EBA 100%);
+  
+  /* 排名字体颜色 */
+  --rank-1-color: #FFD700; /* 金黄色 */
+  --rank-2-color: #C0C0C0; /* 银白色 */
+  --rank-3-color: #CD7F32; /* 黄铜色 */
+  
+  /* 得分渐变 - 根据Readdy.ai版本5 */
+  --score-high-gradient: linear-gradient(90deg, #FF7500, #00C853);
+  --score-mid-gradient: linear-gradient(90deg, #FFA000, #7CB342);
+  --score-low-gradient: linear-gradient(90deg, #546E7A, #26A69A);
+  
+  /* 表头渐变 - 修复typo */
+  --header-gradient: linear-gradient(90deg, #166B6D 0%, #06B6D4 50%, #0D9488 100%);
+  --header-gradient-start: #166B6D;
+  --header-gradient-mid: #06B6D4;
+  --header-gradient-end: #0D9488;
+  
+  /* 推荐等级颜色 - Red 主题调整 */
+  --recommendation-strong-buy-bg: rgba(198, 40, 40, 0.1);
+  --recommendation-strong-buy-text: #C62828;
+  --recommendation-buy-bg: rgba(229, 57, 53, 0.1);
+  --recommendation-buy-text: #E53935;
+  --recommendation-hold-bg: rgba(255, 138, 101, 0.1);
+  --recommendation-hold-text: #FF8A65;
+  --recommendation-avoid-bg: rgba(144, 164, 174, 0.1);
+  --recommendation-avoid-text: #90A4AE;
+  
+  /* 得分等级颜色 - Red 主题 */
+  --score-high-color: #C62828;
+  --score-medium-color: #FF8A65;
+  --score-low-color: #90A4AE;
+}
+
+/* Red 主题 */
+[data-theme="red"] {
+  --primary-color: #E53935;
+  --primary-dark: #C62828;
+  --primary-light: rgba(229, 57, 53, 0.1);
+  
+  /* 渐变背景 */
+  --bg-gradient-start: #ffebee;
+  --bg-gradient-mid: #ffcdd2;
+  --bg-gradient-end: #ef9a9a;
+  
+  /* 表头三色渐变 - Red主题: Red → Pink → Purple */
+  --header-gradient: linear-gradient(90deg, #E53935 0%, #EC407A 50%, #9C27B0 100%);
+  
+  /* 推荐等级颜色 - Red 主题调整 */
+  --recommendation-strong-buy-bg: rgba(198, 40, 40, 0.1);
+  --recommendation-strong-buy-text: #C62828;
+  
+  --recommendation-buy-bg: rgba(229, 57, 53, 0.1);
+  --recommendation-buy-text: #E53935;
+  
+  --recommendation-hold-bg: rgba(255, 138, 101, 0.1);
+  --recommendation-hold-text: #FF8A65;
+  
+  --recommendation-avoid-bg: rgba(144, 164, 174, 0.1);
+  --recommendation-avoid-text: #90A4AE;
+  
+  /* 得分等级颜色 - Red 主题 */
+  --score-high-color: #C62828;
+  --score-medium-color: #FF8A65;
+  --score-low-color: #90A4AE;
+}
