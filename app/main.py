@@ -102,6 +102,30 @@ async def get_sync_status_api():
         return {"error": str(e)}
 
 
+@app.post("/api/sync/trigger", summary="手动触发数据同步")
+async def trigger_sync(force: bool = False):
+    """
+    手动触发数据同步
+    - force=False: 增量同步（仅同步新增/更新的数据）
+    - force=True: 强制全量同步（清除缓存，重新同步所有数据）
+    """
+    from app.data_sync import sync_data_from_remote, force_full_sync
+    try:
+        logger.info(f"收到手动同步请求，force={force}")
+        if force:
+            result = force_full_sync()
+        else:
+            result = sync_data_from_remote()
+        return result
+    except Exception as e:
+        logger.error(f"手动同步失败: {e}")
+        return {
+            "success": False,
+            "error": str(e),
+            "sync_type": "full" if force else "incremental"
+        }
+
+
 if __name__ == "__main__":
     import uvicorn
     uvicorn.run(
