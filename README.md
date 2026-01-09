@@ -1,10 +1,11 @@
-# 股票基本面选股数据看板
+# 先信投资 - 数据驱动的投资探索
 
-**版本**：v1.1.0
+**版本**：v2.0.0
 **状态**：已上线 🟢
 **在线地址**：https://cicpa.fun
+**GitHub**: https://github.com/zhangtron/stock_dashboard
 
-基于FastAPI + MySQL + SQLite + Bootstrap 5构建的股票基本面选股数据展示系统。
+基于FastAPI + MySQL + SQLite + Bootstrap 5构建的股票基本面选股数据展示系统，支持三主题切换。
 
 ## 功能特性
 
@@ -13,12 +14,27 @@
 - **多维度筛选**：股票代码、名称、综合得分范围、投资建议
 - **灵活排序**：支持按任意字段排序，默认按综合得分降序
 - **分页展示**：每页20条数据，快速浏览大量数据
+- **快速搜索**：支持股票代码和名称搜索，实时显示建议
 - **可视化展示**：
   - 得分颜色编码（≥80绿色，60-79黄色，<60红色）
   - 投资建议标签（强烈推荐/买入/持有/回避）
   - 响应式设计，支持手机/平板/桌面
 
-### 性能优化（v1.1.0）
+### 主题系统（v2.0.0）
+- **三主题支持**：Teal（默认）、Red、Dark
+- **一键切换**：点击主题按钮循环切换
+- **主题持久化**：主题选择保存在浏览器本地
+- **自动适配**：所有页面元素自动适配当前主题
+- **流畅动画**：主题切换时图标旋转360°
+
+### 关于页面（v2.0.0）
+- **网站愿景**：数据驱动的投资探索
+- **核心功能**：四大能力维度分析
+- **未来规划**：4个开发中的功能
+- **数据来源**：聚宽/Tushare
+- **联系反馈**：邮箱 + GitHub
+
+### 性能优化
 - **本地缓存**：使用SQLite本地缓存，减少远程数据库连接
 - **增量同步**：基于update_time字段实现增量数据同步
 - **定时任务**：每天早上5:00自动同步最新数据
@@ -28,7 +44,8 @@
 - **后端**：FastAPI 0.115.0
 - **数据库**：MySQL（远程）+ SQLite（本地缓存）+ SQLAlchemy 2.0.36
 - **定时任务**：APScheduler 3.10.4
-- **前端**：Bootstrap 5.3.0 + Jinja2
+- **前端**：Bootstrap 5.3.0 + Jinja2 + Bootstrap Icons
+- **主题**：CSS Variables + Vanilla JavaScript
 - **部署**：Zeabur（免费托管）
 
 ## 数据库配置
@@ -108,9 +125,11 @@ uvicorn app.main:app --reload
 
 6. **访问应用**
 - Web页面：http://localhost:8000
+- 关于页面：http://localhost:8000/about
 - API文档：http://localhost:8000/docs
 - API端点：http://localhost:8000/api/screening
-
+- 健康检查：http://localhost:8000/health
+ 
 ### API文档
 
 #### 获取基本面选股数据
@@ -266,15 +285,33 @@ stock-dashboard/
 │   │   ├── __init__.py
 │   │   └── screening.py       # 基本面选股API
 │   └── static/
+│       ├── css/
+│       │   ├── variables-updated.css  # 主题变量
+│       │   ├── base.css             # 基础样式
+│       │   ├── layout.css           # 布局样式
+│       │   ├── components.css       # 组件样式
+│       │   ├── responsive.css       # 响应式样式
+│       │   └── about.css           # 关于页面样式
+│       ├── js/
+│       │   ├── theme.js             # 主题管理器
+│       │   ├── api.js               # API 调用
+│       │   ├── skeleton.js          # 骨架屏
+│       │   ├── components.js        # 组件渲染
+│       │   ├── events.js            # 事件处理
+│       │   └── parallax.js          # 视差效果
 │       └── templates/
-│           ├── base.html      # 基础模板
-│           └── screening.html # 基本面选股页面
+│           ├── base.html            # 基础模板
+│           ├── screening.html       # 基本面选股页面
+│           └── about.html           # 关于页面
 ├── .env                       # 环境变量（本地用，不提交Git）
 ├── .env.example               # 环境变量示例
 ├── .gitignore                 # Git忽略文件
 ├── requirements.txt           # Python依赖
 ├── zeabur.yaml               # Zeabur部署配置
-└── README.md                 # 项目文档
+├── README.md                 # 项目文档
+├── USER_GUIDE.md             # 使用文档
+├── TODO.md                   # 待开发任务
+└── CHANGELOG_V2.0.md         # 开发存档
 ```
 
 ## 开发说明
@@ -305,4 +342,11 @@ MIT License
 
 ## 联系方式
 
-如有问题，请提交Issue或联系项目维护者。
+- **邮箱**: zhangtron@outlook.com
+- **GitHub**: https://github.com/zhangtron/stock_dashboard
+- **在线地址**: https://cicpa.fun
+
+如有问题或建议，欢迎：
+1. 提交 GitHub Issue
+2. 发送邮件联系
+3. 查看关于页面了解更多信息

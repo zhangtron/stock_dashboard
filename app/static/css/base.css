@@ -125,6 +125,27 @@ body {
   background: rgba(156, 39, 176, 0.2);
 }
 
+/* 暗黑主题的圆形色块 */
+[data-theme="dark"] .bg-shape-cyan-1 {
+  background: rgba(0, 191, 165, 0.2);
+}
+
+[data-theme="dark"] .bg-shape-cyan-2 {
+  background: rgba(0, 191, 165, 0.15);
+}
+
+[data-theme="dark"] .bg-shape-blue-1 {
+  background: rgba(77, 208, 225, 0.2);
+}
+
+[data-theme="dark"] .bg-shape-blue-2 {
+  background: rgba(77, 208, 225, 0.15);
+}
+
+[data-theme="dark"] .bg-shape-blue-3 {
+  background: rgba(77, 208, 225, 0.1);
+}
+
 /* 滚动条样式 */
 ::-webkit-scrollbar {
   width: 8px;
@@ -358,6 +379,20 @@ i {
   transform: scale(0.95);
 }
 
+/* 主题切换时的旋转动画 */
+.theme-toggle-float.rotating {
+  animation: themeRotateFloat 0.3s ease;
+}
+
+@keyframes themeRotateFloat {
+  from {
+    transform: scale(1.1) rotate(0deg);
+  }
+  to {
+    transform: scale(1.1) rotate(360deg);
+  }
+}
+
 /* 工具提示 */
 .tooltip {
   position: relative;
@@ -395,7 +430,7 @@ i {
 }
 
 .spinner {
-  border: 3px solid rgba(0, 0, 0, 0.1);
+  border: 3px solid var(--skeleton-border);
   border-left-color: var(--primary-color);
   border-radius: 50%;
   width: 20px;
@@ -414,10 +449,10 @@ i {
 }
 
 .skeleton {
-  background: linear-gradient(90deg, 
-    rgba(0, 0, 0, 0.05) 0%, 
-    rgba(0, 0, 0, 0.08) 50%, 
-    rgba(0, 0, 0, 0.05) 100%
+  background: linear-gradient(90deg,
+    var(--skeleton-bg-1) 0%,
+    var(--skeleton-bg-2) 50%,
+    var(--skeleton-bg-3) 100%
   );
   background-size: 200% 100%;
   animation: shimmer 1.5s infinite linear;

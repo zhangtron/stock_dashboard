@@ -48,16 +48,16 @@
   gap: var(--spacing-xs);
   margin-bottom: var(--spacing-sm);
   font-size: 24px;
-  color: rgba(83, 79, 79, 0.9);
+  color: var(--card-rank-color);
   background: transparent;
   padding: var(--spacing-xs) var(--spacing-sm);
   border-radius: var(--radius-md);
-  font-weight: bold; 
+  font-weight: bold;
 }
 
 .rank-icon {
   font-size: 24px;
-  color: rgba(255, 255, 255, 0.9);
+  color: var(--rank-icon-color);
 }
 
 .rank-extra-icon {
@@ -84,14 +84,14 @@
 .card-code {
   font-size: 14px;
   font-weight: 700;
-  color: #6a6363;
+  color: var(--card-code-color);
   margin-bottom: var(--spacing-xs);
 }
 
 .card-name {
   font-size: 18px;
   font-weight: 700;
-  color: #2b2828;
+  color: var(--card-name-color);
   margin-bottom: var(--spacing-sm);
 }
 
@@ -106,8 +106,8 @@
 .card-tag {
   display: inline-block;
   padding: var(--spacing-xs) var(--spacing-sm);
-  background: rgba(255, 255, 255, 0.3);
-  color: #ffffff;
+  background: var(--card-tag-bg);
+  color: var(--card-tag-color);
   border-radius: var(--radius-full);
   font-size: 12px;
   font-weight: 500;
@@ -123,27 +123,33 @@
   border: 1px solid rgba(255,255, 255, 0.2);
   border-radius: var(--radius-lg);
   box-shadow: var(--shadow-md);
-  color: #000000;
+  color: var(--filter-text-color);
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-md);
 }
 
 .filter-row {
   display: flex;
-  gap: var(--spacing-md);
-  flex-wrap: wrap;
-  margin-bottom: var(--spacing-md);
+  gap: var(--spacing-sm);
+  flex-wrap: nowrap;
+  align-items: center;
+  flex: 1;
 }
 
 .filter-item {
   flex: 1;
-  min-width: 150px;
+  min-width: 122px;
+  display: flex;
+  align-items: center;
+  gap: 20px;
 }
 
 .filter-item label {
-  display: block;
-  margin-bottom: var(--spacing-xs);
+  flex-shrink: 0;
   font-size: 14px;
   color: var(--text-secondary);
-  font-weight: 500;
+  font-weight: 700;
 }
 
 /* 输入框 - 基于 Readdy.ai 设计 */
@@ -151,7 +157,7 @@ input[type="text"],
 input[type="number"],
 select {
   width: 100%;
-  padding: var(--spacing-sm) var(--spacing-md) var(--spacing-sm) var(--spacing-xl);
+  padding: var(--spacing-xs) var(--spacing-sm);
   border: 1px solid rgba(255, 255, 255, 0.3);
   border-radius: var(--radius-md);
   outline: none;
@@ -159,14 +165,14 @@ select {
   backdrop-filter: blur(var(--glass-blur-light));
   -webkit-backdrop-filter: blur(var(--glass-blur-light));
   transition: all var(--transition-fast);
-  font-size: 14px;
-  height: var(--input-height-desktop);
-  color: #ffffff;
+  font-size: 13px;
+  height: 36px;
+  color: var(--input-text-color);
 }
 
 input[type="text"]::placeholder,
 input[type="number"]::placeholder {
-  color: rgba(11, 10, 10, 0.5);
+  color: var(--input-placeholder-color);
 }
 
 input[type="text"]:focus,
@@ -188,7 +194,7 @@ select:focus {
 
 /* 直接通过唯一id设置，简洁且优先级更高 */
 #recommendation {
-  color: rgba(11, 10, 10, 0.5);
+  color: var(--input-select-placeholder-color);
 }
 
 /* 筛选按钮 */
@@ -196,8 +202,8 @@ select:focus {
   display: flex;
   justify-content: flex-end;
   gap: var(--spacing-sm);
-
-
+  align-items: center;
+  flex-shrink: 0;
 }
 
 /* 按钮组件 - 基于 Readdy.ai 设计 */
@@ -206,14 +212,14 @@ select:focus {
   align-items: center;
   justify-content: center;
   gap: var(--spacing-xs);
-  padding: var(--spacing-sm) var(--spacing-md);
+  padding: var(--spacing-xs) var(--spacing-md);
   border-radius: var(--radius-md);
   border: none;
   cursor: pointer;
   transition: all var(--transition-fast);
-  font-size: 14px;
+  font-size: 13px;
   font-weight: 500;
-  height: var(--button-height-desktop);
+  height: 36px;
 }
 
 .btn:disabled {
@@ -239,7 +245,7 @@ select:focus {
 
 .btn-secondary {
   background: transparent;
-  color: var(--white);
+  color: var(--btn-secondary-color);
   border: 1px solid rgba(255, 255, 255, 0.4);
 }
 
@@ -288,7 +294,7 @@ select:focus {
 
 .stock-table th {
   background: transparent;
-  color: #ffffff;
+  color: var(--table-header-color);
   padding: var(--spacing-sm);
   font-weight: 600;
   text-align: left;
@@ -328,18 +334,8 @@ select:focus {
 }
 
 .stock-table tbody tr:hover {
-  background: rgba(0, 0, 0, 0.3);
+  background: var(--table-row-hover-bg);
   cursor: pointer;
-}
-
-.stock-table th.sort-icon {
-  cursor: pointer;
-  user-select: none;
-  transition: background var(--transition-fast);
-}
-
-.stock-table th.sort-icon:hover {
-  filter: brightness(1.1);
 }
 
 .stock-table th i {
@@ -361,15 +357,6 @@ select:focus {
   padding: var(--spacing-sm);
   border-bottom: 1px solid var(--border-color);
   color: var(--text-primary);
-}
-
-.stock-table tbody tr {
-  transition: background var(--transition-fast);
-}
-
-.stock-table tbody tr:hover {
-  background: var(--primary-light);
-  cursor: pointer;
 }
 
 /* 得分颜色 */
@@ -442,7 +429,7 @@ select:focus {
   padding: var(--spacing-xs) var(--spacing-sm);
   border: 1px solid var(--border-color);
   border-radius: var(--radius-md);
-  background: var(--white);
+  background: var(--pagination-bg);
   color: var(--text-primary);
   text-decoration: none;
   font-size: 14px;

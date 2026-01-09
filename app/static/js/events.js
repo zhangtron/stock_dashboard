@@ -16,6 +16,7 @@ class Events {
    */
   static init() {
     this.bindHamburgerMenu();
+    this.bindSidebarToggle();
     this.bindSortEvents();
     this.bindFilterEvents();
     this.bindPaginationEvents();
@@ -41,6 +42,35 @@ class Events {
         if (!sidebar.contains(e.target) && !hamburger.contains(e.target)) {
           hamburger.classList.remove('active');
           sidebar.classList.remove('active');
+        }
+      });
+    }
+  }
+  
+  /**
+   * 绑定桌面端侧边栏切换事件
+   */
+  static bindSidebarToggle() {
+    const sidebarToggle = document.getElementById('sidebar-toggle-desktop');
+    const sidebar = document.getElementById('sidebar');
+    const desktopHeader = document.querySelector('.desktop-header');
+    const mainContent = document.querySelector('.main-content');
+    
+    if (sidebarToggle && sidebar && desktopHeader && mainContent) {
+      sidebarToggle.addEventListener('click', () => {
+        sidebarToggle.classList.toggle('active');
+        sidebar.classList.toggle('visible');
+        desktopHeader.classList.toggle('sidebar-visible');
+        mainContent.classList.toggle('sidebar-visible');
+      });
+      
+      // 点击外部关闭侧边栏
+      document.addEventListener('click', (e) => {
+        if (!sidebar.contains(e.target) && !sidebarToggle.contains(e.target)) {
+          sidebarToggle.classList.remove('active');
+          sidebar.classList.remove('visible');
+          desktopHeader.classList.remove('sidebar-visible');
+          mainContent.classList.remove('sidebar-visible');
         }
       });
     }
@@ -112,30 +142,36 @@ class Events {
    * 绑定移动端导航事件
    */
   static bindMobileNavigation() {
-    const navItems = document.querySelectorAll('.nav-item');
-    
-    navItems.forEach(item => {
-      item.addEventListener('click', (e) => {
-        e.preventDefault();
-        
-        // 移除所有激活状态
-        navItems.forEach(nav => nav.classList.remove('active'));
-        
-        // 添加当前激活状态
-        item.classList.add('active');
-        
-        // 在移动端，点击导航后关闭侧边栏
-        if (window.innerWidth < 768) {
+    // 仅在移动端绑定侧边栏关闭事件
+    if (window.innerWidth < 768) {
+      const navItems = document.querySelectorAll('.nav-item');
+
+      navItems.forEach(item => {
+        item.addEventListener('click', (e) => {
+          const href = item.getAttribute('href');
+
+          // 如果链接是 # (占位符)，阻止默认行为
+          if (href === '#' || !href) {
+            e.preventDefault();
+          }
+
+          // 移除所有激活状态
+          navItems.forEach(nav => nav.classList.remove('active'));
+
+          // 添加当前激活状态
+          item.classList.add('active');
+
+          // 关闭侧边栏
           const hamburger = document.getElementById('hamburger');
           const sidebar = document.getElementById('sidebar');
-          
+
           if (hamburger && sidebar) {
             hamburger.classList.remove('active');
             sidebar.classList.remove('active');
           }
-        }
+        });
       });
-    });
+    }
   }
   
   /**

@@ -11,15 +11,21 @@
   backdrop-filter: blur(var(--glass-blur));
   -webkit-backdrop-filter: blur(var(--glass-blur));
   padding: var(--spacing-lg);
-  display: flex;
+  display: none;
   flex-direction: column;
   gap: var(--spacing-lg);
   box-shadow: var(--shadow-md);
-  position: sticky;
+  position: fixed;
   top: 0;
+  left: 0;
   height: 100vh;
   overflow-y: auto;
   z-index: var(--z-sidebar);
+  transition: transform var(--transition-normal);
+}
+
+.sidebar.visible {
+  display: flex;
 }
 
 /* 侧边栏 Logo */
@@ -82,25 +88,37 @@
   flex: 1;
   padding: var(--spacing-lg);
   padding-top: calc(var(--header-height-desktop) + var(--spacing-lg));
+  padding-left: var(--spacing-lg);
   overflow-y: auto;
+  transition: padding-left var(--transition-normal);
+}
+
+.main-content.sidebar-visible {
+  padding-left: calc(200px + var(--spacing-lg));
 }
 
 /* 桌面端顶部导航 */
 .desktop-header {
   padding: var(--spacing-md) var(--spacing-lg);
   display: flex;
-  justify-content: space-between;
+  justify-content: flex-start;
   align-items: center;
   position: fixed;
   top: 0;
-  left: 200px;
+  left: 0;
   right: 0;
-  width: calc(100% - 200px);
+  width: 100%;
   z-index: var(--z-header);
   backdrop-filter: blur(var(--glass-blur));
   -webkit-backdrop-filter: blur(var(--glass-blur));
   background: var(--glass-bg);
   box-shadow: var(--shadow-md);
+  transition: left var(--transition-normal), width var(--transition-normal);
+}
+
+.desktop-header.sidebar-visible {
+  left: 200px;
+  width: calc(100% - 200px);
 }
 
 .header-title {
@@ -122,38 +140,37 @@
 
 /* 搜索框容器 - 居中显示 */
 .header-search {
-  flex: 1;
   display: flex;
   justify-content: center;
   align-items: center;
-  max-width: 400px;
-  margin: 0 var(--spacing-lg);
-  position: relative;
+  position: absolute;
+  left: 50%;
+  transform: translateX(-50%);
 }
 
 /* 搜索框 */
 .search-box {
   position: relative;
-  width: 100%;
-  max-width: 300px;
+  width: 500px;
 }
 
 .search-icon {
   position: absolute;
-  left: var(--spacing-sm);
+  left: 16px;
   top: 50%;
   transform: translateY(-50%);
   color: var(--text-muted);
   font-size: 16px;
+  z-index: 1;
 }
 
-.search-box input {
+.search-box input[type="text"] {
   width: 100%;
-  padding: var(--spacing-sm) var(--spacing-lg) var(--spacing-sm) 36px;
+  padding: var(--spacing-sm) var(--spacing-lg) var(--spacing-sm) 45px !important;
   border: 1px solid rgba(255, 255, 255, 0.2);
   border-radius: var(--radius-md);
   outline: none;
-  background: rgba(255, 255, 255, 0.1);
+  background: var(--glass-bg);
   backdrop-filter: blur(var(--glass-blur));
   color: var(--text-primary);
   font-size: 14px;
@@ -161,9 +178,9 @@
   transition: all var(--transition-normal);
 }
 
-.search-box input:focus {
+.search-box input[type="text"]:focus {
   border-color: var(--primary-color);
-  background: rgba(255, 255, 255, 0.2);
+  background: var(--glass-bg-xl);
   box-shadow: 0 0 0 3px rgba(var(--primary-rgb), 0.2);
 }
 
@@ -188,6 +205,7 @@
   justify-content: center;
   opacity: 0.6;
   transition: all var(--transition-normal);
+  z-index: 1;
 }
 
 .search-clear:hover {
@@ -312,6 +330,42 @@
   outline: none;
 }
 
+/* 侧边栏切换按钮（桌面端） */
+.sidebar-toggle-desktop {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 40px;
+  height: 40px;
+  border: none;
+  border-radius: var(--radius-md);
+  background: transparent;
+  color: var(--text-secondary);
+  font-size: 20px;
+  cursor: pointer;
+  transition: all var(--transition-normal);
+  margin-right: 4px;
+  flex-shrink: 0;
+}
+
+.sidebar-toggle-desktop:hover {
+  background: var(--primary-light);
+  color: var(--primary-color);
+}
+
+.sidebar-toggle-desktop.active {
+  background: var(--primary-light);
+  color: var(--primary-color);
+}
+
+/* Header右侧操作区 */
+.header-actions {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-sm);
+  margin-left: auto;
+}
+
 /* 主题切换按钮（桌面端） */
 .theme-toggle-desktop {
   display: flex;
@@ -335,6 +389,20 @@
 
 .theme-toggle-desktop:active {
   transform: rotate(60deg);
+}
+
+/* 主题切换时的旋转动画 */
+.theme-toggle-desktop.rotating {
+  animation: themeRotate 0.3s ease;
+}
+
+@keyframes themeRotate {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
 }
 
 /* 区块样式 */
@@ -368,4 +436,10 @@ section {
   font-weight: 500;
   background: var(--primary-color);
   color: var(--white);
+}
+
+/* 主题选择器容器 */
+.theme-toggle-container {
+  position: relative;
+  cursor: pointer;
 }

@@ -5,32 +5,32 @@
   --primary-color: #00BFA5;
   --primary-dark: #00A992;
   --primary-light: rgba(0, 191, 165, 0.1);
-  
+
   /* 渐变背景 */
   --bg-gradient-start: #e0f7fa;
   --bg-gradient-mid: #b2ebf2;
   --bg-gradient-end: #80deea;
-  
+
   /* 毛玻璃效果 - 根据Readdy.ai分析 */
   --glass-bg: rgba(255, 255, 255, 0.4);
   --glass-bg-xl: rgba(255, 255, 255, 0.6);
   --glass-blur: 24px;
   --glass-blur-light: 12px;
   --glass-blur-extra-light: 4px;
-  
+
   /* 阴影系统 - 基于Readdy.ai分析 */
   --shadow-none: none;
   --shadow-sm: 0 0 0 rgba(0, 0, 0, 0);
   --shadow-md: 0 4px 6px -4px rgba(0, 0, 0, 0.1);
   --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -4px rgba(0, 0, 0, 0.1);
-  
+
   /* 圆角系统 */
   --radius-sm: 4px;
   --radius-md: 8px;
   --radius-lg: 12px;
   --radius-xl: 16px;
   --radius-full: 9999px;
-  
+
   /* 间距系统 */
   --spacing-xs: 4px;
   --spacing-sm: 8px;
@@ -38,15 +38,15 @@
   --spacing-lg: 24px;
   --spacing-xl: 32px;
   --spacing-2xl: 40px;
-  
+
   /* 过渡动画 */
   --transition-fast: 0.15s cubic-bezier(0.4, 0, 0.2, 1);
   --transition-normal: 0.3s cubic-bezier(0.4, 0, 0.2, 1);
   --transition-slow: 0.5s cubic-bezier(0.4, 0, 0.2, 1);
-  
+
   /* 字体系统 */
   --font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
-  
+
   /* 高度系统 */
   --header-height-mobile: 56px;
   --header-height-desktop: 64px;
@@ -54,7 +54,7 @@
   --button-height-desktop: 36px;
   --input-height-mobile: 44px;
   --input-height-desktop: 40px;
-  
+
   /* Z-index */
   --z-sidebar: 100;
   --z-header: 150;
@@ -62,42 +62,65 @@
   --z-dropdown: 200;
   --z-sticky: 10;
   --z-decoration: -1;
-  
+
   /* 透明度 */
   --opacity-high: 1.0;
   --opacity-mid-high: 0.8;
   --opacity-mid: 0.6;
   --opacity-mid-low: 0.4;
   --opacity-low: 0.2;
-  
+
   /* 颜色 */
   --text-primary: #000000;
   --text-secondary: rgba(0, 0, 0, 0.7);
   --text-muted: rgba(0, 0, 0, 0.5);
   --border-color: rgba(0, 0, 0, 0.1);
   --white: #ffffff;
-  
+
+  /* 卡片内容颜色 */
+  --card-code-color: #6a6363;
+  --card-name-color: #2b2828;
+  --card-rank-color: rgba(83, 79, 79, 0.9);
+  --card-tag-color: #ffffff;
+  --card-tag-bg: rgba(255, 255, 255, 0.3);
+
+  /* 输入框颜色 */
+  --input-text-color: #ffffff;
+  --input-placeholder-color: rgba(11, 10, 10, 0.3);
+  --input-select-placeholder-color: rgba(11, 10, 10, 0.3);
+
+  /* 筛选容器颜色 */
+  --filter-text-color: #000000;
+
+  /* 按钮颜色 */
+  --btn-secondary-color: #ffffff;
+
+  /* 表格颜色 */
+  --table-header-color: #ffffff;
+  --table-row-hover-bg: rgba(0, 0, 0, 0.3);
+
   /* Top 3 卡片渐变 - 根据Readdy.ai版本8 */
   --card-1-gradient: linear-gradient(135deg, #FFEDFB 0%, #FAB349 100%);
   --card-2-gradient: linear-gradient(135deg, #AFF006 0%, #9894E1 100%);
   --card-3-gradient: linear-gradient(135deg, #7BF2E9 0%, #B55EBA 100%);
-  
+
   /* 排名字体颜色 */
-  --rank-1-color: #FFD700; /* 金黄色 */
-  --rank-2-color: #C0C0C0; /* 银白色 */
-  --rank-3-color: #CD7F32; /* 黄铜色 */
-  
+  --rank-1-color: #FFD700;
+  --rank-2-color: #C0C0C0;
+  --rank-3-color: #CD7F32;
+  --rank-icon-color: rgba(255, 255, 255, 0.9);
+
   /* 得分渐变 - 根据Readdy.ai版本5 */
   --score-high-gradient: linear-gradient(90deg, #FF7500, #00C853);
   --score-mid-gradient: linear-gradient(90deg, #FFA000, #7CB342);
   --score-low-gradient: linear-gradient(90deg, #546E7A, #26A69A);
-  
+
   /* 表头渐变 - 修复typo */
   --header-gradient: linear-gradient(90deg, #166B6D 0%, #06B6D4 50%, #0D9488 100%);
   --header-gradient-start: #166B6D;
   --header-gradient-mid: #06B6D4;
   --header-gradient-end: #0D9488;
-  
+
   /* 推荐等级颜色 - Red 主题调整 */
   --recommendation-strong-buy-bg: rgba(198, 40, 40, 0.1);
   --recommendation-strong-buy-text: #C62828;
@@ -107,11 +130,20 @@
   --recommendation-hold-text: #FF8A65;
   --recommendation-avoid-bg: rgba(144, 164, 174, 0.1);
   --recommendation-avoid-text: #90A4AE;
-  
+
   /* 得分等级颜色 - Red 主题 */
   --score-high-color: #C62828;
   --score-medium-color: #FF8A65;
   --score-low-color: #90A4AE;
+
+  /* 骨架屏颜色 */
+  --skeleton-bg-1: rgba(0, 0, 0, 0.05);
+  --skeleton-bg-2: rgba(0, 0, 0, 0.08);
+  --skeleton-bg-3: rgba(0, 0, 0, 0.05);
+  --skeleton-border: rgba(0, 0, 0, 0.1);
+
+  /* 分页背景颜色 */
+  --pagination-bg: var(--white);
 }
 
 /* Red 主题 */
@@ -119,30 +151,119 @@
   --primary-color: #E53935;
   --primary-dark: #C62828;
   --primary-light: rgba(229, 57, 53, 0.1);
-  
+
   /* 渐变背景 */
   --bg-gradient-start: #ffebee;
   --bg-gradient-mid: #ffcdd2;
   --bg-gradient-end: #ef9a9a;
-  
+
   /* 表头三色渐变 - Red主题: Red → Pink → Purple */
   --header-gradient: linear-gradient(90deg, #E53935 0%, #EC407A 50%, #9C27B0 100%);
-  
+
   /* 推荐等级颜色 - Red 主题调整 */
   --recommendation-strong-buy-bg: rgba(198, 40, 40, 0.1);
   --recommendation-strong-buy-text: #C62828;
-  
+
   --recommendation-buy-bg: rgba(229, 57, 53, 0.1);
   --recommendation-buy-text: #E53935;
-  
+
   --recommendation-hold-bg: rgba(255, 138, 101, 0.1);
   --recommendation-hold-text: #FF8A65;
-  
+
   --recommendation-avoid-bg: rgba(144, 164, 174, 0.1);
   --recommendation-avoid-text: #90A4AE;
-  
+
   /* 得分等级颜色 - Red 主题 */
   --score-high-color: #C62828;
   --score-medium-color: #FF8A65;
   --score-low-color: #90A4AE;
+}
+
+/* Dark 主题 */
+[data-theme="dark"] {
+  --bg-gradient-start: #121212;
+  --bg-gradient-mid: #1e1e1e;
+  --bg-gradient-end: #2d2d2d;
+
+  --glass-bg: rgba(40, 40, 40, 0.6);
+  --glass-bg-xl: rgba(40, 40, 40, 0.8);
+
+  --text-primary: #ffffff;
+  --text-secondary: rgba(255, 255, 255, 0.7);
+  --text-muted: rgba(255, 255, 255, 0.5);
+  --border-color: rgba(255, 255, 255, 0.1);
+  --white: #ffffff;
+
+  /* 卡片内容颜色 - 反向为白色 */
+  --card-code-color: rgba(255, 255, 255, 0.7);
+  --card-name-color: #ffffff;
+  --card-rank-color: rgba(255, 255, 255, 0.9);
+  --card-tag-color: #ffffff;
+  --card-tag-bg: rgba(255, 255, 255, 0.2);
+
+  /* 输入框颜色 - 反向为白色 */
+  --input-text-color: #ffffff;
+  --input-placeholder-color: rgba(255, 255, 255, 0.4);
+  --input-select-placeholder-color: rgba(255, 255, 255, 0.4);
+
+  /* 筛选容器颜色 - 反向为白色 */
+  --filter-text-color: #ffffff;
+
+  /* 按钮颜色 - 反向为白色 */
+  --btn-secondary-color: #ffffff;
+
+  /* 表格颜色 - 反向为白色 */
+  --table-header-color: #ffffff;
+  --table-row-hover-bg: rgba(255, 255, 255, 0.1);
+
+  /* 主色调使用 Teal */
+  --primary-color: #f00b50b3;
+  --primary-dark: #FE585C;
+  --primary-light: rgba(191, 0, 134, 0.15);
+
+  /* 表头三色渐变 - Dark主题 */
+  --header-gradient: linear-gradient(90deg, #7937cf84 0%, #ea29607b 50%, #f00b5084 100%);
+
+  /* Top 3 卡片渐变 - Dark主题调整 */
+  /* --card-1-gradient: linear-gradient(135deg, #FF6B6B 0%, #FF8E53 100%);
+  --card-2-gradient: linear-gradient(135deg, #4ECDC4 0%, #44A08D 100%);
+  --card-3-gradient: linear-gradient(135deg, #A8E6CF 0%, #88D8B0 100%); */
+
+  /* 排名字体颜色 - Dark主题保持原色但增加透明度 */
+  --rank-1-color: #FFD700;
+  --rank-2-color: #E0E0E0;
+  --rank-3-color: #D4A574;
+  --rank-icon-color: rgba(255, 255, 255, 0.9);
+
+  /* 推荐等级颜色 - Dark主题 */
+  --recommendation-strong-buy-bg: rgba(198, 40, 40, 0.2);
+  --recommendation-strong-buy-text: #EF5350;
+
+  --recommendation-buy-bg: rgba(229, 57, 53, 0.2);
+  --recommendation-buy-text: #E57373;
+
+  --recommendation-hold-bg: rgba(255, 138, 101, 0.2);
+  --recommendation-hold-text: #FF8A65;
+
+  --recommendation-avoid-bg: rgba(144, 164, 174, 0.2);
+  --recommendation-avoid-text: #B0BEC5;
+
+  /* 得分等级颜色 - Dark主题 */
+  --score-high-color: #EF5350;
+  --score-medium-color: #FF8A65;
+  --score-low-color: #B0BEC5;
+
+  /* 得分渐变 - Dark主题 */
+  /* --score-high-gradient: linear-gradient(90deg, #EF5350, #66BB6A);
+  --score-mid-gradient: linear-gradient(90deg, #FF8A65, #81C784);
+  --score-low-gradient: linear-gradient(90deg, #90A4AE, #26A69A); */
+
+  /* 骨架屏颜色 - Dark主题 */
+  --skeleton-bg-1: rgba(255, 255, 255, 0.05);
+  --skeleton-bg-2: rgba(255, 255, 255, 0.08);
+  --skeleton-bg-3: rgba(255, 255, 255, 0.05);
+  --skeleton-border: rgba(255, 255, 255, 0.1);
+
+  /* 分页背景颜色 - Dark主题 */
+  --pagination-bg: rgba(40, 40, 40, 0.6);
 }

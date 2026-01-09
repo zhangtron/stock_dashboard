@@ -14,8 +14,8 @@ logger = logging.getLogger(__name__)
 
 app = FastAPI(
     title=settings.APP_NAME,
-    description="股票基本面选股数据看板",
-    version="1.0.1"
+    description="先信投资 - 数据驱动的投资探索",
+    version="2.0.0"
 )
 
 app.include_router(screening.router, prefix="/api")
@@ -72,6 +72,12 @@ async def read_root(request: Request):
 @app.get("/screening", response_class=HTMLResponse, summary="基本面选股页面")
 async def screening_page(request: Request):
     return templates.TemplateResponse("screening.html", {"request": request})
+
+
+@app.get("/about", response_class=HTMLResponse, summary="关于页面")
+async def about_page(request: Request):
+    """关于页面"""
+    return templates.TemplateResponse("about.html", {"request": request})
 
 
 @app.get("/health", summary="健康检查")
