@@ -1,0 +1,235 @@
+{% extends "base.html" %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="/static/css/about.css">
+{% endblock %}
+
+{% block content %}
+<!-- 移动端顶部导航 -->
+<header class="mobile-header">
+    <div class="hamburger" id="hamburger">
+        <span></span>
+        <span></span>
+        <span></span>
+    </div>
+    <div class="header-title">
+        <h1>先信投资</h1>
+    </div>
+    <div class="header-actions">
+        <i class="bi bi-info-circle"></i>
+    </div>
+</header>
+
+<!-- 桌面端顶部导航 -->
+<header class="desktop-header glass">
+    <button id="sidebar-toggle-desktop" class="sidebar-toggle-desktop">
+        <i class="bi bi-list"></i>
+    </button>
+    <div class="header-title">
+        <h1>关于</h1>
+    </div>
+    <div class="header-actions">
+        <div class="theme-toggle-container">
+            <button id="theme-toggle-desktop" class="theme-toggle-desktop">
+                <i class="bi bi-palette"></i>
+            </button>
+        </div>
+    </div>
+</header>
+
+<div class="about-page">
+    <!-- 第一部分：网站愿景 -->
+    <section class="about-section glass">
+        <div class="section-header">
+            <i class="bi bi-lightbulb section-icon-large"></i>
+            <h1>数据驱动的投资探索</h1>
+        </div>
+        <p class="lead">
+            我们相信，理性的投资决策应该建立在透明、系统的数据分析之上。
+            这个网站是我们对投资方法论的一次实践——从基本面分析出发，逐步构建多维度的资产评估体系。
+        </p>
+    </section>
+
+    <!-- 第二部分：当前核心功能 -->
+    <section class="about-section glass">
+        <div class="section-header">
+            <i class="bi bi-bar-chart-line section-icon-large"></i>
+            <h2>当前核心：基本面选股系统</h2>
+        </div>
+        <div class="feature-cards">
+            <div class="feature-card">
+                <div class="feature-icon">
+                    <i class="bi bi-graph-up-arrow"></i>
+                </div>
+                <h3>成长能力分析</h3>
+                <p>评估企业营收、利润的持续增长潜力</p>
+            </div>
+            <div class="feature-card">
+                <div class="feature-icon">
+                    <i class="bi bi-currency-dollar"></i>
+                </div>
+                <h3>盈利能力分析</h3>
+                <p>考察ROE、毛利率等盈利质量指标</p>
+            </div>
+            <div class="feature-card">
+                <div class="feature-icon">
+                    <i class="bi bi-cash-coin"></i>
+                </div>
+                <h3>现金能力分析</h3>
+                <p>分析经营性现金流、自由现金流的健康状况</p>
+            </div>
+            <div class="feature-card">
+                <div class="feature-icon">
+                    <i class="bi bi-shield-check"></i>
+                </div>
+                <h3>偿债能力分析</h3>
+                <p>评估资产负债结构及偿债风险</p>
+            </div>
+        </div>
+        <p class="section-note">每只股票都会根据这四个维度得到综合评分并排名，数据每日/每周更新。</p>
+    </section>
+
+    <!-- 第三部分：未来规划 -->
+    <section class="about-section glass">
+        <div class="section-header">
+            <i class="bi bi-rocket-takeoff section-icon-large"></i>
+            <h2>正在开发中的功能</h2>
+        </div>
+        <ul class="feature-list">
+            <li>
+                <strong class="feature-title">基金策略分析</strong>
+                <span class="feature-desc">：基金折价套利、趋势跟踪、相关性分析</span>
+            </li>
+            <li>
+                <strong class="feature-title">个人交易数据库</strong>
+                <span class="feature-desc">：交易记录分析、组合回测工具</span>
+            </li>
+            <li>
+                <strong class="feature-title">社区分享功能</strong>
+                <span class="feature-desc">：策略讨论、数据分享、用户评级</span>
+            </li>
+            <li>
+                <strong class="feature-title">API接口</strong>
+                <span class="feature-desc">：为开发者提供数据访问服务</span>
+            </li>
+        </ul>
+    </section>
+
+    <!-- 第四部分：数据与原则 -->
+    <section class="about-section glass">
+        <div class="section-header">
+            <i class="bi bi-database section-icon-large"></i>
+            <h2>数据来源与原则</h2>
+        </div>
+        <div class="info-grid">
+            <div class="info-box">
+                <h3>数据来源</h3>
+                <ul>
+                    <li>所有开源渠道：joinquant / Tushare / ptrade / QMT / baostock / tdx / akshare</li>
+                    <li>数据更新频率：日频或者季度更新</li>
+                </ul>
+            </div>
+            <div class="info-box">
+                <h3>我们的原则</h3>
+                <ul class="principles-list">
+                    <li>📈 <strong>数据透明</strong>：所有评分算法和公式公开可查</li>
+                    <li>🤝 <strong>持续改进</strong>：根据用户反馈不断优化模型</li>
+                    <li>🛡️ <strong>隐私保护</strong>：我们不会收集不必要的个人信息</li>
+                    <li>🎯 <strong>专注价值</strong>：专注于分析工具，不提供投资建议</li>
+                </ul>
+            </div>
+        </div>
+    </section>
+
+    <!-- 第五部分：重要声明 -->
+    <section class="about-section alert warning">
+        <div class="alert-header">
+            <i class="bi bi-exclamation-triangle-fill alert-icon"></i>
+            <h2>⚠️ 重要声明</h2>
+        </div>
+        <p>本网站所有内容均为<strong>个人研究分享</strong>，不构成任何形式的投资建议。</p>
+        <p>股票和基金投资存在风险，过去表现不代表未来收益。请您基于自身风险承受能力做出独立决策。</p>
+        <p>我们尽力保证数据的准确性，但不保证信息的完整性和及时性，对使用本网站数据导致的任何损失不承担责任。</p>
+    </section>
+
+    <!-- 第六部分：联系与反馈 -->
+    <section class="about-section glass">
+        <div class="section-header">
+            <i class="bi bi-envelope-paper section-icon-large"></i>
+            <h2>💌 联系我们</h2>
+        </div>
+        <p class="section-intro">我们非常重视您的反馈！如果您：</p>
+        <ul class="contact-reasons">
+            <li>发现了数据问题或计算错误</li>
+            <li>有功能建议或改进想法</li>
+            <li>希望参与测试新功能</li>
+            <li>想要分享您的分析策略</li>
+        </ul>
+        <p class="section-intro">欢迎通过以下方式与我们联系：</p>
+        <div class="contact-methods">
+            <a href="mailto:zhangtron@outlook.com" class="contact-item">
+                <span class="contact-icon">📧</span>
+                <div class="contact-info">
+                    <strong>邮箱</strong>
+                    <span>zhangtron@outlook.com</span>
+                </div>
+                <i class="bi bi-arrow-right contact-arrow"></i>
+            </a>
+            <a href="https://github.com/zhangtron/stock_dashboard" target="_blank" rel="noopener" class="contact-item">
+                <span class="contact-icon">💬</span>
+                <div class="contact-info">
+                    <strong>GitHub</strong>
+                    <span>github.com/zhangtron/stock_dashboard</span>
+                </div>
+                <i class="bi bi-box-arrow-up-right contact-arrow"></i>
+            </a>
+        </div>
+    </section>
+
+    <!-- 第七部分：更新日志 -->
+    <section class="about-section glass">
+        <div class="section-header">
+            <i class="bi bi-clock-history section-icon-large"></i>
+            <h2>📝 更新日志</h2>
+        </div>
+        <div class="changelog">
+            <div class="log-item">
+                <div class="log-badge">
+                    <i class="bi bi-check-circle-fill"></i>
+                </div>
+                <div class="log-content">
+                    <h3>2025.01.10 - 版本 2.0</h3>
+                    <ul>
+                        <li>✅ 新增暗黑主题支持</li>
+                        <li>✅ 优化界面响应式设计</li>
+                        <li>✅ 添加关于页面</li>
+                    </ul>
+                </div>
+            </div>
+            <div class="log-item">
+                <div class="log-badge">
+                    <i class="bi bi-check-circle-fill"></i>
+                </div>
+                <div class="log-content">
+                    <h3>2024.03.15 - 版本 1.0</h3>
+                    <ul>
+                        <li>✅ 基本面选股系统正式上线</li>
+                        <li>✅ 四大能力维度评分与排名</li>
+                        <li>✅ 数据表格导出功能</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- 页脚 -->
+    <footer class="page-footer glass">
+        <p class="footer-copyright">© 2025 先信投资 | 数据驱动，智慧投资</p>
+        <div class="footer-links">
+            <a href="/">首页</a>
+            <span class="footer-separator">|</span>
+            <a href="/about">关于</a>
+        </div>
+    </footer>
+</div>
+{% endblock %}
