@@ -32,6 +32,11 @@
     
     <!-- 顶部导航栏 -->
     <nav class="top-nav">
+        <button id="mobileMenuToggle" class="hamburger-menu">
+            <span></span>
+            <span></span>
+            <span></span>
+        </button>
         <div class="header-title">
             <img src="/static/favicon/favicon.svg" class="brand-logo" alt="先信投资 Logo">
             <h1>先信投资</h1>
@@ -72,11 +77,6 @@
         </div>
         {% block header_actions %}
         <div class="header-actions">
-            <button id="mobileMenuToggle" class="hamburger-menu">
-                <span></span>
-                <span></span>
-                <span></span>
-            </button>
             <div class="mobile-menu-dropdown" id="mobileMenuDropdown">
                 <div class="nav-links mobile-nav-links"></div>
             </div>

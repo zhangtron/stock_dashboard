@@ -23,6 +23,11 @@
   padding: 0 var(--spacing-lg);
 }
 
+.top-nav .hamburger-menu {
+  flex-shrink: 0;
+  order: -1;
+}
+
 .top-nav .header-title {
   display: flex;
   align-items: center;
@@ -40,14 +45,6 @@
   display: flex;
   gap: var(--spacing-sm);
   flex: 1;
-  justify-content: center;
-}
-
-.nav-links {
-  display: flex;
-  gap: var(--spacing-sm);
-  padding: 0 var(--spacing-lg);
-  width: 100%;
   justify-content: center;
 }
 
@@ -605,6 +602,16 @@ section {
   .hamburger-menu {
     display: none;
   }
+
+  .mobile-menu-dropdown {
+    display: none !important;
+  }
+
+  /* 桌面端显示顶部导航链接 */
+  .top-nav > .nav-links {
+    display: flex;
+  }
+}
 
   .mobile-menu-dropdown {
     display: none !important;
