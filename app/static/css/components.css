@@ -197,6 +197,13 @@ select:focus {
   color: var(--input-select-placeholder-color);
 }
 
+/* 筛选容器内输入框颜色 - 确保优先级 */
+.filter-container input[type="text"],
+.filter-container input[type="number"],
+.filter-container select {
+  color: var(--input-text-color) !important;
+}
+
 /* 筛选按钮 */
 .filter-actions {
   display: flex;
