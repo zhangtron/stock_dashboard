@@ -20,19 +20,21 @@
   z-index: var(--z-sidebar);
   display: flex;
   align-items: center;
+  justify-content: space-between;
   padding: 0 var(--spacing-lg);
 }
 
 .top-nav .hamburger-menu {
   flex-shrink: 0;
   order: -1;
+  margin-right: var(--spacing-sm);
 }
 
 .top-nav .header-title {
   display: flex;
   align-items: center;
   gap: var(--spacing-sm);
-  flex-shrink: 0;
+  flex: 0 0 auto;
 }
 
 .top-nav .header-title h1 {
@@ -173,6 +175,24 @@
 .mobile-menu-dropdown.active {
   display: block;
   animation: dropdownFade 0.2s ease-out;
+}
+
+/* 移动端下拉菜单在小屏幕下的优化 */
+@media (max-width: 768px) {
+  .mobile-menu-dropdown {
+    position: fixed;
+    top: 40px; /* 与移动端导航栏高度一致 */
+    left: 0;
+    right: 0;
+    width: 100%;
+    min-width: unset;
+    max-height: calc(100vh - 40px);
+    border-radius: 0;
+    border-left: none;
+    border-right: none;
+    border-top: 1px solid var(--border-color);
+    box-shadow: var(--shadow-xl);
+  }
 }
 
 /* 下拉菜单内的导航链接 */
@@ -557,6 +577,7 @@ section {
   .top-nav {
     height: 40px;
     padding: 0 var(--spacing-sm);
+    justify-content: space-between;
   }
 
   .top-nav .header-title h1 {
@@ -571,6 +592,16 @@ section {
   /* 显示汉堡菜单 */
   .hamburger-menu {
     display: block;
+    order: -1;
+    margin-right: var(--spacing-sm);
+  }
+
+  /* 移动端标题布局 */
+  .top-nav .header-title {
+    position: absolute;
+    left: 50%;
+    transform: translateX(-50%);
+    margin: 0;
   }
 
   .nav-link {
@@ -580,6 +611,7 @@ section {
   .header-actions {
     flex: 0 0 auto;
     min-width: auto;
+    order: 1;
   }
 
   .main-content {
@@ -610,54 +642,5 @@ section {
   /* 桌面端显示顶部导航链接 */
   .top-nav > .nav-links {
     display: flex;
-  }
-}
-
-  .mobile-menu-dropdown {
-    display: none !important;
-  }
-
-  /* 桌面端显示顶部导航链接 */
-  .top-nav > .nav-links {
-    display: flex;
-  }
-}
-
-  .top-nav .header-title h1 {
-    font-size: 14px;
-  }
-
-  .nav-links {
-    overflow-x: auto;
-    -webkit-overflow-scrolling: touch;
-    scrollbar-width: none;
-    flex: 1 0 auto;
-  }
-
-  .nav-links::-webkit-scrollbar {
-    display: none;
-  }
-
-  .nav-link {
-    flex-shrink: 0;
-  }
-
-  .header-actions {
-    flex: 0 0 auto;
-    min-width: auto;
-  }
-
-  .main-content {
-    padding-top: calc(40px + var(--spacing-lg));
-    padding: var(--spacing-lg);
-  }
-
-  .search-box-dropdown {
-    min-width: 280px;
-    right: -10px;
-  }
-
-  .header-title h1 {
-    font-size: 16px;
   }
 }

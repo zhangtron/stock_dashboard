@@ -28,13 +28,8 @@
     padding-top: calc(var(--header-height-mobile) + var(--spacing-md));
   }
   
-  /* 桌面端导航隐藏 */
-  .desktop-header {
-    display: none;
-  }
-  
-  /* 移动端顶部导航 */
-  .mobile-header {
+  /* 移动端顶部导航样式 */
+  .top-nav {
     display: flex;
     align-items: center;
     justify-content: space-between;
@@ -84,12 +79,12 @@
   }
   
   /* 移动端标题 */
-  .mobile-header .header-title {
+  .top-nav .header-title {
     flex: 1;
     justify-content: center;
   }
   
-  .mobile-header .header-title h1 {
+  .top-nav .header-title h1 {
     font-size: 16px;
   }
   
@@ -103,14 +98,12 @@
     display: none;
   }
 
-  /* 桌面端主题切换按钮隐藏 */
+  /* 主题切换按钮在移动端显示 */
   .theme-toggle-desktop {
-    display: none;
-  }
-
-  /* 移动端主题切换按钮显示 */
-  .theme-toggle-mobile {
     display: flex;
+    width: 36px;
+    height: 36px;
+    font-size: 18px;
   }
 
   /* Top 3 卡片：单列布局 */
@@ -250,7 +243,7 @@
   }
   
   /* 桌面端导航高度调整 */
-  .desktop-header {
+  .top-nav {
     padding: var(--spacing-sm) var(--spacing-md);
   }
   
@@ -289,10 +282,7 @@
     display: none;
   }
   
-  /* 移动端导航隐藏 */
-  .mobile-header {
-    display: none;
-  }
+  /* 移动端导航隐藏 - 通过其他样式控制 */
 }
 
 /* 桌面端适配（> 1024px） */
@@ -317,15 +307,7 @@
     display: none;
   }
   
-  /* 移动端导航隐藏 */
-  .mobile-header {
-    display: none;
-  }
-  
-  /* 桌面端导航显示 */
-  .desktop-header {
-    display: flex;
-  }
+  /* 桌面端导航显示 - 通过其他样式控制 */
   
   /* 桌面端主题切换按钮显示 */
   .theme-toggle-desktop {
@@ -345,7 +327,7 @@
 /* 横屏手机适配 */
 @media (max-width: 767px) and (orientation: landscape) {
   /* 顶部导航高度减小 */
-  .mobile-header {
+  .top-nav {
     height: 48px;
   }
   
@@ -388,8 +370,7 @@
 /* 打印样式 */
 @media print {
   .sidebar,
-  .mobile-header,
-  .desktop-header,
+  .top-nav,
   .filter-section,
   .pagination-container,
   .theme-toggle-float {
