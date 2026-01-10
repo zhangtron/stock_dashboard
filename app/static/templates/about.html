@@ -5,32 +5,18 @@
 {% endblock %}
 
 {% block content %}
-<!-- 移动端顶部导航 -->
-<header class="mobile-header">
-    <div class="hamburger" id="hamburger">
-        <span></span>
-        <span></span>
-        <span></span>
-    </div>
-    <div class="header-title">
-        <img src="/static/favicon/favicon.svg" class="brand-logo" alt="先信投资 Logo">
-        <h1>先信投资</h1>
-    </div>
-    <div class="header-actions">
-        <button id="theme-toggle-mobile" class="theme-toggle-mobile">
-            <i class="bi bi-palette"></i>
-        </button>
-    </div>
-</header>
-
 <!-- 桌面端顶部导航 -->
 <header class="desktop-header glass">
-    <button id="sidebar-toggle-desktop" class="sidebar-toggle-desktop">
-        <i class="bi bi-list"></i>
-    </button>
     <div class="header-title">
         <img src="/static/favicon/favicon.svg" class="brand-logo" alt="先信投资 Logo">
         <h1>关于</h1>
+    </div>
+    <div class="header-actions">
+        <div class="theme-toggle-container">
+            <button id="theme-toggle-desktop" class="theme-toggle-desktop">
+                <i class="bi bi-palette"></i>
+            </button>
+        </div>
     </div>
 </header>
 

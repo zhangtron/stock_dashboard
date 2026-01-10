@@ -15,67 +15,13 @@ class Events {
    * 初始化所有事件监听器
    */
   static init() {
-    this.bindHamburgerMenu();
-    this.bindSidebarToggle();
     this.bindSortEvents();
     this.bindFilterEvents();
     this.bindPaginationEvents();
-    this.bindMobileNavigation();
     this.bindSearchEvents();
+    this.bindTopNavEvents();
   }
-  
-  /**
-   * 绑定汉堡菜单事件
-   */
-  static bindHamburgerMenu() {
-    const hamburger = document.getElementById('hamburger');
-    const sidebar = document.getElementById('sidebar');
-    
-    if (hamburger && sidebar) {
-      hamburger.addEventListener('click', () => {
-        hamburger.classList.toggle('active');
-        sidebar.classList.toggle('active');
-      });
-      
-      // 点击外部关闭侧边栏
-      document.addEventListener('click', (e) => {
-        if (!sidebar.contains(e.target) && !hamburger.contains(e.target)) {
-          hamburger.classList.remove('active');
-          sidebar.classList.remove('active');
-        }
-      });
-    }
-  }
-  
-  /**
-   * 绑定桌面端侧边栏切换事件
-   */
-  static bindSidebarToggle() {
-    const sidebarToggle = document.getElementById('sidebar-toggle-desktop');
-    const sidebar = document.getElementById('sidebar');
-    const desktopHeader = document.querySelector('.desktop-header');
-    const mainContent = document.querySelector('.main-content');
-    
-    if (sidebarToggle && sidebar && desktopHeader && mainContent) {
-      sidebarToggle.addEventListener('click', () => {
-        sidebarToggle.classList.toggle('active');
-        sidebar.classList.toggle('visible');
-        desktopHeader.classList.toggle('sidebar-visible');
-        mainContent.classList.toggle('sidebar-visible');
-      });
-      
-      // 点击外部关闭侧边栏
-      document.addEventListener('click', (e) => {
-        if (!sidebar.contains(e.target) && !sidebarToggle.contains(e.target)) {
-          sidebarToggle.classList.remove('active');
-          sidebar.classList.remove('visible');
-          desktopHeader.classList.remove('sidebar-visible');
-          mainContent.classList.remove('sidebar-visible');
-        }
-      });
-    }
-  }
-  
+
   /**
    * 绑定排序事件
    */
@@ -137,43 +83,29 @@ class Events {
       }
     });
   }
-  
+
   /**
-   * 绑定移动端导航事件
+   * 绑定顶部导航栏事件
    */
-  static bindMobileNavigation() {
-    // 仅在移动端绑定侧边栏关闭事件
-    if (window.innerWidth < 768) {
-      const navItems = document.querySelectorAll('.nav-item');
+  static bindTopNavEvents() {
+    const navLinks = document.querySelectorAll('.nav-link');
 
-      navItems.forEach(item => {
-        item.addEventListener('click', (e) => {
-          const href = item.getAttribute('href');
+    navLinks.forEach(link => {
+      link.addEventListener('click', (e) => {
+        const href = link.getAttribute('href');
 
-          // 如果链接是 # (占位符)，阻止默认行为
-          if (href === '#' || !href) {
-            e.preventDefault();
-          }
+        // 如果链接是 # (占位符)，阻止默认行为
+        if (href === '#' || !href) {
+          e.preventDefault();
+        }
 
-          // 移除所有激活状态
-          navItems.forEach(nav => nav.classList.remove('active'));
-
-          // 添加当前激活状态
-          item.classList.add('active');
-
-          // 关闭侧边栏
-          const hamburger = document.getElementById('hamburger');
-          const sidebar = document.getElementById('sidebar');
-
-          if (hamburger && sidebar) {
-            hamburger.classList.remove('active');
-            sidebar.classList.remove('active');
-          }
-        });
+        // 更新激活状态
+        navLinks.forEach(nav => nav.classList.remove('active'));
+        link.classList.add('active');
       });
-    }
+    });
   }
-  
+
   /**
    * 获取筛选参数
    * @returns {Object} 筛选参数
@@ -266,25 +198,66 @@ class Events {
    * 绑定搜索事件
    */
   static bindSearchEvents() {
-    const searchBox = document.querySelector('.search-box');
+    const searchToggle = document.getElementById('searchToggle');
+    const searchBoxDropdown = document.getElementById('searchBoxDropdown');
     const searchInput = document.getElementById('headerSearch');
     const searchClear = document.getElementById('searchClear');
     const suggestionsContainer = document.getElementById('searchSuggestions');
-    
-    if (!searchBox || !searchInput) return;
-    
-    searchBox.addEventListener('click', async () => {
-      if (!searchInput.value.trim()) {
-        await this.fetchTopStocks();
-      }
-    });
-    
-    if (suggestionsContainer) {
-      suggestionsContainer.addEventListener('mouseleave', (e) => {
-        Components.hideSearchSuggestions();
+
+    // 搜索框展开/收起
+    if (searchToggle && searchBoxDropdown) {
+      searchToggle.addEventListener('click', (e) => {
+        e.stopPropagation();
+        const isVisible = searchBoxDropdown.style.display !== 'none';
+        searchBoxDropdown.style.display = isVisible ? 'none' : 'block';
+
+        if (!isVisible) {
+          searchInput?.focus();
+          if (!searchInput.value.trim()) {
+            this.fetchTopStocks();
+          }
+        }
+      });
+
+      // 点击外部关闭搜索框
+      document.addEventListener('click', (e) => {
+        if (!searchToggle.contains(e.target) && !searchBoxDropdown.contains(e.target)) {
+          searchBoxDropdown.style.display = 'none';
+        }
       });
     }
-    
+
+    if (!searchInput) return;
+
+    if (suggestionsContainer) {
+      suggestionsContainer.addEventListener('mouseleave', (e) => {
+      Components.hideSearchSuggestions();
+    });
+
+    document.addEventListener('click', (e) => {
+      const suggestionItem = e.target.closest('.suggestion-item');
+
+      if (suggestionItem) {
+        const stockCode = suggestionItem.dataset.code;
+        const stockName = suggestionItem.dataset.name;
+
+        searchInput.value = stockCode;
+        if (searchClear) {
+          searchClear.style.display = 'flex';
+        }
+        Components.hideSearchSuggestions();
+        this.applySearchFilter(stockCode);
+      }
+
+      const stockCodeLink = e.target.closest('.stock-code-link');
+      if (stockCodeLink) {
+        e.preventDefault();
+        const code = stockCodeLink.dataset.stockCode;
+        Components.openThsF10(code);
+      }
+    });
+  }
+
     searchInput.addEventListener('input', (e) => {
       const keyword = e.target.value.trim();
       

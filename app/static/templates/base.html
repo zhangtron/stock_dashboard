@@ -30,54 +30,48 @@
         <div class="bg-shape bg-shape-blue-3"></div>
     </div>
     
-    <div class="container">
-        <!-- 侧边栏 -->
-        <aside class="sidebar" id="sidebar">
-            <div class="logo">
-                <img src="/static/favicon/favicon.svg" class="brand-logo" alt="先信投资 Logo">
-                <span class="logo-text">先信投资</span>
-            </div>
-            <nav class="nav-items">
-                <a href="/" class="nav-item active">
-                    <i class="bi bi-speedometer2"></i>
-                    <span>基本面分析</span>
-                </a>
-                <a href="#" class="nav-item">
-                    <i class="bi bi-lightbulb"></i>
-                    <span>技术面分析（待开发）</span>
-                </a>
-                <a href="#" class="nav-item">
-                    <i class="bi bi-currency-yen"></i>
-                    <span>基金分析（待开发）</span>
-                </a>
-                <a href="#" class="nav-item">
-                    <i class="bi bi-graph-up"></i>
-                    <span>策略分享（待开发）</span>
-                </a>
-                <a href="#" class="nav-item">
-                    <i class="bi bi-file-earmark-bar-graph"></i>
-                    <span>交易数据库（待开发）</span>
-                </a>
-                <a href="#" class="nav-item">
-                    <i class="bi bi-people"></i>
-                    <span>社区（待开发）</span>
-                </a>
-                <a href="#" class="nav-item">
-                    <i class="bi bi-journal-text"></i>
-                    <span>资源分享（待开发）</span>
-                </a>
-                <a href="/about" class="nav-item">
-                    <i class="bi bi-info-circle"></i>
-                    <span>关于</span>
-                </a>
-            </nav>
-        </aside>
-        
-        <!-- 主内容区 -->
-        <main class="main-content">
-            {% block content %}{% endblock %}
-        </main>
-    </div>
+    <!-- 顶部导航栏 -->
+    <nav class="top-nav">
+        <div class="nav-links">
+            <a href="/" class="nav-link active">
+                <i class="bi bi-speedometer2"></i>
+                <span>基本面分析</span>
+            </a>
+            <a href="#" class="nav-link">
+                <i class="bi bi-lightbulb"></i>
+                <span>技术面分析</span>
+            </a>
+            <a href="#" class="nav-link">
+                <i class="bi bi-currency-yen"></i>
+                <span>基金分析</span>
+            </a>
+            <a href="#" class="nav-link">
+                <i class="bi bi-graph-up"></i>
+                <span>策略分享</span>
+            </a>
+            <a href="#" class="nav-link">
+                <i class="bi bi-file-earmark-bar-graph"></i>
+                <span>交易数据库</span>
+            </a>
+            <a href="#" class="nav-link">
+                <i class="bi bi-people"></i>
+                <span>社区</span>
+            </a>
+            <a href="#" class="nav-link">
+                <i class="bi bi-journal-text"></i>
+                <span>资源分享</span>
+            </a>
+            <a href="/about" class="nav-link">
+                <i class="bi bi-info-circle"></i>
+                <span>关于</span>
+            </a>
+        </div>
+    </nav>
+
+    <!-- 主内容区 -->
+    <main class="main-content">
+        {% block content %}{% endblock %}
+    </main>
     
     <script src="/static/js/theme.js"></script>
     <script src="/static/js/api.js"></script>
