@@ -48,7 +48,7 @@
   gap: var(--spacing-xs);
   margin-bottom: var(--spacing-sm);
   font-size: 24px;
-  color: var(--card-rank-color);
+  /* color: var(--card-rank-color); */
   background: transparent;
   padding: var(--spacing-xs) var(--spacing-sm);
   border-radius: var(--radius-md);
@@ -65,17 +65,17 @@
   margin-left: 4px;
 }
 
-.card-1 .rank-icon {
+.card-1 .card-rank {
   color: var(--rank-1-color);
   /* text-shadow: 0 0 10px rgba(255, 215, 0, 0.3); */
 }
 
-.card-2 .rank-icon {
+.card-2 .card-rank {
   color: var(--rank-2-color);
   /* text-shadow: 0 0 10px rgba(192, 192, 192, 0.3); */
 }
 
-.card-3 .rank-icon {
+.card-3 .card-rank {
   color: var(--rank-3-color);
   /* text-shadow: 0 0 10px rgba(205, 127, 50, 0.3); */
 }
@@ -288,7 +288,7 @@ select:focus {
 .stock-table {
   width: 100%;
   border-collapse: collapse;
-  font-size: 14px;
+  font-size: 15px; /* 从14px增加到15px */
   background: transparent;
 }
 
@@ -303,13 +303,14 @@ select:focus {
   background: transparent;
   color: var(--table-header-color);
   padding: var(--spacing-sm);
-  font-weight: 600;
+  font-weight: 700; /* 从600增加到700，更粗 */
   text-align: left;
   position: sticky;
   top: 0;
   z-index: 10;
   border-radius: var(--radius-sm);
   border: none;
+  font-size: 15px; /* 增加表头字体大小 */
 }
 
 .stock-table th.sort-icon {
@@ -324,7 +325,7 @@ select:focus {
 
 .stock-table th i {
   margin-left: var(--spacing-xs);
-  font-size: 12px;
+  font-size: 13px; /* 从12px增加到13px */
   opacity: 0.5;
 }
 
@@ -334,6 +335,7 @@ select:focus {
   color: #ffffff;
   backdrop-filter: blur(var(--glass-blur-extra-light));
   -webkit-backdrop-filter: blur(var(--glass-blur-extra-light));
+  font-weight: 600; /* 添加字体加粗 */
 }
 
 .stock-table tbody tr {
@@ -347,7 +349,7 @@ select:focus {
 
 .stock-table th i {
   margin-left: var(--spacing-xs);
-  font-size: 12px;
+  font-size: 13px; /* 从12px增加到13px */
   opacity: 0.8;
   transition: transform var(--transition-fast);
 }
@@ -364,6 +366,7 @@ select:focus {
   padding: var(--spacing-sm);
   border-bottom: 1px solid var(--border-color);
   color: var(--text-primary);
+  font-weight: 600; /* 添加字体加粗 */
 }
 
 /* 得分颜色 */
@@ -458,4 +461,98 @@ select:focus {
 .pagination .page-item.disabled .page-link {
   opacity: 0.5;
   cursor: not-allowed;
+}
+
+/* 主题下拉菜单 */
+.theme-dropdown {
+  position: absolute;
+  top: 100%;
+  right: 0;
+  margin-top: var(--spacing-xs);
+  min-width: 200px;
+  background: rgba(255, 255, 255, 0.95);
+  backdrop-filter: blur(var(--glass-blur));
+  -webkit-backdrop-filter: blur(var(--glass-blur));
+  border: 1px solid rgba(0, 0, 0, 0.1);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-lg);
+  z-index: var(--z-dropdown);
+  opacity: 0;
+  visibility: hidden;
+  transform: translateY(-10px);
+  transition: all var(--transition-fast);
+  overflow: hidden;
+}
+
+.theme-dropdown.open {
+  opacity: 1;
+  visibility: visible;
+  transform: translateY(0);
+}
+
+.theme-dropdown-header {
+  padding: var(--spacing-sm) var(--spacing-md);
+  font-size: 12px;
+  font-weight: 600;
+  color: rgba(0, 0, 0, 0.7);
+  border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+  background: rgba(255, 255, 255, 0.9);
+}
+
+.theme-dropdown-list {
+  max-height: 300px;
+  overflow-y: auto;
+}
+
+.theme-dropdown-item {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-sm);
+  padding: var(--spacing-sm) var(--spacing-md);
+  cursor: pointer;
+  transition: all var(--transition-fast);
+  color: #333333;
+  border-left: 3px solid transparent;
+}
+
+.theme-dropdown-item:hover {
+  background: rgba(0, 0, 0, 0.05);
+  border-left-color: var(--primary-color);
+}
+
+.theme-dropdown-item.active {
+  background: rgba(var(--primary-color-rgb, 0, 191, 165), 0.1);
+  border-left-color: var(--primary-color);
+  color: var(--primary-color);
+}
+
+.theme-dropdown-item i:first-child {
+  font-size: 16px;
+  width: 20px;
+  text-align: center;
+  color: inherit;
+}
+
+.theme-dropdown-item span {
+  flex: 1;
+  font-size: 14px;
+}
+
+.theme-dropdown-item .bi-check {
+  color: var(--primary-color);
+  font-size: 14px;
+}
+
+/* 主题切换按钮旋转动画 */
+.rotating {
+  animation: rotate 0.3s ease-in-out;
+}
+
+@keyframes rotate {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
 }

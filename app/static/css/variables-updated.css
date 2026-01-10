@@ -75,7 +75,7 @@
   --text-secondary: rgba(0, 0, 0, 0.7);
   --text-muted: rgba(0, 0, 0, 0.5);
   --border-color: rgba(0, 0, 0, 0.1);
-  --white: #ffffff;
+  --white: #665e5e;
 
   /* 卡片内容颜色 */
   --card-code-color: #6a6363;
@@ -266,4 +266,339 @@
 
   /* 分页背景颜色 - Dark主题 */
   --pagination-bg: rgba(40, 40, 40, 0.6);
+}
+
+/* 紫色梦幻主题 - 毛玻璃效果 */
+[data-theme="purple-dream"] {
+  --primary-color: #B65EBA;
+  --primary-dark: #9A4B9E;
+  --primary-light: rgba(182, 94, 186, 0.1);
+
+  /* 渐变背景 - 紫色系 */
+  --bg-gradient-start: #F3E5F5;
+  --bg-gradient-mid: #E1BEE7;
+  --bg-gradient-end: #CE93D8;
+
+  /* 毛玻璃效果 */
+  --glass-bg: rgba(255, 255, 255, 0.4);
+  --glass-bg-xl: rgba(255, 255, 255, 0.6);
+  --glass-blur: 24px;
+  --glass-blur-light: 12px;
+  --glass-blur-extra-light: 4px;
+
+  /* 表头渐变 - 紫色系 */
+  --header-gradient: linear-gradient(90deg, #8E24AA 0%, #AB47BC 50%, #BA68C8 100%);
+
+  /* 文字颜色 */
+  --text-primary: #000000;
+  --text-secondary: rgba(0, 0, 0, 0.7);
+  --text-muted: rgba(0, 0, 0, 0.5);
+  --border-color: rgba(0, 0, 0, 0.1);
+  --white: #ffffff;
+
+  /* 卡片内容颜色 */
+  --card-code-color: #6a6363;
+  --card-name-color: #2b2828;
+  --card-rank-color: rgba(83, 79, 79, 0.9);
+  --card-tag-color: #ffffff;
+  --card-tag-bg: rgba(255, 255, 255, 0.3);
+
+  /* Top 3 卡片渐变 */
+  --card-1-gradient: linear-gradient(135deg, #FFEDFB 0%, #FAB349 100%);
+  --card-2-gradient: linear-gradient(135deg, #AFF006 0%, #9894E1 100%);
+  --card-3-gradient: linear-gradient(135deg, #7BF2E9 0%, #B55EBA 100%);
+
+  /* 排名字体颜色 */
+  --rank-1-color: #FFD700;
+  --rank-2-color: #C0C0C0;
+  --rank-3-color: #CD7F32;
+  --rank-icon-color: rgba(255, 255, 255, 0.9);
+}
+
+/* 海洋蓝主题 - 毛玻璃效果 */
+[data-theme="ocean-blue"] {
+  --primary-color: #2E8DE1;
+  --primary-dark: #1E7BCE;
+  --primary-light: rgba(46, 141, 225, 0.1);
+
+  /* 渐变背景 - 蓝色系 */
+  --bg-gradient-start: #E3F2FD;
+  --bg-gradient-mid: #BBDEFB;
+  --bg-gradient-end: #90CAF9;
+
+  /* 毛玻璃效果 */
+  --glass-bg: rgba(255, 255, 255, 0.4);
+  --glass-bg-xl: rgba(255, 255, 255, 0.6);
+  --glass-blur: 24px;
+  --glass-blur-light: 12px;
+  --glass-blur-extra-light: 4px;
+
+  /* 表头渐变 - 海洋蓝 */
+  --header-gradient: linear-gradient(90deg, #1565C0 0%, #1E88E5 50%, #42A5F5 100%);
+
+  /* 文字颜色 */
+  --text-primary: #000000;
+  --text-secondary: rgba(0, 0, 0, 0.7);
+  --text-muted: rgba(0, 0, 0, 0.5);
+  --border-color: rgba(0, 0, 0, 0.1);
+  --white: #ffffff;
+
+  /* 卡片内容颜色 */
+  --card-code-color: #6a6363;
+  --card-name-color: #2b2828;
+  --card-rank-color: rgba(83, 79, 79, 0.9);
+  --card-tag-color: #ffffff;
+  --card-tag-bg: rgba(255, 255, 255, 0.3);
+
+  /* Top 3 卡片渐变 */
+  --card-1-gradient: linear-gradient(135deg, #E3F2FD 0%, #64B5F6 100%);
+  --card-2-gradient: linear-gradient(135deg, #BBDEFB 0%, #42A5F5 100%);
+  --card-3-gradient: linear-gradient(135deg, #90CAF9 0%, #2196F3 100%);
+
+  /* 排名字体颜色 */
+  --rank-1-color: #FFD700;
+  --rank-2-color: #C0C0C0;
+  --rank-3-color: #CD7F32;
+  --rank-icon-color: rgba(255, 255, 255, 0.9);
+}
+
+/* 日落橙主题 - 纯色 */
+[data-theme="sunset-orange"] {
+  --primary-color: #FFA62E;
+  --primary-dark: #FF9800;
+  --primary-light: rgba(255, 166, 46, 0.1);
+
+  /* 纯色渐变背景 - 日落色 */
+  --bg-gradient-start: #FFF3E0;
+  --bg-gradient-mid: #FFE0B2;
+  --bg-gradient-end: #FFCC80;
+
+  /* 纯色背景，无毛玻璃 */
+  --glass-bg: rgba(255, 255, 255, 0.9);
+  --glass-bg-xl: rgba(255, 255, 255, 0.95);
+  --glass-blur: 0px;
+  --glass-blur-light: 0px;
+  --glass-blur-extra-light: 0px;
+
+  /* 表头渐变 - 日落色 */
+  --header-gradient: linear-gradient(90deg, #FF6F00 0%, #FF9800 50%, #FFB74D 100%);
+
+  /* 文字颜色 */
+  --text-primary: #000000;
+  --text-secondary: rgba(0, 0, 0, 0.7);
+  --text-muted: rgba(0, 0, 0, 0.5);
+  --border-color: rgba(0, 0, 0, 0.1);
+  --white: #ffffff;
+
+  /* 卡片内容颜色 */
+  --card-code-color: #6a6363;
+  --card-name-color: #2b2828;
+  --card-rank-color: rgba(83, 79, 79, 0.9);
+  --card-tag-color: #ffffff;
+  --card-tag-bg: rgba(255, 255, 255, 0.3);
+
+  /* Top 3 卡片渐变 */
+  --card-1-gradient: linear-gradient(135deg, #FFF3E0 0%, #FFCC80 100%);
+  --card-2-gradient: linear-gradient(135deg, #FFE0B2 0%, #FFB74D 100%);
+  --card-3-gradient: linear-gradient(135deg, #FFCC80 0%, #FF9800 100%);
+
+  /* 排名字体颜色 */
+  --rank-1-color: #FFD700;
+  --rank-2-color: #C0C0C0;
+  --rank-3-color: #CD7F32;
+  --rank-icon-color: rgba(255, 255, 255, 0.9);
+}
+
+/* 霓虹炫彩主题 - 纯色 */
+[data-theme="neon"] {
+  --primary-color: #00FFED;
+  --primary-dark: #00E5D4;
+  --primary-light: rgba(0, 255, 237, 0.1);
+
+  /* 深色纯色背景 - 突出霓虹效果 */
+  --bg-gradient-start: #121212;
+  --bg-gradient-mid: #1A1A1A;
+  --bg-gradient-end: #222222;
+
+  /* 纯色背景，无毛玻璃 */
+  --glass-bg: rgba(30, 30, 30, 0.9);
+  --glass-bg-xl: rgba(40, 40, 40, 0.95);
+  --glass-blur: 0px;
+  --glass-blur-light: 0px;
+  --glass-blur-extra-light: 0px;
+
+  /* 表头渐变 - 霓虹色 */
+  --header-gradient: linear-gradient(90deg, #00FFED 0%, #FF6CAB 50%, #7366FF 100%);
+
+  /* 文字颜色 - 白色在深色背景上 */
+  --text-primary: #ffffff;
+  --text-secondary: rgba(255, 255, 255, 0.8);
+  --text-muted: rgba(255, 255, 255, 0.6);
+  --border-color: rgba(255, 255, 255, 0.2);
+  --white: #ffffff;
+
+  /* 卡片内容颜色 */
+  --card-code-color: rgba(255, 255, 255, 0.7);
+  --card-name-color: #ffffff;
+  --card-rank-color: rgba(255, 255, 255, 0.9);
+  --card-tag-color: #000000;
+  --card-tag-bg: rgba(255, 255, 255, 0.9);
+
+  /* Top 3 卡片渐变 - 霓虹色 */
+  --card-1-gradient: linear-gradient(135deg, #00FFED 0%, #00E5D4 100%);
+  --card-2-gradient: linear-gradient(135deg, #FF6CAB 0%, #FF4D94 100%);
+  --card-3-gradient: linear-gradient(135deg, #7366FF 0%, #5A4DFF 100%);
+
+  /* 排名字体颜色 - 霓虹色 */
+  --rank-1-color: #00FFED;
+  --rank-2-color: #FF6CAB;
+  --rank-3-color: #7366FF;
+  --rank-icon-color: rgba(255, 255, 255, 0.9);
+
+  /* 分页背景颜色 - 霓虹主题 */
+  --pagination-bg: rgba(40, 40, 40, 0.8);
+}
+
+/* 深色优雅主题 - 纯色 */
+[data-theme="dark-elegant"] {
+  --primary-color: #3a3985;
+  --primary-dark: #2A2975;
+  --primary-light: rgba(58, 57, 133, 0.1);
+
+  /* 深色纯色渐变 */
+  --bg-gradient-start: #1A1A2E;
+  --bg-gradient-mid: #16213E;
+  --bg-gradient-end: #0F3460;
+
+  /* 纯色背景，轻微毛玻璃 */
+  --glass-bg: rgba(26, 26, 46, 0.9);
+  --glass-bg-xl: rgba(31, 31, 56, 0.95);
+  --glass-blur: 4px;
+  --glass-blur-light: 2px;
+  --glass-blur-extra-light: 1px;
+
+  /* 表头渐变 - 深蓝色 */
+  --header-gradient: linear-gradient(90deg, #1A1A2E 0%, #16213E 50%, #0F3460 100%);
+
+  /* 文字颜色 - 白色在深色背景上 */
+  --text-primary: #ffffff;
+  --text-secondary: rgba(255, 255, 255, 0.8);
+  --text-muted: rgba(255, 255, 255, 0.6);
+  --border-color: rgba(255, 255, 255, 0.15);
+  --white: #ffffff;
+
+  /* 卡片内容颜色 */
+  --card-code-color: rgba(255, 255, 255, 0.7);
+  --card-name-color: #ffffff;
+  --card-rank-color: rgba(255, 255, 255, 0.9);
+  --card-tag-color: #ffffff;
+  --card-tag-bg: rgba(255, 255, 255, 0.2);
+
+  /* Top 3 卡片渐变 */
+  --card-1-gradient: linear-gradient(135deg, #1A1A2E 0%, #3a3985 100%);
+  --card-2-gradient: linear-gradient(135deg, #16213E 0%, #2A2975 100%);
+  --card-3-gradient: linear-gradient(135deg, #0F3460 0%, #1A1A2E 100%);
+
+  /* 排名字体颜色 */
+  --rank-1-color: #FFD700;
+  --rank-2-color: #C0C0C0;
+  --rank-3-color: #CD7F32;
+  --rank-icon-color: rgba(255, 255, 255, 0.9);
+
+  /* 分页背景颜色 - 深色优雅主题 */
+  --pagination-bg: rgba(40, 40, 40, 0.7);
+}
+
+/* 清新绿色主题 - 毛玻璃效果 */
+[data-theme="fresh-green"] {
+  --primary-color: #00bbba;
+  --primary-dark: #00A5A4;
+  --primary-light: rgba(0, 187, 186, 0.1);
+
+  /* 渐变背景 - 绿色系 */
+  --bg-gradient-start: #E8F5E9;
+  --bg-gradient-mid: #C8E6C9;
+  --bg-gradient-end: #A5D6A7;
+
+  /* 毛玻璃效果 */
+  --glass-bg: rgba(255, 255, 255, 0.4);
+  --glass-bg-xl: rgba(255, 255, 255, 0.6);
+  --glass-blur: 24px;
+  --glass-blur-light: 12px;
+  --glass-blur-extra-light: 4px;
+
+  /* 表头渐变 - 绿色系 */
+  --header-gradient: linear-gradient(90deg, #00bbba 0%, #00A5A4 50%, #008B8A 100%);
+
+  /* 文字颜色 */
+  --text-primary: #000000;
+  --text-secondary: rgba(0, 0, 0, 0.7);
+  --text-muted: rgba(0, 0, 0, 0.5);
+  --border-color: rgba(0, 0, 0, 0.1);
+  --white: #ffffff;
+
+  /* 卡片内容颜色 */
+  --card-code-color: #6a6363;
+  --card-name-color: #2b2828;
+  --card-rank-color: rgba(83, 79, 79, 0.9);
+  --card-tag-color: #ffffff;
+  --card-tag-bg: rgba(255, 255, 255, 0.3);
+
+  /* Top 3 卡片渐变 */
+  --card-1-gradient: linear-gradient(135deg, #E8F5E9 0%, #A5D6A7 100%);
+  --card-2-gradient: linear-gradient(135deg, #C8E6C9 0%, #81C784 100%);
+  --card-3-gradient: linear-gradient(135deg, #A5D6A7 0%, #4CAF50 100%);
+
+  /* 排名字体颜色 */
+  --rank-1-color: #FFD700;
+  --rank-2-color: #C0C0C0;
+  --rank-3-color: #CD7F32;
+  --rank-icon-color: rgba(255, 255, 255, 0.9);
+}
+
+/* 热情红色主题 - 纯色 */
+[data-theme="passion-red"] {
+  --primary-color: #f00b51;
+  --primary-dark: #D90047;
+  --primary-light: rgba(240, 11, 81, 0.1);
+
+  /* 纯色渐变背景 - 红色系 */
+  --bg-gradient-start: #FFEBEE;
+  --bg-gradient-mid: #FFCDD2;
+  --bg-gradient-end: #EF9A9A;
+
+  /* 纯色背景，无毛玻璃 */
+  --glass-bg: rgba(255, 255, 255, 0.9);
+  --glass-bg-xl: rgba(255, 255, 255, 0.95);
+  --glass-blur: 0px;
+  --glass-blur-light: 0px;
+  --glass-blur-extra-light: 0px;
+
+  /* 表头渐变 - 红色系 */
+  --header-gradient: linear-gradient(90deg, #D32F2F 0%, #F44336 50%, #EF5350 100%);
+
+  /* 文字颜色 */
+  --text-primary: #000000;
+  --text-secondary: rgba(0, 0, 0, 0.7);
+  --text-muted: rgba(0, 0, 0, 0.5);
+  --border-color: rgba(0, 0, 0, 0.1);
+  --white: #ffffff;
+
+  /* 卡片内容颜色 */
+  --card-code-color: #6a6363;
+  --card-name-color: #2b2828;
+  --card-rank-color: rgba(83, 79, 79, 0.9);
+  --card-tag-color: #ffffff;
+  --card-tag-bg: rgba(255, 255, 255, 0.3);
+
+  /* Top 3 卡片渐变 */
+  --card-1-gradient: linear-gradient(135deg, #FFEBEE 0%, #EF9A9A 100%);
+  --card-2-gradient: linear-gradient(135deg, #FFCDD2 0%, #EF5350 100%);
+  --card-3-gradient: linear-gradient(135deg, #EF9A9A 0%, #F44336 100%);
+
+  /* 排名字体颜色 */
+  --rank-1-color: #FFD700;
+  --rank-2-color: #C0C0C0;
+  --rank-3-color: #CD7F32;
+  --rank-icon-color: rgba(255, 255, 255, 0.9);
 }
