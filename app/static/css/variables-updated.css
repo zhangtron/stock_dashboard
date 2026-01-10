@@ -85,7 +85,7 @@
   --card-tag-bg: rgba(255, 255, 255, 0.3);
 
   /* 输入框颜色 */
-  --input-text-color: #ffffff;
+  --input-text-color: #000000;
   --input-placeholder-color: rgba(11, 10, 10, 0.3);
   --input-select-placeholder-color: rgba(11, 10, 10, 0.3);
 
