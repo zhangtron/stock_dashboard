@@ -4,22 +4,17 @@
 <link rel="stylesheet" href="/static/css/about.css">
 {% endblock %}
 
-{% block content %}
-<!-- 桌面端顶部导航 -->
-<header class="desktop-header glass">
-    <div class="header-title">
-        <img src="/static/favicon/favicon.svg" class="brand-logo" alt="先信投资 Logo">
-        <h1>关于</h1>
+{% block header_actions %}
+<div class="header-actions">
+    <div class="theme-toggle-container">
+        <button id="theme-toggle-desktop" class="theme-toggle-desktop">
+            <i class="bi bi-palette"></i>
+        </button>
     </div>
-    <div class="header-actions">
-        <div class="theme-toggle-container">
-            <button id="theme-toggle-desktop" class="theme-toggle-desktop">
-                <i class="bi bi-palette"></i>
-            </button>
-        </div>
-    </div>
-</header>
+</div>
+{% endblock %}
 
+{% block content %}
 <div class="about-page">
     <!-- 页面主体 Logo 区域 -->
     <section class="page-hero-section">

@@ -16,11 +16,31 @@
   background: var(--glass-bg);
   backdrop-filter: blur(var(--glass-blur));
   -webkit-backdrop-filter: blur(var(--glass-blur));
-  border-bottom: 1px solid var(--border-color);
+  border-bottom:1px solid var(--border-color);
   z-index: var(--z-sidebar);
   display: flex;
   align-items: center;
-  overflow-x: auto;
+  padding: 0 var(--spacing-lg);
+}
+
+.top-nav .header-title {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-sm);
+  flex-shrink: 0;
+}
+
+.top-nav .header-title h1 {
+  font-size: 16px;
+  font-weight: 600;
+  margin: 0;
+}
+
+.nav-links {
+  display: flex;
+  gap: var(--spacing-sm);
+  flex: 1;
+  justify-content: center;
 }
 
 .nav-links {
@@ -81,45 +101,17 @@
 .main-content {
   flex: 1;
   padding: var(--spacing-lg);
-  padding-top: calc(var(--header-height-desktop) + var(--top-nav-height, 48px) + var(--spacing-lg));
+  padding-top: calc(var(--top-nav-height, 48px) + var(--spacing-lg));
   padding-left: var(--spacing-lg);
   overflow-y: auto;
 }
 
-/* 桌面端顶部导航 */
-.desktop-header {
-  padding: var(--spacing-md) var(--spacing-lg);
-  display: flex;
-  justify-content: flex-start;
-  align-items: center;
-  position: fixed;
-  top: var(--top-nav-height, 48px);
-  left: 0;
-  right: 0;
-  width: 100%;
-  z-index: var(--z-header);
-  backdrop-filter: blur(var(--glass-blur));
-  -webkit-backdrop-filter: blur(var(--glass-blur));
-  background: var(--glass-bg);
-  border-bottom: 1px solid var(--border-color);
-  transition: left var(--transition-normal), width var(--transition-normal);
-}
-
-.header-title {
+/* Header右侧操作区 */
+.header-actions {
   display: flex;
   align-items: center;
   gap: var(--spacing-sm);
-}
-
-.header-icon {
-  font-size: 24px;
-  color: var(--primary-color);
-}
-
-.header-title h1 {
-  font-size: 18px;
-  font-weight: 500;
-  margin: 0;
+  flex-shrink: 0;
 }
 
 /* 搜索切换按钮 */
@@ -476,14 +468,15 @@ section {
 @media (max-width: 768px) {
   .top-nav {
     height: 40px;
+    padding: 0 var(--spacing-md);
   }
 
-  .desktop-header {
-    top: 40px;
+  .top-nav .header-title h1 {
+    font-size: 14px;
   }
 
   .main-content {
-    padding-top: calc(var(--header-height-mobile) + 40px + var(--spacing-lg));
+    padding-top: calc(40px + var(--spacing-lg));
     padding: var(--spacing-lg);
   }
 

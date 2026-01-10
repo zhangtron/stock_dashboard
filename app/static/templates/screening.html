@@ -1,42 +1,37 @@
 {% extends "base.html" %}
 
-{% block content %}
-<!-- 桌面端顶部导航 -->
-<header class="desktop-header glass">
-    <div class="header-title">
-        <img src="/static/favicon/favicon.svg" class="brand-logo" alt="先信投资 Logo">
-        <h1>基本面选股数据看板</h1>
-    </div>
-    <div class="header-actions">
-        <div class="search-toggle-container">
-            <button id="searchToggle" class="search-toggle">
-                <i class="bi bi-search"></i>
-            </button>
-            <div class="search-box-dropdown" id="searchBoxDropdown" style="display: none;">
-                <div class="search-box">
-                    <i class="bi bi-search search-icon"></i>
-                    <input
-                        type="text"
-                        id="headerSearch"
-                        placeholder="搜索股票代码或名称"
-                        autocomplete="off"
-                    >
-                    <button class="search-clear" id="searchClear" style="display: none;">
-                        <i class="bi bi-x"></i>
-                    </button>
-                </div>
-                <div class="search-suggestions" id="searchSuggestions" style="display: none;">
-                </div>
+{% block header_actions %}
+<div class="header-actions">
+    <div class="search-toggle-container">
+        <button id="searchToggle" class="search-toggle">
+            <i class="bi bi-search"></i>
+        </button>
+        <div class="search-box-dropdown" id="searchBoxDropdown" style="display: none;">
+            <div class="search-box">
+                <i class="bi bi-search search-icon"></i>
+                <input
+                    type="text"
+                    id="headerSearch"
+                    placeholder="搜索股票代码或名称"
+                    autocomplete="off"
+                >
+                <button class="search-clear" id="searchClear" style="display: none;">
+                    <i class="bi bi-x"></i>
+                </button>
+            </div>
+            <div class="search-suggestions" id="searchSuggestions" style="display: none;">
             </div>
         </div>
-        <div class="theme-toggle-container">
-            <button id="theme-toggle-desktop" class="theme-toggle-desktop">
-                <i class="bi bi-palette"></i>
-            </button>
-        </div>
     </div>
-</header>
+    <div class="theme-toggle-container">
+        <button id="theme-toggle-desktop" class="theme-toggle-desktop">
+            <i class="bi bi-palette"></i>
+        </button>
+    </div>
+</div>
+{% endblock %}
 
+{% block content %}
 <!-- Top 3 推荐股票 -->
 <section class="top-3">
     <h2 class="section-title">
