@@ -152,8 +152,15 @@ class ThemeManager {
   }
 }
 
-// 创建全局主题管理器实例
-const themeManager = new ThemeManager();
+// 等待 DOM 加载完成后创建主题管理器实例
+let themeManager = null;
 
-// 导出到全局作用域，供其他模块使用
-window.themeManager = themeManager;
+if (document.readyState === 'loading') {
+  document.addEventListener('DOMContentLoaded', () => {
+    themeManager = new ThemeManager();
+    window.themeManager = themeManager;
+  });
+} else {
+  themeManager = new ThemeManager();
+  window.themeManager = themeManager;
+}
