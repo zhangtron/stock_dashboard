@@ -489,6 +489,10 @@ section {
     flex-shrink: 0;
   }
 
+  .header-actions {
+    flex: 0 0 auto;
+  }
+
   .main-content {
     padding-top: calc(40px + var(--spacing-lg));
     padding: var(--spacing-lg);
