@@ -443,3 +443,33 @@ section {
   position: relative;
   cursor: pointer;
 }
+
+/* 主题切换按钮（移动端） */
+.theme-toggle-mobile {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 40px;
+  height: 40px;
+  border: none;
+  border-radius: var(--radius-md);
+  background: transparent;
+  color: var(--primary-color);
+  font-size: 20px;
+  cursor: pointer;
+  transition: all var(--transition-normal);
+}
+
+.theme-toggle-mobile:hover {
+  background: var(--primary-light);
+  transform: rotate(30deg);
+}
+
+.theme-toggle-mobile:active {
+  transform: rotate(60deg);
+}
+
+/* 主题切换时的旋转动画 */
+.theme-toggle-mobile.rotating {
+  animation: themeRotate 0.3s ease;
+}

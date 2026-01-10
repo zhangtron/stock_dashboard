@@ -63,9 +63,9 @@ class ThemeManager {
    */
   triggerRotateAnimation() {
     const desktopToggle = document.getElementById('theme-toggle-desktop');
-    const floatToggle = document.getElementById('theme-toggle-float');
+    const mobileToggle = document.getElementById('theme-toggle-mobile');
 
-    [desktopToggle, floatToggle].forEach(toggle => {
+    [desktopToggle, mobileToggle].forEach(toggle => {
       if (toggle) {
         // 移除动画类（如果存在）
         toggle.classList.remove('rotating');
@@ -89,7 +89,7 @@ class ThemeManager {
    */
   updateThemeToggleIcon() {
     const desktopToggle = document.getElementById('theme-toggle-desktop');
-    const floatToggle = document.getElementById('theme-toggle-float');
+    const mobileToggle = document.getElementById('theme-toggle-mobile');
 
     const iconClass = this.themeIcons[this.currentTheme] || 'bi-palette';
 
@@ -97,8 +97,8 @@ class ThemeManager {
       desktopToggle.innerHTML = `<i class="bi ${iconClass}"></i>`;
     }
 
-    if (floatToggle) {
-      floatToggle.innerHTML = `<i class="bi ${iconClass}"></i>`;
+    if (mobileToggle) {
+      mobileToggle.innerHTML = `<i class="bi ${iconClass}"></i>`;
     }
   }
 
@@ -108,7 +108,7 @@ class ThemeManager {
   bindEvents() {
     const desktopContainer = document.querySelector('.theme-toggle-container');
     const desktopToggle = document.getElementById('theme-toggle-desktop');
-    const floatToggle = document.getElementById('theme-toggle-float');
+    const mobileToggle = document.getElementById('theme-toggle-mobile');
 
     // 桌面端主题切换容器 - 循环切换主题
     if (desktopContainer) {
@@ -118,9 +118,9 @@ class ThemeManager {
       });
     }
 
-    // 浮动主题切换按钮 - 循环切换主题
-    if (floatToggle) {
-      floatToggle.addEventListener('click', (e) => {
+    // 移动端主题切换按钮 - 循环切换主题
+    if (mobileToggle) {
+      mobileToggle.addEventListener('click', (e) => {
         e.preventDefault();
         this.toggle();
       });

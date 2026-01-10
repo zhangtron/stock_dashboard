@@ -102,12 +102,17 @@
   .lang-selector {
     display: none;
   }
-  
+
   /* 桌面端主题切换按钮隐藏 */
   .theme-toggle-desktop {
     display: none;
   }
-  
+
+  /* 移动端主题切换按钮显示 */
+  .theme-toggle-mobile {
+    display: flex;
+  }
+
   /* Top 3 卡片：单列布局 */
   .cards-container {
     grid-template-columns: 1fr;
@@ -186,7 +191,7 @@
   .stock-table td:nth-child(-n+3) {
     display: table-cell;
   }
-  
+
   /* 分页 */
   .pagination .page-link {
     min-width: 32px;
@@ -273,12 +278,12 @@
   .stock-table td:nth-child(9) {
     display: none;
   }
-  
-  /* 浮动主题切换按钮隐藏 */
-  .theme-toggle-float {
+
+  /* 移动端主题切换按钮隐藏 */
+  .theme-toggle-mobile {
     display: none;
   }
-  
+
   /* 汉堡菜单隐藏 */
   .hamburger {
     display: none;
@@ -301,12 +306,12 @@
   .filter-item {
     min-width: calc(20% - var(--spacing-sm));
   }
-  
-  /* 浮动主题切换按钮隐藏 */
-  .theme-toggle-float {
+
+  /* 移动端主题切换按钮隐藏 */
+  .theme-toggle-mobile {
     display: none;
   }
-  
+
   /* 汉堡菜单隐藏 */
   .hamburger {
     display: none;
