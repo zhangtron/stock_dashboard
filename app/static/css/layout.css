@@ -114,6 +114,97 @@
   flex-shrink: 0;
 }
 
+/* 汉堡菜单按钮 */
+.hamburger-menu {
+  width: 24px;
+  height: 18px;
+  position: relative;
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 0;
+  display: none;
+}
+
+.hamburger-menu span {
+  position: absolute;
+  width: 100%;
+  height: 2px;
+  background: var(--text-primary);
+  border-radius: 2px;
+  transition: all 0.3s ease;
+}
+
+.hamburger-menu span:nth-child(1) { top: 0; }
+.hamburger-menu span:nth-child(2) { top: 50%; transform: translateY(-50%); }
+.hamburger-menu span:nth-child(3) { bottom: 0; }
+
+/* 汉堡菜单激活状态 - 变成 X */
+.hamburger-menu.active span:nth-child(1) {
+  top: 50%;
+  transform: translateY(-50%) rotate(45deg);
+}
+
+.hamburger-menu.active span:nth-child(2) {
+  opacity: 0;
+}
+
+.hamburger-menu.active span:nth-child(3) {
+  bottom: 50%;
+  transform: translateY(50%) rotate(-45deg);
+}
+
+/* 移动端下拉菜单面板 */
+.mobile-menu-dropdown {
+  position: absolute;
+  top: calc(100% + 8px);
+  right: 0;
+  background: var(--glass-bg-xl);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-md);
+  box-shadow: var(--shadow-lg);
+  min-width: 200px;
+  max-height: 400px;
+  overflow-y: auto;
+  z-index: 1000;
+  display: none;
+  padding: var(--spacing-sm);
+}
+
+.mobile-menu-dropdown.active {
+  display: block;
+  animation: dropdownFade 0.2s ease-out;
+}
+
+/* 下拉菜单内的导航链接 */
+.mobile-nav-links {
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+  overflow: visible;
+  padding: 0;
+}
+
+.mobile-nav-links .nav-link {
+  width: 100%;
+  padding: 12px var(--spacing-md);
+  justify-content: flex-start;
+  border-radius: var(--radius-sm);
+  margin-bottom: 0;
+}
+
+.mobile-nav-links .nav-link span {
+  display: inline;
+}
+
+.mobile-nav-links .nav-link i {
+  width: 20px;
+  text-align: center;
+  margin-right: var(--spacing-sm);
+}
+
 /* 搜索切换按钮 */
 .search-toggle-container {
   position: relative;
@@ -470,6 +561,60 @@ section {
     height: 40px;
     padding: 0 var(--spacing-sm);
   }
+
+  .top-nav .header-title h1 {
+    font-size: 14px;
+  }
+
+  /* 隐藏顶部导航链接 */
+  .top-nav > .nav-links {
+    display: none;
+  }
+
+  /* 显示汉堡菜单 */
+  .hamburger-menu {
+    display: block;
+  }
+
+  .nav-link {
+    flex-shrink: 0;
+  }
+
+  .header-actions {
+    flex: 0 0 auto;
+    min-width: auto;
+  }
+
+  .main-content {
+    padding-top: calc(40px + var(--spacing-lg));
+    padding: var(--spacing-lg);
+  }
+
+  .search-box-dropdown {
+    min-width: 280px;
+    right: -10px;
+  }
+
+  .header-title h1 {
+    font-size: 16px;
+  }
+}
+
+@media (min-width: 769px) {
+  /* 桌面端隐藏汉堡菜单和下拉面板 */
+  .hamburger-menu {
+    display: none;
+  }
+
+  .mobile-menu-dropdown {
+    display: none !important;
+  }
+
+  /* 桌面端显示顶部导航链接 */
+  .top-nav > .nav-links {
+    display: flex;
+  }
+}
 
   .top-nav .header-title h1 {
     font-size: 14px;

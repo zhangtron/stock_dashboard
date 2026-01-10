@@ -20,6 +20,8 @@ class Events {
     this.bindPaginationEvents();
     this.bindSearchEvents();
     this.bindTopNavEvents();
+    this.bindMobileMenuEvents();
+    this.cloneNavLinksToMobileMenu();
   }
 
   /**
@@ -104,6 +106,58 @@ class Events {
         link.classList.add('active');
       });
     });
+  }
+
+  /**
+   * 绑定移动端汉堡菜单事件
+   */
+  static bindMobileMenuEvents() {
+    const mobileMenuToggle = document.getElementById('mobileMenuToggle');
+    const mobileMenuDropdown = document.getElementById('mobileMenuDropdown');
+
+    if (!mobileMenuToggle || !mobileMenuDropdown) return;
+
+    // 点击切换菜单
+    mobileMenuToggle.addEventListener('click', (e) => {
+      e.stopPropagation();
+      mobileMenuToggle.classList.toggle('active');
+      mobileMenuDropdown.classList.toggle('active');
+    });
+
+    // 点击外部关闭菜单
+    document.addEventListener('click', (e) => {
+      if (!mobileMenuToggle.contains(e.target) &&
+          !mobileMenuDropdown.contains(e.target)) {
+        mobileMenuToggle.classList.remove('active');
+        mobileMenuDropdown.classList.remove('active');
+      }
+    });
+  }
+
+  /**
+   * 克隆导航链接到移动端菜单
+   */
+  static cloneNavLinksToMobileMenu() {
+    const navLinks = document.querySelector('.top-nav > .nav-links');
+    const mobileNavLinks = document.querySelector('.mobile-nav-links');
+
+    if (navLinks && mobileNavLinks) {
+      mobileNavLinks.innerHTML = navLinks.innerHTML;
+
+      // 为移动端菜单中的链接添加点击关闭事件
+      const mobileLinks = mobileNavLinks.querySelectorAll('.nav-link');
+      mobileLinks.forEach(link => {
+        link.addEventListener('click', () => {
+          const mobileMenuToggle = document.getElementById('mobileMenuToggle');
+          const mobileMenuDropdown = document.getElementById('mobileMenuDropdown');
+
+          if (mobileMenuToggle && mobileMenuDropdown) {
+            mobileMenuToggle.classList.remove('active');
+            mobileMenuDropdown.classList.remove('active');
+          }
+        });
+      });
+    }
   }
 
   /**
