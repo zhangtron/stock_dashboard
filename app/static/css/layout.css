@@ -46,6 +46,14 @@
   white-space: nowrap;
 }
 
+/* 品牌 Logo - 小尺寸（用于 Header 和侧边栏） */
+.brand-logo {
+  width: 24px;
+  height: 24px;
+  object-fit: contain;
+  flex-shrink: 0;
+}
+
 /* 导航项 */
 .nav-items {
   display: flex;

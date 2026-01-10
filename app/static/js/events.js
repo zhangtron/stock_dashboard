@@ -349,19 +349,24 @@ class Events {
     
     document.addEventListener('click', (e) => {
       const suggestionItem = e.target.closest('.suggestion-item');
-      
+
       if (suggestionItem) {
         const stockCode = suggestionItem.dataset.code;
         const stockName = suggestionItem.dataset.name;
-        
-        Components.openThsF10(stockCode);
-        
+
         searchInput.value = stockCode;
         if (searchClear) {
           searchClear.style.display = 'flex';
         }
         Components.hideSearchSuggestions();
         this.applySearchFilter(stockCode);
+      }
+
+      const stockCodeLink = e.target.closest('.stock-code-link');
+      if (stockCodeLink) {
+        e.preventDefault();
+        const code = stockCodeLink.dataset.stockCode;
+        Components.openThsF10(code);
       }
     });
   }

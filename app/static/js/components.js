@@ -92,7 +92,7 @@ class Components {
     
     tbody.innerHTML = data.map(item => `
       <tr>
-        <td><strong>${item.stock_code || '-'}</strong></td>
+        <td><a href="#" class="stock-code-link" data-stock-code="${item.stock_code || ''}"><strong>${item.stock_code || '-'}</strong></a></td>
         <td>${item.stock_name || '-'}</td>
         <td class="${this.getScoreClass(item.overall_score)}">${item.overall_score || '-'}</td>
         <td>${item.growth_score || '-'}</td>
