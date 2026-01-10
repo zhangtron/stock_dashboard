@@ -468,7 +468,7 @@ section {
 @media (max-width: 768px) {
   .top-nav {
     height: 40px;
-    padding: 0 var(--spacing-md);
+    padding: 0 var(--spacing-sm);
   }
 
   .top-nav .header-title h1 {
@@ -479,6 +479,7 @@ section {
     overflow-x: auto;
     -webkit-overflow-scrolling: touch;
     scrollbar-width: none;
+    flex: 1 0 auto;
   }
 
   .nav-links::-webkit-scrollbar {
@@ -491,6 +492,7 @@ section {
 
   .header-actions {
     flex: 0 0 auto;
+    min-width: auto;
   }
 
   .main-content {
