@@ -214,54 +214,70 @@
   }
 }
 
-/* 平板端适配（768px - 1024px） */
-@media (min-width: 768px) and (max-width: 1024px) {
-  /* 侧边栏宽度调整 */
-  .sidebar {
-    width: 180px;
-    padding: var(--spacing-md);
+/* 平板横屏模式 - 使用电脑布局（768px - 1024px，宽 > 高） */
+@media (min-width: 768px) and (max-width: 1024px) and (orientation: landscape) {
+  /* Top 3 卡片：三列布局 */
+  .cards-container {
+    grid-template-columns: repeat(3, 1fr);
   }
-  
-  /* 侧边栏 Logo 字体缩小 */
-  .logo {
-    font-size: 16px;
+
+  /* 筛选条件：5列布局 */
+  .filter-item {
+    min-width: calc(20% - var(--spacing-sm));
   }
-  
-  .logo-icon {
-    font-size: 20px;
+
+  /* 表格：显示所有列 */
+  .stock-table th,
+  .stock-table td {
+    display: table-cell;
   }
-  
-  /* 导航项字体缩小 */
-  .nav-item {
-    font-size: 13px;
-    padding: var(--spacing-xs) var(--spacing-sm);
+
+  /* 汉堡菜单隐藏 */
+  .hamburger {
+    display: none;
   }
-  
+}
+
+/* 平板竖屏模式 - 使用平板布局（768px - 1024px，高 > 宽） */
+@media (min-width: 768px) and (max-width: 1024px) and (orientation: portrait) {
   /* 主内容区 padding 减小 */
   .main-content {
     padding: var(--spacing-md);
   }
-  
+
   /* 桌面端导航高度调整 */
   .top-nav {
     padding: var(--spacing-sm) var(--spacing-md);
   }
-  
-  /* 搜索框宽度减小 */
-  .search-box {
-    width: 200px;
+
+  /* 导航链接优化 - 字体缩小、间距减小 */
+  .nav-link {
+    font-size: 11px;
+    padding: 6px 10px;
   }
-  
+
+  .nav-link i {
+    font-size: 14px;
+  }
+
+  .nav-links {
+    gap: 4px;
+  }
+
   /* Top 3 卡片：双列布局 */
   .cards-container {
     grid-template-columns: repeat(2, 1fr);
   }
-  
-  /* 筛选条件：3列布局 */
+
+  /* 筛选条件：2列布局，允许换行 */
   .filter-item {
-    min-width: calc(33.333% - var(--spacing-sm));
+    min-width: calc(50% - var(--spacing-sm));
   }
-  
+
+  .filter-row {
+    flex-wrap: wrap;
+  }
+
   /* 表格：显示前6列 */
   .stock-table th:nth-child(7),
   .stock-table td:nth-child(7),
@@ -281,8 +297,6 @@
   .hamburger {
     display: none;
   }
-  
-  /* 移动端导航隐藏 - 通过其他样式控制 */
 }
 
 /* 桌面端适配（> 1024px） */
@@ -312,6 +326,38 @@
   /* 桌面端主题切换按钮显示 */
   .theme-toggle-desktop {
     display: flex;
+  }
+}
+
+/* 中等屏幕适配（768px - 1199px）- 隐藏导航链接文字，只显示图标 */
+@media (min-width: 768px) and (max-width: 1199px) {
+  /* 隐藏导航链接文字，只显示图标 */
+  .nav-link span {
+    display: none;
+  }
+  
+  /* 调整导航链接间距 */
+  .nav-link {
+    padding: var(--spacing-xs) var(--spacing-sm);
+  }
+  
+  /* 调整导航链接图标大小 */
+  .nav-link i {
+    font-size: 18px;
+    margin: 0;
+  }
+  
+  /* 调整导航链接容器间距 */
+  .nav-links {
+    gap: var(--spacing-xs);
+  }
+}
+
+/* 大屏幕适配（1200px - 1440px）- 显示导航链接文字 */
+@media (min-width: 1200px) and (max-width: 1440px) {
+  /* 确保导航链接文字显示 */
+  .nav-link span {
+    display: inline;
   }
 }
 

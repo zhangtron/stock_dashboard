@@ -91,7 +91,7 @@
   --input-select-placeholder-color: rgba(11, 10, 10, 0.3);
 
   /* 筛选容器颜色 */
-  --filter-text-color: #000000;
+  /* --filter-text-color: #000000; */
 
   /* 按钮颜色 */
   --btn-secondary-color: #ffffff;
@@ -219,7 +219,7 @@
   --table-row-hover-bg: rgba(255, 255, 255, 0.1);
 
   /* 主色调使用 Teal */
-  --primary-color: #f00b50b3;
+  --primary-color: #f00b50;
   --primary-dark: #FE585C;
   --primary-light: rgba(191, 0, 134, 0.15);
 
@@ -416,6 +416,21 @@
   --bg-gradient-mid: #1A1A1A;
   --bg-gradient-end: #222222;
 
+  /* 输入框颜色 - 反向为白色 */
+  --input-text-color: #ffffff;
+  --input-placeholder-color: rgba(255, 255, 255, 0.4);
+  --input-select-placeholder-color: rgba(255, 255, 255, 0.4);
+
+  /* 筛选容器颜色 - 反向为白色 */
+  --filter-text-color: #ffffff;
+
+  /* 按钮颜色 - 反向为白色 */
+  --btn-secondary-color: #ffffff;
+
+  /* 表格颜色 - 反向为白色 */
+  --table-header-color: #ffffff;
+  --table-row-hover-bg: rgba(255, 255, 255, 0.1);
+
   /* 纯色背景，无毛玻璃 */
   --glass-bg: rgba(30, 30, 30, 0.9);
   --glass-bg-xl: rgba(40, 40, 40, 0.95);
@@ -503,6 +518,21 @@
 
   /* 分页背景颜色 - 深色优雅主题 */
   --pagination-bg: rgba(40, 40, 40, 0.7);
+
+  /* 输入框颜色 - 反向为白色 */
+  --input-text-color: #ffffff;
+  --input-placeholder-color: rgba(255, 255, 255, 0.4);
+  --input-select-placeholder-color: rgba(255, 255, 255, 0.4);
+
+  /* 筛选容器颜色 - 反向为白色 */
+  --filter-text-color: #ffffff;
+
+  /* 按钮颜色 - 反向为白色 */
+  --btn-secondary-color: #ffffff;
+
+  /* 表格颜色 - 反向为白色 */
+  --table-header-color: #ffffff;
+  --table-row-hover-bg: rgba(255, 255, 255, 0.1);
 }
 
 /* 清新绿色主题 - 毛玻璃效果 */
