@@ -285,32 +285,33 @@ class Events {
 
     if (suggestionsContainer) {
       suggestionsContainer.addEventListener('mouseleave', (e) => {
-      Components.hideSearchSuggestions();
-    });
-
-    document.addEventListener('click', (e) => {
-      const suggestionItem = e.target.closest('.suggestion-item');
-
-      if (suggestionItem) {
-        const stockCode = suggestionItem.dataset.code;
-        const stockName = suggestionItem.dataset.name;
-
-        searchInput.value = stockCode;
-        if (searchClear) {
-          searchClear.style.display = 'flex';
-        }
         Components.hideSearchSuggestions();
-        this.applySearchFilter(stockCode);
-      }
+      });
 
-      const stockCodeLink = e.target.closest('.stock-code-link');
-      if (stockCodeLink) {
-        e.preventDefault();
-        const code = stockCodeLink.dataset.stockCode;
-        Components.openThsF10(code);
-      }
-    });
-  }
+      // 处理搜索建议和股票代码链接的点击事件
+      document.addEventListener('click', (e) => {
+        const suggestionItem = e.target.closest('.suggestion-item');
+
+        if (suggestionItem) {
+          const stockCode = suggestionItem.dataset.code;
+          const stockName = suggestionItem.dataset.name;
+
+          searchInput.value = stockCode;
+          if (searchClear) {
+            searchClear.style.display = 'flex';
+          }
+          Components.hideSearchSuggestions();
+          this.applySearchFilter(stockCode);
+        }
+
+        const stockCodeLink = e.target.closest('.stock-code-link');
+        if (stockCodeLink) {
+          e.preventDefault();
+          const code = stockCodeLink.dataset.stockCode;
+          Components.openThsF10(code);
+        }
+      });
+    }
 
     searchInput.addEventListener('input', (e) => {
       const keyword = e.target.value.trim();
@@ -366,34 +367,11 @@ class Events {
     }
     
     document.addEventListener('click', (e) => {
-      if (!searchBox || !suggestionsContainer) return;
+      if (!searchBoxDropdown || !suggestionsContainer) return;
       
-      if (!searchBox.contains(e.target) && 
+      if (!searchBoxDropdown.contains(e.target) && 
           !suggestionsContainer.contains(e.target)) {
         Components.hideSearchSuggestions();
-      }
-    });
-    
-    document.addEventListener('click', (e) => {
-      const suggestionItem = e.target.closest('.suggestion-item');
-
-      if (suggestionItem) {
-        const stockCode = suggestionItem.dataset.code;
-        const stockName = suggestionItem.dataset.name;
-
-        searchInput.value = stockCode;
-        if (searchClear) {
-          searchClear.style.display = 'flex';
-        }
-        Components.hideSearchSuggestions();
-        this.applySearchFilter(stockCode);
-      }
-
-      const stockCodeLink = e.target.closest('.stock-code-link');
-      if (stockCodeLink) {
-        e.preventDefault();
-        const code = stockCodeLink.dataset.stockCode;
-        Components.openThsF10(code);
       }
     });
   }
