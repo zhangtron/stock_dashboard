@@ -28,7 +28,7 @@ class StockFundamentalScreeningCache(CacheBase):
     __tablename__ = 'stock_fundamental_screening_cache'
 
     id = Column(Integer, primary_key=True)
-    stock_code = Column(String(20), nullable=False, index=True, comment='股票代码')
+    stock_code = Column(String(20), nullable=False, unique=True, index=True, comment='股票代码')
     stock_name = Column(String(100), comment='股票名称')
     overall_score = Column(DECIMAL(5, 2), index=True, comment='综合得分')
     growth_score = Column(DECIMAL(5, 2), comment='成长能力得分')

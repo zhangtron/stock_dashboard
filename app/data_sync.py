@@ -85,7 +85,7 @@ def sync_data_from_remote() -> dict:
 
         for remote_item in remote_data:
             existing = cache_db.query(StockFundamentalScreeningCache)\
-                .filter(StockFundamentalScreeningCache.id == remote_item.id)\
+                .filter(StockFundamentalScreeningCache.stock_code == remote_item.stock_code)\
                 .first()
 
             cache_item_data = {
@@ -107,9 +107,13 @@ def sync_data_from_remote() -> dict:
             }
 
             if existing:
-                for key, value in cache_item_data.items():
-                    setattr(existing, key, value)
-                logger.debug(f"更新记录: {remote_item.stock_code}")
+                # 只有远程数据更新时间更新时才替换本地数据
+                if remote_item.update_time > existing.update_time:
+                    for key, value in cache_item_data.items():
+                        setattr(existing, key, value)
+                    logger.debug(f"更新记录: {remote_item.stock_code}")
+                else:
+                    logger.debug(f"跳过记录（数据未更新）: {remote_item.stock_code}")
             else:
                 cache_item = StockFundamentalScreeningCache(**cache_item_data)
                 cache_db.add(cache_item)
