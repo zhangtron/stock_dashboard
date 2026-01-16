@@ -1,0 +1,177 @@
+{% extends "base.html" %}
+
+{% block header_actions %}
+<div class="header-actions">
+    <div class="mobile-menu-dropdown" id="mobileMenuDropdown">
+        <div class="nav-links mobile-nav-links"></div>
+    </div>
+    <div class="theme-toggle-container">
+        <button id="theme-toggle-desktop" class="theme-toggle-desktop">
+            <i class="bi bi-palette"></i>
+        </button>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="/static/css/macro_analysis.css">
+{% endblock %}
+
+{% block content %}
+<div class="container-fluid px-4 py-3">
+    <div class="row mb-4">
+        <div class="col-12">
+            <div class="d-flex justify-content-between align-items-center mb-3">
+                <h2 class="section-title mb-0">
+                    <i class="bi bi-graph-up section-icon"></i>
+                    宏观周期分析
+                </h2>
+                <span id="lastUpdateTime" class="text-muted small">
+                    <i class="bi bi-clock"></i>
+                    加载中...
+                </span>
+            </div>
+        </div>
+    </div>
+
+    <!-- 周期状态与投资建议卡片 -->
+    <div class="row mb-5">
+        <div class="col-12">
+            <h3 class="section-title mb-4">
+                <i class="bi bi-arrow-repeat section-icon"></i>
+                周期状态与投资建议
+            </h3>
+            <div class="cards-container two-column">
+                <div class="card card-1">
+                    <div class="card-rank">
+                        <span class="rank-icon">💰</span>
+                        <span>货币周期</span>
+                    </div>
+                    <div id="monetaryCycleCard" class="card-content text-center">
+                        <p class="mb-1 text-muted">加载中...</p>
+                    </div>
+                </div>
+                <div class="card card-2">
+                    <div class="card-rank">
+                        <span class="rank-icon">🏦</span>
+                        <span>信用周期</span>
+                    </div>
+                    <div id="creditCycleCard" class="card-content text-center">
+                        <p class="mb-1 text-muted">加载中...</p>
+                    </div>
+                </div>
+                <div class="card card-3">
+                    <div class="card-rank">
+                        <span class="rank-icon">🎯</span>
+                        <span>投资策略</span>
+                    </div>
+                    <div id="investmentStrategyCard" class="card-content text-center">
+                        <p class="mb-1 text-muted">加载中...</p>
+                    </div>
+                </div>
+                <div class="card card-4">
+                    <div class="card-rank">
+                        <span class="rank-icon">📈</span>
+                        <span>资产配置</span>
+                    </div>
+                    <div id="assetAllocationCard" class="card-content text-center">
+                        <p class="mb-1 text-muted">加载中...</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row mb-4">
+        <div class="col-lg-6 mb-4">
+            <div class="card chart-card">
+                <div class="card-header">
+                    <h6 class="mb-0">
+                        <i class="bi bi-graph-up-arrow"></i>
+                        M1同比增长率
+                    </h6>
+                </div>
+                <div class="card-body">
+                    <div id="m1Chart" style="height: 250px;"></div>
+                </div>
+            </div>
+        </div>
+        <div class="col-lg-6 mb-4">
+            <div class="card chart-card">
+                <div class="card-header">
+                    <h6 class="mb-0">
+                        <i class="bi bi-graph-up-arrow"></i>
+                        GDP增速
+                    </h6>
+                </div>
+                <div class="card-body">
+                    <div id="gdpChart" style="height: 250px;"></div>
+                </div>
+            </div>
+        </div>
+        <div class="col-lg-6 mb-4">
+            <div class="card chart-card">
+                <div class="card-header">
+                    <h6 class="mb-0">
+                        <i class="bi bi-graph-up-arrow"></i>
+                        PPI同比增长率
+                    </h6>
+                </div>
+                <div class="card-body">
+                    <div id="ppiChart" style="height: 250px;"></div>
+                </div>
+            </div>
+        </div>
+        <div class="col-lg-6 mb-4">
+            <div class="card chart-card">
+                <div class="card-header">
+                    <h6 class="mb-0">
+                        <i class="bi bi-graph-up-arrow"></i>
+                        新增人民币贷款同比增长
+                    </h6>
+                </div>
+                <div class="card-body">
+                    <div id="loanChart" style="height: 250px;"></div>
+                </div>
+            </div>
+        </div>
+        <div class="col-lg-6 mb-4">
+            <div class="card chart-card">
+                <div class="card-header">
+                    <h6 class="mb-0">
+                        <i class="bi bi-graph-up-arrow"></i>
+                        1年期国债收益率
+                    </h6>
+                </div>
+                <div class="card-body">
+                    <div id="bond1yChart" style="height: 250px;"></div>
+                </div>
+            </div>
+        </div>
+        <div class="col-lg-6 mb-4">
+            <div class="card chart-card">
+                <div class="card-header">
+                    <h6 class="mb-0">
+                        <i class="bi bi-graph-up-arrow"></i>
+                        10年期国债收益率
+                    </h6>
+                </div>
+                <div class="card-body">
+                    <div id="bond10yChart" style="height: 250px;"></div>
+                </div>
+            </div>
+        </div>
+
+    </div>
+</div>
+
+<div id="errorToast" class="toast error-toast" style="display: none;">
+    <i class="bi bi-exclamation-triangle-fill"></i>
+    <span id="errorMessage"></span>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script src="https://cdn.jsdelivr.net/npm/echarts@5.4.3/dist/echarts.min.js"></script>
+<script src="/static/js/macro_analysis.js"></script>
+{% endblock %}

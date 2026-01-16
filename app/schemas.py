@@ -1,5 +1,5 @@
 from pydantic import BaseModel, Field
-from typing import Optional, List
+from typing import Optional, List, Dict, Any
 from datetime import datetime, date
 
 
@@ -54,3 +54,17 @@ class SearchSuggestionItem(BaseModel):
 
 class SearchSuggestionsResponse(BaseModel):
     suggestions: List[SearchSuggestionItem] = Field(default_factory=list, description="搜索建议列表")
+
+
+class MacroAnalysisSchema(BaseModel):
+    monetary_cycle: str = Field(..., description="货币周期状态")
+    credit_cycle: str = Field(..., description="信用周期状态")
+    market_cap_bias: str = Field(..., description="利好大市值或小市值")
+    calc_time: str = Field(..., description="计算时间")
+    raw_data: Dict[str, Any] = Field(default_factory=dict, description="原始图表数据")
+    # 新增字段
+    monetary_status: str = Field(..., description="货币状态：宽货币/紧货币")
+    credit_status: str = Field(..., description="信用状态：宽信用/紧信用")
+    combination: str = Field(..., description="货币+信用组合状态")
+    investment_strategy: str = Field(..., description="投资策略建议")
+    asset_allocation: str = Field(..., description="资产配置建议")
