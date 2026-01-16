@@ -42,13 +42,13 @@
             <h1>先信投资</h1>
         </div>
         <div class="nav-links">
-            <a href="/" class="nav-link active">
+            <a href="/" class="nav-link {% if request.url.path == '/' %}active{% endif %}">
                 <i class="bi bi-speedometer2"></i>
                 <span>基本面分析</span>
             </a>
-            <a href="#" class="nav-link">
+            <a href="/macro-analysis" class="nav-link {% if request.url.path == '/macro-analysis' %}active{% endif %}">
                 <i class="bi bi-lightbulb"></i>
-                <span>技术面分析</span>
+                <span>宏观分析</span>
             </a>
             <a href="#" class="nav-link">
                 <i class="bi bi-currency-yen"></i>
@@ -70,7 +70,7 @@
                 <i class="bi bi-journal-text"></i>
                 <span>资源分享</span>
             </a>
-            <a href="/about" class="nav-link">
+            <a href="/about" class="nav-link {% if request.url.path == '/about' %}active{% endif %}">
                 <i class="bi bi-info-circle"></i>
                 <span>关于</span>
             </a>
