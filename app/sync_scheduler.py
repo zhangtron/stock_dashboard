@@ -30,7 +30,7 @@ def init_scheduler():
         )
 
         scheduler.start()
-        logger.info("定时任务调度器启动成功，每日5:00执行数据同步")
+        logger.info("定时任务调度器启动成功，每日5:00执行数据同步（包含股票和宏观数据）")
 
     except Exception as e:
         logger.error(f"定时任务调度器启动失败: {e}")

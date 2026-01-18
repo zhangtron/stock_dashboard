@@ -157,6 +157,17 @@
     background: rgba(var(--accent-primary-rgb), 0.1);
 }
 
+.cards-container .card-header {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 1rem 1.25rem;
+    border-bottom: 1px solid var(--border-color);
+    background: transparent;
+    color: var(--text-color);
+    font-weight: 600;
+}
+
 .cards-container .card-content {
     padding: 1.5rem 1.25rem;
     min-height: 120px;

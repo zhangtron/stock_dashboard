@@ -5,6 +5,8 @@ from sqlalchemy import desc
 from app.database import SessionLocal as RemoteSessionLocal
 from app.cache_database import SessionLocal as CacheSessionLocal, engine as cache_engine, Base as CacheBase
 from app.models import StockFundamentalScreening, StockFundamentalScreeningCache, SyncMetadata
+from app.macro_sync import init_macro_cache_db, sync_all_macro_data
+from app.market_breadth_sync import init_market_breadth_cache_db, sync_market_breadth_data_from_remote, get_market_breadth_sync_status
 
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
@@ -14,6 +16,8 @@ def init_cache_db():
     """初始化本地缓存数据库表结构"""
     try:
         CacheBase.metadata.create_all(bind=cache_engine)
+        init_macro_cache_db()
+        init_market_breadth_cache_db()
         logger.info("本地缓存数据库表结构初始化完成")
     except Exception as e:
         logger.error(f"初始化缓存数据库失败: {e}")
@@ -73,73 +77,71 @@ def sync_data_from_remote() -> dict:
                 'record_count': 0,
                 'last_sync_time': last_sync.remote_max_update_time if last_sync else None
             })
-            return result
+        else:
+            logger.info(f"从远程获取到 {record_count} 条记录")
 
-        logger.info(f"从远程获取到 {record_count} 条记录")
+            remote_max_update_time = max([item.update_time for item in remote_data]) if remote_data else None
 
-        remote_max_update_time = max([item.update_time for item in remote_data]) if remote_data else None
+            if result['sync_type'] == 'full':
+                logger.info("全量同步：清空本地缓存表")
+                cache_db.query(StockFundamentalScreeningCache).delete()
 
-        if result['sync_type'] == 'full':
-            logger.info("全量同步：清空本地缓存表")
-            cache_db.query(StockFundamentalScreeningCache).delete()
+            for remote_item in remote_data:
+                existing = cache_db.query(StockFundamentalScreeningCache)\
+                    .filter(StockFundamentalScreeningCache.stock_code == remote_item.stock_code)\
+                    .first()
 
-        for remote_item in remote_data:
-            existing = cache_db.query(StockFundamentalScreeningCache)\
-                .filter(StockFundamentalScreeningCache.stock_code == remote_item.stock_code)\
-                .first()
+                cache_item_data = {
+                    'id': remote_item.id,
+                    'stock_code': remote_item.stock_code,
+                    'stock_name': remote_item.stock_name,
+                    'overall_score': remote_item.overall_score,
+                    'growth_score': remote_item.growth_score,
+                    'profitability_score': remote_item.profitability_score,
+                    'solvency_score': remote_item.solvency_score,
+                    'cashflow_score': remote_item.cashflow_score,
+                    'recommendation': remote_item.recommendation,
+                    'pass_filters': remote_item.pass_filters,
+                    'latest_quarter': remote_item.latest_quarter,
+                    'report_publ_date': remote_item.report_publ_date,
+                    'calc_time': remote_item.calc_time,
+                    'create_time': remote_item.create_time,
+                    'update_time': remote_item.update_time
+                }
 
-            cache_item_data = {
-                'id': remote_item.id,
-                'stock_code': remote_item.stock_code,
-                'stock_name': remote_item.stock_name,
-                'overall_score': remote_item.overall_score,
-                'growth_score': remote_item.growth_score,
-                'profitability_score': remote_item.profitability_score,
-                'solvency_score': remote_item.solvency_score,
-                'cashflow_score': remote_item.cashflow_score,
-                'recommendation': remote_item.recommendation,
-                'pass_filters': remote_item.pass_filters,
-                'latest_quarter': remote_item.latest_quarter,
-                'report_publ_date': remote_item.report_publ_date,
-                'calc_time': remote_item.calc_time,
-                'create_time': remote_item.create_time,
-                'update_time': remote_item.update_time
-            }
-
-            if existing:
-                # 只有远程数据更新时间更新时才替换本地数据
-                if remote_item.update_time > existing.update_time:
-                    for key, value in cache_item_data.items():
-                        setattr(existing, key, value)
-                    logger.debug(f"更新记录: {remote_item.stock_code}")
+                if existing:
+                    if remote_item.update_time > existing.update_time:
+                        for key, value in cache_item_data.items():
+                            setattr(existing, key, value)
+                        logger.debug(f"更新记录: {remote_item.stock_code}")
+                    else:
+                        logger.debug(f"跳过记录（数据未更新）: {remote_item.stock_code}")
                 else:
-                    logger.debug(f"跳过记录（数据未更新）: {remote_item.stock_code}")
-            else:
-                cache_item = StockFundamentalScreeningCache(**cache_item_data)
-                cache_db.add(cache_item)
-                logger.debug(f"新增记录: {remote_item.stock_code}")
+                    cache_item = StockFundamentalScreeningCache(**cache_item_data)
+                    cache_db.add(cache_item)
+                    logger.debug(f"新增记录: {remote_item.stock_code}")
 
-        cache_db.commit()
+            cache_db.commit()
 
-        total_count = cache_db.query(StockFundamentalScreeningCache).count()
+            total_count = cache_db.query(StockFundamentalScreeningCache).count()
 
-        sync_metadata = SyncMetadata(
-            last_sync_time=datetime.now(),
-            record_count=total_count,
-            sync_status='success',
-            error_message=None,
-            remote_max_update_time=remote_max_update_time
-        )
-        cache_db.add(sync_metadata)
-        cache_db.commit()
+            sync_metadata = SyncMetadata(
+                last_sync_time=datetime.now(),
+                record_count=total_count,
+                sync_status='success',
+                error_message=None,
+                remote_max_update_time=remote_max_update_time
+            )
+            cache_db.add(sync_metadata)
+            cache_db.commit()
 
-        logger.info(f"同步成功！本地缓存共 {total_count} 条记录")
+            logger.info(f"同步成功！本地缓存共 {total_count} 条记录")
 
-        result.update({
-            'success': True,
-            'record_count': total_count,
-            'last_sync_time': datetime.now()
-        })
+            result.update({
+                'success': True,
+                'record_count': total_count,
+                'last_sync_time': datetime.now()
+            })
 
     except Exception as e:
         cache_db.rollback()
@@ -161,6 +163,28 @@ def sync_data_from_remote() -> dict:
         remote_db.close()
         cache_db.close()
 
+    if result['success']:
+        logger.info("开始同步宏观数据...")
+        macro_result = sync_all_macro_data()
+        result['macro_sync'] = macro_result
+
+        if not macro_result['success']:
+            logger.error(f"宏观数据同步失败: {macro_result.get('error')}")
+            result['success'] = False
+            result['macro_sync_error'] = macro_result.get('error')
+
+        logger.info("开始同步市场宽度数据...")
+        breadth_result = sync_market_breadth_data_from_remote()
+        result['market_breadth_sync'] = breadth_result
+
+        if not breadth_result['success']:
+            logger.error(f"市场宽度数据同步失败: {breadth_result.get('error')}")
+            result['success'] = False
+            result['market_breadth_sync_error'] = breadth_result.get('error')
+    else:
+        result['macro_sync'] = None
+        result['market_breadth_sync'] = None
+
     return result
 
 
@@ -180,6 +204,8 @@ def force_full_sync() -> dict:
 
 def get_sync_status() -> dict:
     """获取同步状态"""
+    from app.macro_sync import get_macro_sync_status
+
     last_sync = get_last_sync_info()
     total_count = 0
 
@@ -189,22 +215,31 @@ def get_sync_status() -> dict:
     finally:
         cache_db.close()
 
-    if not last_sync:
-        return {
-            'last_sync_time': None,
-            'record_count': 0,
-            'sync_status': 'never',
-            'error_message': None,
-            'cache_count': 0,
-            'has_data': False
+    stock_sync_status = {
+        'last_sync_time': None,
+        'record_count': 0,
+        'sync_status': 'never',
+        'error_message': None,
+        'cache_count': 0,
+        'has_data': False
+    }
+
+    if last_sync:
+        stock_sync_status = {
+            'last_sync_time': last_sync.last_sync_time.isoformat() if last_sync.last_sync_time else None,
+            'record_count': last_sync.record_count,
+            'sync_status': last_sync.sync_status,
+            'error_message': last_sync.error_message,
+            'remote_max_update_time': last_sync.remote_max_update_time.isoformat() if last_sync.remote_max_update_time else None,
+            'cache_count': total_count,
+            'has_data': total_count > 0
         }
 
+    macro_sync_status = get_macro_sync_status()
+    market_breadth_sync_status = get_market_breadth_sync_status()
+
     return {
-        'last_sync_time': last_sync.last_sync_time.isoformat() if last_sync.last_sync_time else None,
-        'record_count': last_sync.record_count,
-        'sync_status': last_sync.sync_status,
-        'error_message': last_sync.error_message,
-        'remote_max_update_time': last_sync.remote_max_update_time.isoformat() if last_sync.remote_max_update_time else None,
-        'cache_count': total_count,
-        'has_data': total_count > 0
+        'stock': stock_sync_status,
+        'macro': macro_sync_status,
+        'market_breadth': market_breadth_sync_status
     }

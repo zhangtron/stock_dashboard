@@ -68,3 +68,15 @@ class MacroAnalysisSchema(BaseModel):
     combination: str = Field(..., description="货币+信用组合状态")
     investment_strategy: str = Field(..., description="投资策略建议")
     asset_allocation: str = Field(..., description="资产配置建议")
+
+
+class MarketBreadthResponse(BaseModel):
+    dates: List[str] = Field(..., description="日期列表（Y轴）")
+    columns: List[str] = Field(..., description="列名列表（X轴）：各行业 + index_all + sum")
+    data: List[List[int]] = Field(..., description="热力图数据矩阵（BIAS>0比例）")
+    statistics: Dict[str, Any] = Field(default_factory=dict, description="统计数据")
+    last_update: Optional[str] = Field(None, description="最后更新时间")
+
+
+class MarketBreadthIndustriesResponse(BaseModel):
+    industries: List[str] = Field(..., description="行业列表（排除 index_all）")

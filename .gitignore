@@ -44,3 +44,10 @@ Thumbs.db
 
 # Local Cache Database
 app/static/data/*.db
+
+# Claude Code
+.claude/
+
+# Documentation reference files
+refrence/
+docs/ref/

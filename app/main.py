@@ -2,7 +2,7 @@ from fastapi import FastAPI, Request
 from fastapi.responses import HTMLResponse
 from fastapi.staticfiles import StaticFiles
 from fastapi.templating import Jinja2Templates
-from app.routers import screening
+from app.routers import screening, macro_analysis, market_breadth
 from app.config import settings
 from app.data_sync import init_cache_db, sync_data_from_remote, get_sync_status
 from app.sync_scheduler import init_scheduler, shutdown_scheduler, get_scheduler_status
@@ -19,6 +19,8 @@ app = FastAPI(
 )
 
 app.include_router(screening.router, prefix="/api")
+app.include_router(macro_analysis.router, prefix="/api")
+app.include_router(market_breadth.router, prefix="/api")
 
 base_dir = os.path.dirname(os.path.abspath(__file__))
 static_dir = os.path.join(base_dir, "static")
@@ -39,7 +41,7 @@ async def startup_event():
         init_scheduler()
 
         sync_status = get_sync_status()
-        if not sync_status['has_data']:
+        if not sync_status['stock']['has_data']:
             logger.info("本地缓存为空，执行首次数据同步...")
             result = sync_data_from_remote()
             if result['success']:
@@ -78,6 +80,18 @@ async def screening_page(request: Request):
 async def about_page(request: Request):
     """关于页面"""
     return templates.TemplateResponse("about.html", {"request": request})
+
+
+@app.get("/macro-analysis", response_class=HTMLResponse, summary="宏观分析页面")
+async def macro_analysis_page(request: Request):
+    """宏观分析页面"""
+    return templates.TemplateResponse("macro_analysis.html", {"request": request})
+
+
+@app.get("/market-breadth", response_class=HTMLResponse, summary="市场宽度分析页面")
+async def market_breadth_page(request: Request):
+    """市场宽度分析页面"""
+    return templates.TemplateResponse("market_breadth.html", {"request": request})
 
 
 @app.get("/health", summary="健康检查")
