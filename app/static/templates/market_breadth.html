@@ -1,0 +1,177 @@
+{% extends "base.html" %}
+
+{% block header_actions %}
+<div class="header-actions">
+    <div class="mobile-menu-dropdown" id="mobileMenuDropdown">
+        <div class="nav-links mobile-nav-links"></div>
+    </div>
+    <div class="theme-toggle-container">
+        <button id="theme-toggle-desktop" class="theme-toggle-desktop">
+            <i class="bi bi-palette"></i>
+        </button>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="/static/css/market_breadth.css">
+{% endblock %}
+
+{% block content %}
+<div class="container-fluid px-4 py-3">
+    <div class="row mb-4">
+        <div class="col-12">
+            <div class="d-flex justify-content-between align-items-center mb-3">
+                <h2 class="section-title mb-0">
+                    <i class="bi bi-grid-3x3 section-icon"></i>
+                    市场宽度分析
+                </h2>
+                <span id="lastUpdateTime" class="text-muted small">
+                    <i class="bi bi-clock"></i>
+                    加载中...
+                </span>
+            </div>
+        </div>
+    </div>
+
+    <!-- 筛选器卡片 - 已隐藏 -->
+    <!--
+    <div class="row mb-4">
+        <div class="col-12">
+            <div class="card filters-card">
+                <div class="card-header">
+                    <h6 class="mb-0">
+                        <i class="bi bi-funnel"></i>
+                        数据筛选
+                    </h6>
+                </div>
+                <div class="card-body">
+                    <form id="filterForm" class="row g-3">
+                        <div class="col-md-4">
+                            <label for="startDate" class="form-label">开始日期</label>
+                            <input type="date" class="form-control" id="startDate" name="start_date">
+                        </div>
+                        <div class="col-md-4">
+                            <label for="endDate" class="form-label">结束日期</label>
+                            <input type="date" class="form-control" id="endDate" name="end_date">
+                        </div>
+                        <div class="col-md-4">
+                            <label for="industrySelect" class="form-label">行业</label>
+                            <select class="form-select" id="industrySelect" name="industries" multiple size="1">
+                                <option value="">全部行业</option>
+                            </select>
+                        </div>
+                        <div class="col-12">
+                            <div class="d-flex gap-2">
+                                <button type="submit" class="btn btn-primary">
+                                    <i class="bi bi-check-circle"></i>
+                                    应用筛选
+                                </button>
+                                <button type="button" class="btn btn-outline-secondary" id="resetBtn">
+                                    <i class="bi bi-arrow-counterclockwise"></i>
+                                    重置
+                                </button>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+    -->
+
+    <!-- 统计摘要卡片 -->
+    <div class="row mb-4">
+        <div class="col-12">
+            <h3 class="section-title mb-3">
+                <i class="bi bi-bar-chart section-icon"></i>
+                统计摘要
+            </h3>
+            <div class="cards-container four-column">
+                <div class="card stat-card">
+                    <div class="card-rank">
+                        <span class="rank-icon">📅</span>
+                        <span>日期范围</span>
+                    </div>
+                    <div id="dateRangeCard" class="card-content text-center">
+                        <p class="mb-1 text-muted">加载中...</p>
+                    </div>
+                </div>
+                <div class="card stat-card">
+                    <div class="card-rank">
+                        <span class="rank-icon">🏢</span>
+                        <span>行业数量</span>
+                    </div>
+                    <div id="industryCountCard" class="card-content text-center">
+                        <p class="mb-1 text-muted">加载中...</p>
+                    </div>
+                </div>
+                <div class="card stat-card">
+                    <div class="card-rank">
+                        <span class="rank-icon">📊</span>
+                        <span>交易日数</span>
+                    </div>
+                    <div id="tradingDaysCard" class="card-content text-center">
+                        <p class="mb-1 text-muted">加载中...</p>
+                    </div>
+                </div>
+                <div class="card stat-card">
+                    <div class="card-rank">
+                        <span class="rank-icon">📈</span>
+                        <span>平均比例</span>
+                    </div>
+                    <div id="avgValueCard" class="card-content text-center">
+                        <p class="mb-1 text-muted">加载中...</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 市场宽度趋势图 -->
+    <div class="row mb-4">
+        <div class="col-12">
+            <div class="card chart-card">
+                <div class="card-header d-flex justify-content-between align-items-center">
+                    <h6 class="mb-0">
+                        <i class="bi bi-graph-up"></i>
+                        市场宽度趋势（全市场上涨家数总和）
+                    </h6>
+                    <span class="text-muted small">横轴：交易日期，纵轴：sum值</span>
+                </div>
+                <div class="card-body">
+                    <div id="trendChart" style="height: 300px;"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 热力图 -->
+    <div class="row mb-4">
+        <div class="col-12">
+            <div class="card chart-card">
+                <div class="card-header d-flex justify-content-between align-items-center">
+                    <h6 class="mb-0">
+                        <i class="bi bi-grid-3x3-gap"></i>
+                        市场宽度热力图（BIAS>0的股票比例）
+                    </h6>
+                    <span class="text-muted small">包含各行业 + 全市场汇总(index_all) + 各行业总和(sum)</span>
+                </div>
+                <div class="card-body">
+                    <div id="heatmapChart" style="height: 600px;"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div id="errorToast" class="toast error-toast" style="display: none;">
+    <i class="bi bi-exclamation-triangle-fill"></i>
+    <span id="errorMessage"></span>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script src="https://cdn.jsdelivr.net/npm/echarts@5.4.3/dist/echarts.min.js"></script>
+<script src="/static/js/market_breadth.js"></script>
+{% endblock %}
