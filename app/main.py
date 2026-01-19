@@ -36,10 +36,22 @@ async def startup_event():
     try:
         logger.info("正在初始化本地缓存数据库...")
         init_cache_db()
+        logger.info("本地缓存数据库初始化完成")
 
+    except Exception as e:
+        logger.error(f"本地缓存数据库初始化失败: {e}")
+        # 继续启动，不阻止应用运行
+
+    try:
         logger.info("正在启动定时任务调度器...")
         init_scheduler()
+        logger.info("定时任务调度器启动完成")
 
+    except Exception as e:
+        logger.error(f"定时任务调度器启动失败: {e}")
+        # 继续启动，不阻止应用运行
+
+    try:
         sync_status = get_sync_status()
         if not sync_status['stock']['has_data']:
             logger.info("本地缓存为空，执行首次数据同步...")
@@ -53,6 +65,7 @@ async def startup_event():
 
     except Exception as e:
         logger.error(f"应用启动初始化失败: {e}")
+        # 继续启动，不阻止应用运行
 
 
 @app.on_event("shutdown")
