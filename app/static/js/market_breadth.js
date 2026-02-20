@@ -41,12 +41,8 @@ class MarketBreadth {
             return;
         }
 
-        // 设置默认日期范围（最近30天）
-        const today = new Date();
-        const thirtyDaysAgo = new Date(today);
-        thirtyDaysAgo.setDate(today.getDate() - 30);
-        endDateInput.valueAsDate = today;
-        startDateInput.valueAsDate = thirtyDaysAgo;
+        // 不设置默认日期范围，让后端返回所有数据
+        // 用户可以通过筛选器选择特定日期范围
 
         // 表单提交
         filterForm.addEventListener('submit', async (e) => {
@@ -140,15 +136,17 @@ class MarketBreadth {
             const data = await response.json();
             this.industries = data.industries || [];
 
-            // 填充行业选择器
+            // 填充行业选择器（如果存在）
             const industrySelect = document.getElementById('industrySelect');
-            industrySelect.innerHTML = '<option value="">全部行业</option>';
-            this.industries.forEach(industry => {
-                const option = document.createElement('option');
-                option.value = industry;
-                option.textContent = industry;
-                industrySelect.appendChild(option);
-            });
+            if (industrySelect) {
+                industrySelect.innerHTML = '<option value="">全部行业</option>';
+                this.industries.forEach(industry => {
+                    const option = document.createElement('option');
+                    option.value = industry;
+                    option.textContent = industry;
+                    industrySelect.appendChild(option);
+                });
+            }
         } catch (error) {
             console.error('加载行业列表失败:', error);
         }
@@ -158,9 +156,13 @@ class MarketBreadth {
         const startDate = document.getElementById('startDate').value;
         const endDate = document.getElementById('endDate').value;
         const industrySelect = document.getElementById('industrySelect');
-        const selectedIndustries = Array.from(industrySelect.selectedOptions)
-            .map(opt => opt.value)
-            .filter(v => v !== '');
+
+        let selectedIndustries = [];
+        if (industrySelect) {
+            selectedIndustries = Array.from(industrySelect.selectedOptions)
+                .map(opt => opt.value)
+                .filter(v => v !== '');
+        }
 
         await this.loadData(startDate, endDate, selectedIndustries);
         this.renderStatistics();
@@ -168,12 +170,9 @@ class MarketBreadth {
     }
 
     resetFilters() {
-        const today = new Date();
-        const thirtyDaysAgo = new Date(today);
-        thirtyDaysAgo.setDate(today.getDate() - 30);
-
-        document.getElementById('startDate').valueAsDate = thirtyDaysAgo;
-        document.getElementById('endDate').valueAsDate = today;
+        // 清空日期筛选，显示所有数据
+        document.getElementById('startDate').value = '';
+        document.getElementById('endDate').value = '';
         document.getElementById('industrySelect').value = '';
 
         this.applyFilters();
@@ -430,6 +429,37 @@ class MarketBreadth {
         const minValue = 0;
         const maxValue = 100;
 
+        // 计算显示百分比
+        const totalIndustries = industryColumns.length;
+        const totalDates = dates.length;
+
+        // 计算行业显示百分比：前31个行业
+        const targetIndustries = 31;
+        const industryDisplayPercent = totalIndustries > 0
+            ? Math.min(100, Math.round((targetIndustries / totalIndustries) * 100))
+            : 100;
+
+        // 计算日期显示百分比：最近60天（可调整此值来改变默认显示范围）
+        // 515天数据中显示60天 ≈ 11.6%
+        const targetDates = 30;
+        const dateDisplayPercent = totalDates > 0
+            ? Math.min(100, Math.round((targetDates / totalDates) * 100))
+            : 100;
+
+        // 在控制台输出数据统计信息，方便调试
+        console.log(`市场宽度热力图数据统计: 共 ${totalDates} 个交易日, ${totalIndustries} 个行业`);
+        console.log(`默认显示: 最近 ${targetDates} 个交易日 (${dateDisplayPercent}%)`);
+
+        // 更新页面上的数据信息提示
+        const heatmapInfo = document.getElementById('heatmapInfo');
+        if (heatmapInfo) {
+            heatmapInfo.innerHTML = `
+                <i class="bi bi-info-circle"></i>
+                数据范围：共 ${totalDates} 个交易日（${dates[0]} 至 ${dates[dates.length - 1]}），
+                当前显示最近 ${targetDates} 天。使用右侧滑块或鼠标滚轮查看历史数据。
+            `;
+        }
+
         const option = {
             // 添加滚动和缩放功能
             dataZoom: [
@@ -439,7 +469,7 @@ class MarketBreadth {
                     show: true,
                     xAxisIndex: [0],  // 只控制第一个xAxis（行业数据）
                     start: 0,
-                    end: 40,  // 初始显示前40%的行业（约37-38个）
+                    end: industryDisplayPercent,  // 初始显示前31个行业
                     bottom: '2%',
                     height: 20,
                     handleSize: '80%',
@@ -449,31 +479,34 @@ class MarketBreadth {
                     zoomLock: false,  // 允许拖动
                     brushSelect: false  // 禁用框选
                 },
-                // 纵向缩放（日期）- 同时控制所有三个 yAxis
+                // 纵向滑块（日期）- 默认显示最近60天
                 {
                     type: 'slider',
                     show: true,
                     yAxisIndex: [0, 1, 2],  // 控制所有三个 yAxis（行业、index_all、sum）
-                    start: 0,
-                    end: 100,  // 初始显示所有日期
-                    right: '3%',
-                    width: 20,
-                    height: '70%',
-                    handleSize: '80%',
+                    start: Math.max(0, 100 - dateDisplayPercent),  // 从 88% 开始（最新60天）
+                    end: 100,  // 到 100% 结束（最新数据）
+                    right: '2%',
+                    width: 18,
+                    height: '75%',
+                    handleSize: '100%',
                     textStyle: {
-                        fontSize: 10
+                        fontSize: 9
                     },
                     zoomLock: false,
-                    orient: 'vertical'
+                    orient: 'vertical',
+                    showDetail: false,  // 不显示详细数值
+                    filterMode: 'filter'  // 过滤模式
                 },
-                // 框选缩放（支持鼠标交互）- 同时控制所有坐标轴
+                // 鼠标交互（日期）- 支持鼠标滚轮缩放和拖拽
                 {
                     type: 'inside',
-                    xAxisIndex: [0],
-                    yAxisIndex: [0, 1, 2],  // 控制所有 yAxis
+                    yAxisIndex: [0, 1, 2],  // 控制所有三个 yAxis
+                    start: Math.max(0, 100 - dateDisplayPercent),  // 初始也只显示最近60天
+                    end: 100,
                     zoomOnMouseWheel: true,  // 支持鼠标滚轮缩放
                     moveOnMouseMove: true,    // 支持鼠标拖动平移
-                    moveOnMouseWheel: false
+                    moveOnMouseWheel: false   // 禁用滚轮平移
                 }
             ],
             tooltip: {
@@ -502,24 +535,24 @@ class MarketBreadth {
             grid: [
                 // 行业数据 grid (占主要区域)
                 {
-                    height: '65%',     // 从 70% 调整到 65%（为底部dataZoom留空间）
-                    top: '12%',        // 从 10% 调整到 12%（为顶部标签留空间）
-                    left: '7%',        // 从 5% 调整到 7%（为右侧dataZoom留空间）
-                    right: '30%',      // 从 25% 调整到 30%（给 index_all 和 sum 更多空间）
+                    height: '70%',     // 增加高度以显示更多数据
+                    top: '10%',        // 为顶部标签留空间
+                    left: '7%',        // 为右侧dataZoom留空间
+                    right: '30%',      // 给 index_all 和 sum 更多空间
                     containLabel: false
                 },
                 // index_all grid
                 {
-                    height: '65%',
-                    top: '12%',
+                    height: '70%',
+                    top: '10%',
                     left: '73%',
                     width: '10%',   // 固定宽度
                     containLabel: false
                 },
                 // sum grid
                 {
-                    height: '65%',
-                    top: '12%',
+                    height: '70%',
+                    top: '10%',
                     left: '85%',
                     width: '10%',   // 固定宽度
                     containLabel: false

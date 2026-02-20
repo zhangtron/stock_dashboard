@@ -44,21 +44,12 @@ async def get_market_breadth(
         except:
             raise HTTPException(status_code=400, detail="结束日期格式错误，应为 YYYY-MM-DD")
 
-    # 如果没有指定日期范围，默认使用最近30个交易日
+    # 如果没有指定日期范围，默认返回所有数据
     if not parsed_start_date and not parsed_end_date:
         from app.models import MarketBreadthMetricsCache
-        latest_record = cache_db.query(MarketBreadthMetricsCache.trade_date)\
-            .order_by(MarketBreadthMetricsCache.trade_date.desc())\
-            .first()
-        if latest_record:
-            parsed_end_date = latest_record[0]
-        else:
-            parsed_end_date = date.today().strftime('%Y-%m-%d')
-
-        # 计算45天前的日期（约30个交易日）
-        end_dt = datetime.strptime(parsed_end_date, '%Y-%m-%d')
-        start_dt = end_dt - timedelta(days=45)
-        parsed_start_date = start_dt.strftime('%Y-%m-%d')
+        # 获取所有数据，不限制日期范围
+        # 如果用户需要限制日期范围，可以通过参数指定
+        pass  # parsed_start_date 和 parsed_end_date 保持为 None，返回所有数据
 
     # 解析行业列表
     parsed_industries = None
