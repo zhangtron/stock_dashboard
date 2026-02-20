@@ -7,12 +7,14 @@ class MarketBreadth {
         this.trendChart = null;
         this.currentData = null;
         this.industries = [];
+        this.isSyncing = false;
         this.init();
     }
 
     async init() {
         this.checkECharts();
         this.initFilters();
+        this.initSyncButton();
         await this.loadIndustries();
         await this.loadData();
         this.renderStatistics();
@@ -56,6 +58,77 @@ class MarketBreadth {
         resetBtn.addEventListener('click', () => {
             this.resetFilters();
         });
+    }
+
+    initSyncButton() {
+        const syncBtn = document.getElementById('syncBtn');
+        if (syncBtn) {
+            syncBtn.addEventListener('click', () => {
+                this.syncMarketBreadthData();
+            });
+        }
+    }
+
+    async syncMarketBreadthData() {
+        if (this.isSyncing) {
+            return;
+        }
+
+        const syncBtn = document.getElementById('syncBtn');
+        const syncBtnText = document.getElementById('syncBtnText');
+        const syncBtnIcon = syncBtn.querySelector('i');
+
+        this.isSyncing = true;
+        syncBtn.disabled = true;
+        syncBtnIcon.classList.add('spin-icon');
+        syncBtnText.textContent = '同步中...';
+
+        try {
+            const response = await API.fetch('/api/market-breadth/sync', {
+                method: 'POST'
+            });
+
+            if (!response.ok) {
+                throw new Error(`HTTP error! status: ${response.status}`);
+            }
+
+            const result = await response.json();
+
+            if (result.success) {
+                this.showSuccess(`同步成功！共同步 ${result.record_count} 条记录`);
+                // 重新加载数据
+                await this.loadData();
+                this.renderStatistics();
+                this.renderTrendChart();
+                this.renderHeatmap();
+            } else {
+                this.showError('同步失败：' + (result.error || '未知错误'));
+            }
+        } catch (error) {
+            this.showError('同步失败：' + error.message);
+            console.error('同步市场宽度数据失败:', error);
+        } finally {
+            this.isSyncing = false;
+            syncBtn.disabled = false;
+            syncBtnIcon.classList.remove('spin-icon');
+            syncBtnText.textContent = '同步数据';
+        }
+    }
+
+    showSuccess(message) {
+        const toast = document.getElementById('errorToast');
+        const errorEl = document.getElementById('errorMessage');
+
+        if (toast && errorEl) {
+            errorEl.textContent = message;
+            toast.className = 'toast success-toast';
+            toast.style.display = 'flex';
+
+            setTimeout(() => {
+                toast.style.display = 'none';
+                toast.className = 'toast error-toast';
+            }, 3000);
+        }
     }
 
     async loadIndustries() {

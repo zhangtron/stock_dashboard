@@ -25,7 +25,7 @@ def get_last_market_breadth_sync_info() -> Optional[SyncMetadata]:
     cache_db = CacheSessionLocal()
     try:
         last_sync = cache_db.query(SyncMetadata)\
-            .filter(SyncMetadata.sync_status.like('%market_breadth%'))\
+            .filter(SyncMetadata.sync_status.in_(['market_breadth_success', 'market_breadth_failed']))\
             .order_by(desc(SyncMetadata.id))\
             .first()
         return last_sync
@@ -114,7 +114,7 @@ def sync_market_breadth_data_from_remote() -> dict:
         sync_metadata = SyncMetadata(
             last_sync_time=datetime.now(),
             record_count=total_count,
-            sync_status='success',
+            sync_status='market_breadth_success',
             error_message=None,
             remote_max_update_time=remote_max_update_time
         )
@@ -136,7 +136,7 @@ def sync_market_breadth_data_from_remote() -> dict:
         sync_metadata = SyncMetadata(
             last_sync_time=datetime.now(),
             record_count=0,
-            sync_status='failed',
+            sync_status='market_breadth_failed',
             error_message=str(e)[:500],
             remote_max_update_time=None
         )
@@ -159,11 +159,18 @@ def get_market_breadth_sync_status() -> dict:
         breadth_count = cache_db.query(MarketBreadthMetricsCache).count()
         last_sync = get_last_market_breadth_sync_info()
 
+        sync_status = 'never'
+        if last_sync:
+            if last_sync.sync_status == 'market_breadth_success':
+                sync_status = 'success'
+            elif last_sync.sync_status == 'market_breadth_failed':
+                sync_status = 'failed'
+
         return {
             'last_sync_time': last_sync.last_sync_time.isoformat() if last_sync and last_sync.last_sync_time else None,
             'remote_max_update_time': last_sync.remote_max_update_time.isoformat() if last_sync and last_sync.remote_max_update_time else None,
             'record_count': breadth_count,
-            'sync_status': last_sync.sync_status if last_sync else 'never',
+            'sync_status': sync_status,
             'has_data': breadth_count > 0
         }
     finally:

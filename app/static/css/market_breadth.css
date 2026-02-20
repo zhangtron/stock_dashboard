@@ -279,3 +279,55 @@ select[multiple] option:checked {
     background: var(--primary-color) linear-gradient(0deg, var(--primary-color) 0%, var(--primary-color) 100%);
     color: white;
 }
+
+/* 同步按钮样式 */
+#syncBtn {
+    transition: all 0.2s;
+}
+
+#syncBtn:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+}
+
+.spin-icon {
+    animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+    from {
+        transform: rotate(0deg);
+    }
+    to {
+        transform: rotate(360deg);
+    }
+}
+
+/* 成功提示样式 */
+.success-toast {
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    background: #198754;
+    color: white;
+    padding: 1rem 1.5rem;
+    border-radius: 8px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+    display: none;
+    align-items: center;
+    gap: 0.75rem;
+    z-index: 9999;
+    animation: slideIn 0.3s ease-out;
+}
+
+.success-toast i {
+    font-size: 1.25rem;
+}
+
+@media (max-width: 768px) {
+    .success-toast {
+        right: 10px;
+        left: 10px;
+        top: 10px;
+    }
+}

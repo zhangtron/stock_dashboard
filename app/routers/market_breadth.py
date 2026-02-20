@@ -3,11 +3,13 @@ from fastapi.responses import JSONResponse
 from sqlalchemy.orm import Session
 from typing import Optional, List
 from datetime import datetime, date, timedelta
+import logging
 
 from app.cache_database import get_cache_db
 from app.crud import get_market_breadth_data, get_market_breadth_industries
 from app.schemas import MarketBreadthResponse, MarketBreadthIndustriesResponse
 
+logger = logging.getLogger(__name__)
 router = APIRouter(prefix="/market-breadth")
 
 
@@ -89,3 +91,32 @@ async def get_industries(cache_db: Session = Depends(get_cache_db)):
     """
     industries = get_market_breadth_industries(cache_db)
     return {"industries": industries}
+
+
+@router.get("/sync-status")
+async def get_market_breadth_sync_status():
+    """
+    获取市场宽度数据同步状态
+    """
+    from app.market_breadth_sync import get_market_breadth_sync_status
+    try:
+        status = get_market_breadth_sync_status()
+        return status
+    except Exception as e:
+        logger.error(f"获取市场宽度同步状态失败: {e}")
+        raise HTTPException(status_code=500, detail=str(e))
+
+
+@router.post("/sync")
+async def sync_market_breadth():
+    """
+    手动触发市场宽度数据同步（从远程MySQL同步到本地SQLite缓存）
+    """
+    from app.market_breadth_sync import sync_market_breadth_data_from_remote
+    try:
+        logger.info("收到市场宽度数据同步请求")
+        result = sync_market_breadth_data_from_remote()
+        return result
+    except Exception as e:
+        logger.error(f"市场宽度数据同步失败: {e}")
+        raise HTTPException(status_code=500, detail=str(e))
