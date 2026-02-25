@@ -96,6 +96,14 @@ class Events {
       link.addEventListener('click', (e) => {
         const href = link.getAttribute('href');
 
+        // 检查是否是建设中的功能
+        if (link.classList.contains('under-construction')) {
+          e.preventDefault();
+          const featureName = link.getAttribute('data-feature');
+          this.showUnderConstructionToast(featureName);
+          return;
+        }
+
         // 如果链接是 # (占位符)，阻止默认行为
         if (href === '#' || !href) {
           e.preventDefault();
@@ -106,6 +114,47 @@ class Events {
         link.classList.add('active');
       });
     });
+  }
+
+  /**
+   * 显示建设中功能的提示
+   */
+  static showUnderConstructionToast(featureName) {
+    // 移除现有的 toast
+    const existingToast = document.querySelector('.construction-toast');
+    if (existingToast) {
+      existingToast.remove();
+    }
+
+    // 创建 toast 元素
+    const toast = document.createElement('div');
+    toast.className = 'construction-toast';
+    toast.innerHTML = `
+      <div class="construction-toast-content">
+        <span class="construction-toast-icon">🚧</span>
+        <div class="construction-toast-text">
+          <strong>${featureName}</strong>
+          <span class="construction-toast-message">功能正在建设中，敬请期待！</span>
+        </div>
+        <button class="construction-toast-close" onclick="this.parentElement.parentElement.remove()">
+          <i class="bi bi-x"></i>
+        </button>
+      </div>
+    `;
+
+    document.body.appendChild(toast);
+
+    // 自动消失
+    setTimeout(() => {
+      toast.classList.add('show');
+    }, 10);
+
+    setTimeout(() => {
+      toast.classList.remove('show');
+      setTimeout(() => {
+        toast.remove();
+      }, 300);
+    }, 3000);
   }
 
   /**
