@@ -2,16 +2,19 @@ from pydantic_settings import BaseSettings, SettingsConfigDict
 
 
 class Settings(BaseSettings):
-    DB_HOST: str = "mysql.sqlpub.com"
-    DB_PORT: int = 3306
-    DB_USER: str = "chase_zhang"
-    DB_PASSWORD: str = ""  # Set via environment variable
-    DB_NAME: str = "stock_review"
+    # 数据库配置 - 必须通过环境变量设置
+    DB_HOST: str
+    DB_PORT: int
+    DB_USER: str
+    DB_PASSWORD: str
+    DB_NAME: str
 
+    # 应用配置
     APP_NAME: str = "Stock Dashboard"
     APP_ENV: str = "production"
     DEBUG: bool = False
 
+    # 服务器配置
     HOST: str = "0.0.0.0"
     PORT: int = 8000
 
