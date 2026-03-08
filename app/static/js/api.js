@@ -3,7 +3,7 @@
  * 处理所有与后端 API 的通信
  */
 class API {
-  static BASE_URL = 'http://localhost:8000';  // 本地开发服务器地址
+  static BASE_URL = window.location.origin;  // 自动使用当前域名，支持 localhost 和远程服务器
   static TIMEOUT = 30000;
   
   /**
