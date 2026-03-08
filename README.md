@@ -1,38 +1,57 @@
 # 先信投资 - 数据驱动的投资探索
 
-**版本**：v2.0.0
+**版本**：v2.1.0
 **状态**：已上线 🟢
 **在线地址**：https://cicpa.fun
 **GitHub**: https://github.com/zhangtron/stock_dashboard
 
-基于FastAPI + MySQL + SQLite + Bootstrap 5构建的股票基本面选股数据展示系统，支持三主题切换。
+基于FastAPI + MySQL + SQLite + Bootstrap 5构建的股票基本面选股与基金分析展示系统，支持三主题切换。
 
 ## 功能特性
 
 ### 核心功能
+#### 基本面选股
 - **Top 3 推荐**：综合得分前3的股票突出展示
 - **多维度筛选**：股票代码、名称、综合得分范围、投资建议
 - **灵活排序**：支持按任意字段排序，默认按综合得分降序
 - **分页展示**：每页20条数据，快速浏览大量数据
 - **快速搜索**：支持股票代码和名称搜索，实时显示建议
+- **双击板块筛选**：双击板块名称即可快速筛选该板块所有股票
+- **手动同步**：支持手动触发数据同步，实时获取最新数据
 - **可视化展示**：
   - 得分颜色编码（≥80绿色，60-79黄色，<60红色）
   - 投资建议标签（强烈推荐/买入/持有/回避）
   - 响应式设计，支持手机/平板/桌面
 
-### 主题系统（v2.0.0）
+#### 基金分析 🆕
+- **ETF聚类选股**：基于聚类算法的ETF基金选股结果展示
+- **5个聚类卡片**：每个聚类展示5只基金
+- **Rank 1突出显示**：排名第一的基金居中突出展示
+- **纵向列表**：其余基金纵向排列，显示代码、名称和得分
+- **手动同步**：支持手动同步最新选股结果
+
+#### 市场宽度分析
+- **热力图展示**：各行业BIAS>0股票比例的时间序列热力图
+- **默认60天**：默认显示最近60个交易日数据
+- **全量查看**：支持查看全部历史数据
+- **趋势分析**：全市场上涨家数总和的趋势图和5日均线
+- **统计摘要**：日期范围、行业数量、交易日数、平均比例
+- **手动同步**：支持手动同步最新市场宽度数据
+
+### 主题系统
 - **三主题支持**：Teal（默认）、Red、Dark
 - **一键切换**：点击主题按钮循环切换
 - **主题持久化**：主题选择保存在浏览器本地
 - **自动适配**：所有页面元素自动适配当前主题
 - **流畅动画**：主题切换时图标旋转360°
 
-### 关于页面（v2.0.0）
+### 关于页面
 - **网站愿景**：数据驱动的投资探索
-- **核心功能**：四大能力维度分析
+- **核心功能**：基本面选股、基金分析、市场宽度分析
 - **未来规划**：4个开发中的功能
-- **数据来源**：聚宽/Tushare
+- **数据来源**：聚宽/Tushare/AKShare
 - **联系反馈**：邮箱 + GitHub
+- **更新日志**：详细的版本更新记录
 
 ### 性能优化
 - **本地缓存**：使用SQLite本地缓存，减少远程数据库连接
@@ -125,11 +144,13 @@ uvicorn app.main:app --reload
 
 6. **访问应用**
 - Web页面：http://localhost:8000
+- 基本面选股：http://localhost:8000/
+- 基金分析：http://localhost:8000/fund-analysis
+- 市场宽度：http://localhost:8000/market-breadth
 - 关于页面：http://localhost:8000/about
 - API文档：http://localhost:8000/docs
-- API端点：http://localhost:8000/api/screening
 - 健康检查：http://localhost:8000/health
- 
+
 ### API文档
 
 #### 获取基本面选股数据
@@ -149,31 +170,70 @@ GET /api/screening
 - `sort_by`: 排序字段（默认：overall_score）
 - `sort_order`: 排序方向（asc/desc，默认：desc）
 
+#### 获取ETF聚类选股数据 🆕
+```
+GET /api/fund-analysis/etf-clusters
+```
+
 **响应示例：**
 ```json
 {
-  "top3": [
+  "update_date": "2024-03-08",
+  "clusters": [
     {
-      "id": 1,
-      "stock_code": "000001",
-      "stock_name": "平安银行",
-      "overall_score": 95.6,
-      "growth_score": 92.5,
-      "profitability_score": 96.8,
-      "solvency_score": 94.2,
-      "cashflow_score": 93.5,
-      "recommendation": "STRONG_BUY",
-      "pass_filters": true,
-      "calc_time": "2025-01-07T10:30:00"
+      "cluster_name": "聚类1",
+      "funds": [
+        {"fund_code": "159001", "fund_name": "基金1", "rank": 1, "score": 95.5},
+        {"fund_code": "159002", "fund_name": "基金2", "rank": 2, "score": 90.3}
+      ]
     }
-  ],
-  "data": [...],
-  "total": 5000,
-  "page": 1,
-  "page_size": 20,
-  "total_pages": 250
+  ]
 }
 ```
+
+#### 同步ETF聚类选股数据 🆕
+```
+POST /api/fund-analysis/sync
+```
+
+#### 获取市场宽度数据
+```
+GET /api/market-breadth
+```
+
+**查询参数：**
+- `start_date`: 开始日期（可选）
+- `end_date`: 结束日期（可选）
+- `industries`: 行业列表，逗号分隔（可选）
+
+#### 同步市场宽度数据
+```
+POST /api/market-breadth/sync
+```
+
+#### 获取同步状态
+```
+GET /api/sync/status
+```
+
+**响应示例：**
+```json
+{
+  "sync": {
+    "stock": {"last_sync_time": "2024-03-08T05:00:00", "has_data": true},
+    "market_breadth": {"last_sync_time": "2024-03-08T05:00:00", "has_data": true},
+    "etf_cluster": {"last_sync_time": "2024-03-08T05:00:00", "has_data": true}
+  }
+}
+```
+
+#### 手动触发数据同步
+```
+POST /api/sync/trigger?force=false
+```
+
+**查询参数：**
+- `force`: 是否强制全量同步（true/false，默认：false）
 
 ## 部署到Zeabur
 
@@ -276,14 +336,21 @@ stock-dashboard/
 ├── app/
 │   ├── __init__.py
 │   ├── config.py              # 配置管理
-│   ├── database.py            # 数据库连接
-│   ├── models.py              # SQLAlchemy模型
+│   ├── database.py            # 远程MySQL连接
+│   ├── cache_database.py      # 本地SQLite缓存连接
+│   ├── models.py              # SQLAlchemy模型（远程+缓存）
 │   ├── schemas.py             # Pydantic schemas
-│   ├── crud.py                # 数据库操作
+│   ├── crud.py                # 数据库操作（缓存）
+│   ├── data_sync.py           # 数据同步主模块
+│   ├── etf_cluster_sync.py    # ETF聚类数据同步 🆕
+│   ├── market_breadth_sync.py # 市场宽度数据同步
+│   ├── sync_scheduler.py      # APScheduler定时任务
 │   ├── main.py                # FastAPI应用入口
 │   ├── routers/
 │   │   ├── __init__.py
-│   │   └── screening.py       # 基本面选股API
+│   │   ├── screening.py       # 基本面选股API
+│   │   ├── fund_analysis.py   # 基金分析API 🆕
+│   │   └── market_breadth.py  # 市场宽度API
 │   └── static/
 │       ├── css/
 │       │   ├── variables-updated.css  # 主题变量
@@ -291,17 +358,22 @@ stock-dashboard/
 │       │   ├── layout.css           # 布局样式
 │       │   ├── components.css       # 组件样式
 │       │   ├── responsive.css       # 响应式样式
-│       │   └── about.css           # 关于页面样式
+│       │   ├── about.css           # 关于页面样式
+│       │   └── fund_analysis.css   # 基金分析样式 🆕
 │       ├── js/
 │       │   ├── theme.js             # 主题管理器
 │       │   ├── api.js               # API 调用
 │       │   ├── skeleton.js          # 骨架屏
 │       │   ├── components.js        # 组件渲染
 │       │   ├── events.js            # 事件处理
-│       │   └── parallax.js          # 视差效果
+│       │   ├── parallax.js          # 视差效果
+│       │   ├── market_breadth.js   # 市场宽度逻辑
+│       │   └── fund_analysis.js    # 基金分析逻辑 🆕
 │       └── templates/
 │           ├── base.html            # 基础模板
 │           ├── screening.html       # 基本面选股页面
+│           ├── fund_analysis.html   # 基金分析页面 🆕
+│           ├── market_breadth.html  # 市场宽度页面
 │           └── about.html           # 关于页面
 ├── .env                       # 环境变量（本地用，不提交Git）
 ├── .env.example               # 环境变量示例
@@ -309,9 +381,8 @@ stock-dashboard/
 ├── requirements.txt           # Python依赖
 ├── zeabur.yaml               # Zeabur部署配置
 ├── README.md                 # 项目文档
-├── USER_GUIDE.md             # 使用文档
-├── TODO.md                   # 待开发任务
-└── CHANGELOG_V2.0.md         # 开发存档
+├── CLAUDE.md                 # Claude Code开发指南
+└── reset_cache_db.py         # 重置缓存数据库脚本
 ```
 
 ## 开发说明
