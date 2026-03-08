@@ -1,0 +1,254 @@
+/**
+ * 基金分析页面样式 - ETF聚类选股
+ */
+
+/* 聚类选股卡片容器 */
+.cluster-section {
+    margin-top: var(--spacing-lg);
+}
+
+/* 5列卡片布局 */
+.cards-container.five-column {
+    display: grid;
+    grid-template-columns: repeat(5, 1fr);
+    gap: var(--spacing-md);
+}
+
+@media (max-width: 1400px) {
+    .cards-container.five-column {
+        grid-template-columns: repeat(3, 1fr);
+    }
+}
+
+@media (max-width: 992px) {
+    .cards-container.five-column {
+        grid-template-columns: repeat(2, 1fr);
+    }
+}
+
+@media (max-width: 576px) {
+    .cards-container.five-column {
+        grid-template-columns: 1fr;
+    }
+}
+
+/* 聚类卡片 */
+.cluster-card {
+    background: var(--glass-bg-xl);
+    backdrop-filter: blur(var(--glass-blur));
+    -webkit-backdrop-filter: blur(var(--glass-blur));
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    border-radius: var(--radius-xl);
+    padding: var(--spacing-lg);
+    transition: transform var(--transition-normal), box-shadow var(--transition-normal);
+    box-shadow: var(--shadow-lg);
+    display: flex;
+    flex-direction: column;
+    min-height: 400px;
+}
+
+.cluster-card:hover {
+    transform: translateY(-4px);
+    box-shadow: var(--shadow-xl);
+}
+
+/* 聚类卡片头部 */
+.cluster-card-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: var(--spacing-md);
+    padding-bottom: var(--spacing-sm);
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.cluster-name {
+    font-size: 16px;
+    font-weight: 700;
+    color: var(--text-primary);
+}
+
+.cluster-badge {
+    font-size: 20px;
+}
+
+/* Rank 1 基金容器 - 居中突出显示 */
+.rank1-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: var(--spacing-lg) 0;
+    background: var(--glass-bg);
+    border-radius: var(--radius-lg);
+    margin-bottom: var(--spacing-md);
+    min-height: 160px;
+}
+
+.rank1-fund {
+    text-align: center;
+}
+
+.rank1-icon {
+    font-size: 48px;
+    margin-bottom: var(--spacing-xs);
+}
+
+.rank1-code {
+    font-size: 18px;
+    font-weight: 700;
+    color: var(--card-code-color);
+    margin-bottom: var(--spacing-xs);
+}
+
+.rank1-name {
+    font-size: 16px;
+    font-weight: 600;
+    color: var(--card-name-color);
+    margin-bottom: var(--spacing-sm);
+}
+
+.rank1-score {
+    font-size: 32px;
+    font-weight: 700;
+    color: var(--primary-color);
+}
+
+/* 其他基金列表 - 纵向排列 */
+.other-funds-list {
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing-xs);
+    flex: 1;
+}
+
+.other-fund-item {
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-xs);
+    padding: var(--spacing-xs) var(--spacing-sm);
+    background: rgba(255, 255, 255, 0.2);
+    border-radius: var(--radius-md);
+    transition: background var(--transition-fast);
+}
+
+.other-fund-item:hover {
+    background: var(--glass-bg);
+}
+
+.fund-rank {
+    font-size: 12px;
+    font-weight: 700;
+    color: var(--text-secondary);
+    min-width: 20px;
+    text-align: center;
+}
+
+.fund-info {
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-xs);
+    flex: 1;
+}
+
+.fund-info strong {
+    font-size: 13px;
+    color: var(--card-code-color);
+}
+
+.fund-name {
+    font-size: 13px;
+    color: var(--text-secondary);
+}
+
+.fund-score {
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--primary-color);
+}
+
+/* 错误提示 */
+.error-toast {
+    position: fixed;
+    top: 80px;
+    right: 20px;
+    z-index: 9999;
+    background: var(--glass-bg-xl);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    border: 1px solid rgba(239, 68, 68, 0.3);
+    border-left: 4px solid #ef4444;
+    border-radius: 12px;
+    padding: 16px;
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    min-width: 300px;
+}
+
+.error-toast i {
+    font-size: 20px;
+    color: #ef4444;
+    flex-shrink: 0;
+}
+
+.error-toast span {
+    color: var(--text-primary);
+    font-size: 14px;
+}
+
+/* 主题适配 */
+[data-theme="teal"] .rank1-score,
+[data-theme="teal"] .fund-score {
+    color: #11aac3;
+}
+
+[data-theme="red"] .rank1-score,
+[data-theme="red"] .fund-score {
+    color: #f5465f;
+}
+
+[data-theme="dark"] .rank1-score,
+[data-theme="dark"] .fund-score {
+    color: #a78bfa;
+}
+
+/* 移动端适配 */
+@media (max-width: 768px) {
+    .cluster-card {
+        min-height: auto;
+    }
+
+    .rank1-container {
+        min-height: 120px;
+    }
+
+    .rank1-icon {
+        font-size: 36px;
+    }
+
+    .rank1-code {
+        font-size: 16px;
+    }
+
+    .rank1-name {
+        font-size: 14px;
+    }
+
+    .rank1-score {
+        font-size: 24px;
+    }
+
+    .error-toast {
+        top: 60px;
+        right: 10px;
+        left: 10px;
+        min-width: auto;
+    }
+
+    .cluster-card-header {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: var(--spacing-xs);
+    }
+}

@@ -46,18 +46,13 @@
                 <i class="bi bi-speedometer2"></i>
                 <span>基本面分析</span>
             </a>
-            <a href="/macro-analysis" class="nav-link {% if request.url.path == '/macro-analysis' %}active{% endif %}">
-                <i class="bi bi-lightbulb"></i>
-                <span>宏观分析</span>
-            </a>
             <a href="/market-breadth" class="nav-link {% if request.url.path == '/market-breadth' %}active{% endif %}">
                 <i class="bi bi-grid-3x3"></i>
                 <span>市场宽度</span>
             </a>
-            <a href="#" class="nav-link under-construction" data-feature="基金分析">
+            <a href="/fund-analysis" class="nav-link {% if request.url.path == '/fund-analysis' %}active{% endif %}">
                 <i class="bi bi-currency-yen"></i>
                 <span>基金分析</span>
-                <span class="construction-badge">🚧</span>
             </a>
             <a href="#" class="nav-link under-construction" data-feature="策略分享">
                 <i class="bi bi-graph-up"></i>

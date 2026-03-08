@@ -88,10 +88,10 @@ def sync_market_breadth_data_from_remote() -> dict:
                 .first()
 
             cache_item_data = {
-                'trade_date': remote_item.trade_date,
                 'industries_data': remote_item.industries_data,
                 'market_breadth': remote_item.market_breadth,
                 'total_breadth': remote_item.total_breadth,
+                'trade_date': remote_item.trade_date,
                 'update_time': remote_item.update_time
             }
 
@@ -112,11 +112,11 @@ def sync_market_breadth_data_from_remote() -> dict:
         total_count = cache_db.query(MarketBreadthMetricsCache).count()
 
         sync_metadata = SyncMetadata(
-            last_sync_time=datetime.now(),
+            last_sync_time=datetime.now().isoformat(),
             record_count=total_count,
             sync_status='market_breadth_success',
             error_message=None,
-            remote_max_update_time=remote_max_update_time
+            remote_max_update_time=remote_max_update_time.isoformat() if remote_max_update_time else None
         )
         cache_db.add(sync_metadata)
         cache_db.commit()
@@ -134,7 +134,7 @@ def sync_market_breadth_data_from_remote() -> dict:
         logger.error(f"市场宽度数据同步失败: {e}")
 
         sync_metadata = SyncMetadata(
-            last_sync_time=datetime.now(),
+            last_sync_time=datetime.now().isoformat(),
             record_count=0,
             sync_status='market_breadth_failed',
             error_message=str(e)[:500],
@@ -167,8 +167,8 @@ def get_market_breadth_sync_status() -> dict:
                 sync_status = 'failed'
 
         return {
-            'last_sync_time': last_sync.last_sync_time.isoformat() if last_sync and last_sync.last_sync_time else None,
-            'remote_max_update_time': last_sync.remote_max_update_time.isoformat() if last_sync and last_sync.remote_max_update_time else None,
+            'last_sync_time': last_sync.last_sync_time if last_sync and last_sync.last_sync_time else None,
+            'remote_max_update_time': last_sync.remote_max_update_time if last_sync and last_sync.remote_max_update_time else None,
             'record_count': breadth_count,
             'sync_status': sync_status,
             'has_data': breadth_count > 0

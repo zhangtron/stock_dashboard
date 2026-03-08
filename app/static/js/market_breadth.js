@@ -260,19 +260,18 @@ class MarketBreadth {
 
         this.trendChart = echarts.init(el);
 
-        const { dates, columns, data } = this.currentData;
-        const sumIndex = columns.indexOf('sum');
+        const { dates, total_breadth_data } = this.currentData;
 
-        // 提取sum数据
-        const sumValues = data.map(row => row[sumIndex]);
+        // 提取 total_breadth 数据（全市场上涨家数总和）
+        const totalBreadthValues = total_breadth_data || [];
 
         // 计算移动平均线（5日）
         const ma5 = [];
-        for (let i = 0; i < sumValues.length; i++) {
+        for (let i = 0; i < totalBreadthValues.length; i++) {
             if (i < 4) {
                 ma5.push(null);
             } else {
-                const sum = sumValues.slice(i - 4, i + 1).reduce((a, b) => a + b, 0);
+                const sum = totalBreadthValues.slice(i - 4, i + 1).reduce((a, b) => a + b, 0);
                 ma5.push(Math.round(sum / 5));
             }
         }
@@ -308,7 +307,7 @@ class MarketBreadth {
             },
             yAxis: {
                 type: 'value',
-                name: '上涨家数总和'
+                name: '全市场上涨家数总和'
             },
             dataZoom: [
                 {
@@ -326,9 +325,9 @@ class MarketBreadth {
             ],
             series: [
                 {
-                    name: 'sum值',
+                    name: '全市场上涨家数总和',
                     type: 'line',
-                    data: sumValues,
+                    data: totalBreadthValues,
                     smooth: true,
                     symbol: 'circle',
                     symbolSize: 6,
@@ -389,39 +388,20 @@ class MarketBreadth {
         this.heatmapChart = echarts.init(el);
 
         const { dates, columns, data } = this.currentData;
-        const industryCount = columns.length - 2;  // 排除 index_all 和 sum
+        // 只使用行业数据，排除 index_all 和 sum 列
         const industryColumns = columns.slice(0, -2);
-        const specialColumns = columns.slice(-2);  // ['index_all', 'sum']
 
         // 交换x轴和y轴：行业在顶部(x轴)，日期在左侧(y轴)
         // 数据格式: [x, y, value] 其中 x=列索引, y=日期索引（ECharts heatmap格式）
 
         // 构建行业数据
         const industryData = [];
-        for (let j = 0; j < industryCount; j++) {
+        for (let j = 0; j < industryColumns.length; j++) {
             for (let i = 0; i < dates.length; i++) {
                 const value = data[i][j];
                 if (value !== null && value !== undefined) {
                     industryData.push([j, i, value]);
                 }
-            }
-        }
-
-        // 构建 index_all 数据
-        const indexAllData = [];
-        for (let i = 0; i < dates.length; i++) {
-            const value = data[i][industryCount];
-            if (value !== null && value !== undefined) {
-                indexAllData.push([0, i, value]);
-            }
-        }
-
-        // 构建 sum 数据
-        const sumData = [];
-        for (let i = 0; i < dates.length; i++) {
-            const value = data[i][industryCount + 1];
-            if (value !== null && value !== undefined) {
-                sumData.push([0, i, value]);
             }
         }
 
@@ -433,14 +413,10 @@ class MarketBreadth {
         const totalIndustries = industryColumns.length;
         const totalDates = dates.length;
 
-        // 计算行业显示百分比：前31个行业
-        const targetIndustries = 31;
-        const industryDisplayPercent = totalIndustries > 0
-            ? Math.min(100, Math.round((targetIndustries / totalIndustries) * 100))
-            : 100;
+        // 计算行业显示百分比：显示所有行业
+        const industryDisplayPercent = 100;
 
-        // 计算日期显示百分比：最近60天（可调整此值来改变默认显示范围）
-        // 515天数据中显示60天 ≈ 11.6%
+        // 计算日期显示百分比：最近30天
         const targetDates = 30;
         const dateDisplayPercent = totalDates > 0
             ? Math.min(100, Math.round((targetDates / totalDates) * 100))
@@ -467,25 +443,25 @@ class MarketBreadth {
                 {
                     type: 'slider',
                     show: true,
-                    xAxisIndex: [0],  // 只控制第一个xAxis（行业数据）
+                    xAxisIndex: 0,
                     start: 0,
-                    end: industryDisplayPercent,  // 初始显示前31个行业
+                    end: industryDisplayPercent,
                     bottom: '2%',
                     height: 20,
                     handleSize: '80%',
                     textStyle: {
                         fontSize: 10
                     },
-                    zoomLock: false,  // 允许拖动
-                    brushSelect: false  // 禁用框选
+                    zoomLock: false,
+                    brushSelect: false
                 },
-                // 纵向滑块（日期）- 默认显示最近60天
+                // 纵向滑块（日期）
                 {
                     type: 'slider',
                     show: true,
-                    yAxisIndex: [0, 1, 2],  // 控制所有三个 yAxis（行业、index_all、sum）
-                    start: Math.max(0, 100 - dateDisplayPercent),  // 从 88% 开始（最新60天）
-                    end: 100,  // 到 100% 结束（最新数据）
+                    yAxisIndex: 0,
+                    start: Math.max(0, 100 - dateDisplayPercent),
+                    end: 100,
                     right: '2%',
                     width: 18,
                     height: '75%',
@@ -495,244 +471,87 @@ class MarketBreadth {
                     },
                     zoomLock: false,
                     orient: 'vertical',
-                    showDetail: false,  // 不显示详细数值
-                    filterMode: 'filter'  // 过滤模式
+                    showDetail: false,
+                    filterMode: 'filter'
                 },
-                // 鼠标交互（日期）- 支持鼠标滚轮缩放和拖拽
+                // 鼠标交互（日期）
                 {
                     type: 'inside',
-                    yAxisIndex: [0, 1, 2],  // 控制所有三个 yAxis
-                    start: Math.max(0, 100 - dateDisplayPercent),  // 初始也只显示最近60天
+                    yAxisIndex: 0,
+                    start: Math.max(0, 100 - dateDisplayPercent),
                     end: 100,
-                    zoomOnMouseWheel: true,  // 支持鼠标滚轮缩放
-                    moveOnMouseMove: true,    // 支持鼠标拖动平移
-                    moveOnMouseWheel: false   // 禁用滚轮平移
+                    zoomOnMouseWheel: true,
+                    moveOnMouseMove: true,
+                    moveOnMouseWheel: false
                 }
             ],
             tooltip: {
                 position: 'top',
                 formatter: (params) => {
-                    // 数据格式: [x, y, value] 其中 x=列索引, y=日期索引
                     const dateIndex = params.value[1];
                     const date = dates[dateIndex];
-
-                    // 判断是哪个系列
-                    if (params.seriesName === '行业数据') {
-                        const colIndex = params.value[0];
-                        const column = industryColumns[colIndex];
-                        const value = params.value[2];
-                        return `${date}<br/><strong>${column}</strong><br/>BIAS>0比例: <strong>${value}%</strong>`;
-                    } else if (params.seriesName === '全市场汇总') {
-                        const value = params.value[2];
-                        return `${date}<br/><strong>index_all (全市场汇总)</strong><br/>BIAS>0比例: <strong>${value}%</strong>`;
-                    } else if (params.seriesName === '行业总和') {
-                        const value = params.value[2];
-                        return `${date}<br/><strong>sum (各行业总和)</strong><br/>汇总值: <strong>${value}</strong>`;
-                    }
-                    return '';
+                    const colIndex = params.value[0];
+                    const column = industryColumns[colIndex];
+                    const value = params.value[2];
+                    return `${date}<br/><strong>${column}</strong><br/>BIAS>0比例: <strong>${value}%</strong>`;
                 }
             },
-            grid: [
-                // 行业数据 grid (占主要区域)
-                {
-                    height: '70%',     // 增加高度以显示更多数据
-                    top: '10%',        // 为顶部标签留空间
-                    left: '7%',        // 为右侧dataZoom留空间
-                    right: '30%',      // 给 index_all 和 sum 更多空间
-                    containLabel: false
+            grid: {
+                height: '75%',
+                top: '10%',
+                left: '5%',
+                right: '5%',
+                containLabel: false
+            },
+            xAxis: {
+                type: 'category',
+                data: industryColumns,
+                position: 'top',
+                splitArea: {
+                    show: true
                 },
-                // index_all grid
-                {
-                    height: '70%',
-                    top: '10%',
-                    left: '73%',
-                    width: '10%',   // 固定宽度
-                    containLabel: false
-                },
-                // sum grid
-                {
-                    height: '70%',
-                    top: '10%',
-                    left: '85%',
-                    width: '10%',   // 固定宽度
-                    containLabel: false
+                axisLabel: {
+                    rotate: 45,
+                    interval: 'auto',
+                    fontSize: 10
                 }
-            ],
-            xAxis: [
-                // 行业数据 x轴（顶部）
-                {
-                    type: 'category',
-                    data: industryColumns,
-                    position: 'top',
-                    splitArea: {
-                        show: true
-                    },
-                    axisLabel: {
-                        rotate: 45,
-                        interval: 'auto',  // 自动计算显示间隔，避免重叠
-                        fontSize: 10
-                    },
-                    gridIndex: 0
+            },
+            yAxis: {
+                type: 'category',
+                data: dates,
+                splitArea: {
+                    show: true
                 },
-                // index_all x轴
-                {
-                    type: 'category',
-                    data: ['index_all'],
-                    position: 'top',
-                    splitArea: {
-                        show: true
-                    },
-                    axisLabel: {
-                        fontSize: 10,
-                        formatter: () => '📊\n全市场'
-                    },
-                    gridIndex: 1
-                },
-                // sum x轴
-                {
-                    type: 'category',
-                    data: ['sum'],
-                    position: 'top',
-                    splitArea: {
-                        show: true
-                    },
-                    axisLabel: {
-                        fontSize: 10,
-                        formatter: () => '📈\n总和'
-                    },
-                    gridIndex: 2
+                axisLabel: {
+                    fontSize: 9
                 }
-            ],
-            yAxis: [
-                // 行业数据 y轴
-                {
-                    type: 'category',
-                    data: dates,
-                    splitArea: {
-                        show: true
-                    },
-                    axisLabel: {
-                        fontSize: 9
-                    },
-                    gridIndex: 0
+            },
+            visualMap: {
+                min: 0,
+                max: 100,
+                calculable: true,
+                orient: 'horizontal',
+                left: 'center',
+                bottom: '6%',
+                inRange: {
+                    color: [
+                        '#11aac3',  // 0 - 青绿色
+                        '#07bdae',  // 20 - 青色
+                        '#34ebe0',  // 40 - 亮青色
+                        '#d0ffae',  // 60 - 浅黄绿色
+                        '#f5465f',  // 80 - 粉红色
+                        '#a53354'   // 100 - 深粉红色
+                    ]
                 },
-                // index_all y轴
-                {
-                    type: 'category',
-                    data: dates,
-                    splitArea: {
-                        show: true
-                    },
-                    axisLabel: {
-                        show: false
-                    },
-                    gridIndex: 1
-                },
-                // sum y轴
-                {
-                    type: 'category',
-                    data: dates,
-                    splitArea: {
-                        show: true
-                    },
-                    axisLabel: {
-                        show: false
-                    },
-                    gridIndex: 2
-                }
-            ],
-            visualMap: [
-                // 行业数据和全市场汇总的颜色映射（0-100）
-                {
-                    min: 0,
-                    max: 100,
-                    calculable: true,
-                    orient: 'horizontal',
-                    left: 'center',
-                    bottom: '6%',
-                    inRange: {
-                        // 青绿到粉红渐变
-                        color: [
-                            '#11aac3',  // 0 - 青绿色
-                            '#07bdae',  // 20 - 青色
-                            '#34ebe0',  // 40 - 亮青色
-                            '#d0ffae',  // 60 - 浅黄绿色
-                            '#f5465f',  // 80 - 粉红色
-                            '#a53354'   // 100 - 深粉红色
-                        ]
-                    },
-                    text: ['高 (100)', '低 (0)'],
-                    seriesIndex: [0, 1]  // 控制行业数据和全市场汇总
-                },
-                // 行业总和的颜色映射（0-5000），使用相同的颜色渐变
-                {
-                    min: 0,
-                    max: 5000,
-                    calculable: false,
-                    orient: 'horizontal',
-                    left: 'center',
-                    bottom: '2%',
-                    inRange: {
-                        // 使用相同的青绿到粉红渐变
-                        color: [
-                            '#11aac3',  // 0 - 青绿色
-                            '#07bdae',  // 1000 - 青色
-                            '#34ebe0',  // 2000 - 亮青色
-                            '#d0ffae',  // 3000 - 浅黄绿色
-                            '#f5465f',  // 4000 - 粉红色
-                            '#a53354'   // 5000 - 深粉红色
-                        ]
-                    },
-                    text: ['多 (5000)', '少 (0)'],
-                    seriesIndex: [2],  // 控制行业总和
-                    show: false  // 隐藏控制器，避免混淆
-                }
-            ],
+                text: ['高 (100)', '低 (0)']
+            },
             series: [
                 {
                     name: '行业数据',
                     type: 'heatmap',
                     data: industryData,
-                    xAxisIndex: 0,
-                    yAxisIndex: 0,
                     label: {
                         show: false
-                    },
-                    emphasis: {
-                        itemStyle: {
-                            shadowBlur: 10,
-                            shadowColor: 'rgba(0, 0, 0, 0.5)'
-                        }
-                    }
-                },
-                {
-                    name: '全市场汇总',
-                    type: 'heatmap',
-                    data: indexAllData,
-                    xAxisIndex: 1,
-                    yAxisIndex: 1,
-                    label: {
-                        show: true,
-                        fontSize: 10,
-                        formatter: (params) => params.value[2] + '%'
-                    },
-                    emphasis: {
-                        itemStyle: {
-                            shadowBlur: 10,
-                            shadowColor: 'rgba(0, 0, 0, 0.5)'
-                        }
-                    }
-                },
-                {
-                    name: '行业总和',
-                    type: 'heatmap',
-                    data: sumData,
-                    xAxisIndex: 2,
-                    yAxisIndex: 2,
-                    label: {
-                        show: true,
-                        fontSize: 10,
-                        formatter: (params) => params.value[2]
                     },
                     emphasis: {
                         itemStyle: {

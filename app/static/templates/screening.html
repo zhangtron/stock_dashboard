@@ -74,10 +74,22 @@
 
 <!-- 筛选条件 -->
 <section class="filter-section">
-    <h2 class="section-title">
-        <i class="bi bi-funnel section-icon"></i>
-        筛选条件
-    </h2>
+    <div class="d-flex justify-content-between align-items-center mb-3">
+        <h2 class="section-title mb-0">
+            <i class="bi bi-funnel section-icon"></i>
+            筛选条件
+        </h2>
+        <div class="d-flex align-items-center gap-2">
+            <button id="syncBtn" class="btn btn-sm btn-outline-primary">
+                <i class="bi bi-arrow-clockwise"></i>
+                <span id="syncBtnText">同步数据</span>
+            </button>
+            <span id="lastUpdateTime" class="text-muted small">
+                <i class="bi bi-clock"></i>
+                加载中...
+            </span>
+        </div>
+    </div>
     <div class="filter-container glass">
         <div class="filter-row">
             <div class="filter-item">
@@ -97,14 +109,16 @@
                 <input type="number" id="maxScore" min="0" max="100" placeholder="100">
             </div>
             <div class="filter-item">
-                <label for="recommendation">投资建议</label>
+                <label for="grade">评级</label>
                 <div class="select-wrapper">
-                    <select id="recommendation">
+                    <select id="grade">
                         <option value="">全部</option>
-                        <option value="STRONG_BUY">强烈推荐</option>
-                        <option value="BUY">买入</option>
-                        <option value="HOLD">持有</option>
-                        <option value="AVOID">回避</option>
+                        <option value="A">A</option>
+                        <option value="B">B</option>
+                        <option value="C">C</option>
+                        <option value="D">D</option>
+                        <option value="E">E</option>
+                        <option value="F">F</option>
                     </select>
                     <i class="bi bi-chevron-down select-arrow"></i>
                 </div>
@@ -140,25 +154,22 @@
                         <th class="sort-icon" data-sort="stock_name">
                             股票名称 <i class="bi bi-arrow-down-up" style="opacity: 0.5;"></i>
                         </th>
-                        <th class="sort-icon" data-sort="overall_score">
+                        <th class="sort-icon" data-sort="sector_name">
+                            板块名称 <i class="bi bi-arrow-down-up" style="opacity: 0.5;"></i>
+                        </th>
+                        <th class="sort-icon" data-sort="total_score">
                             综合得分 <i class="bi bi-arrow-down-up" style="opacity: 0.5;"></i>
                         </th>
-                        <th class="sort-icon" data-sort="growth_score">
-                            成长能力 <i class="bi bi-arrow-down-up" style="opacity: 0.5;"></i>
+                        <th class="sort-icon" data-sort="grade">
+                            评级 <i class="bi bi-arrow-down-up" style="opacity: 0.5;"></i>
                         </th>
-                        <th class="sort-icon" data-sort="profitability_score">
-                            盈利能力 <i class="bi bi-arrow-down-up" style="opacity: 0.5;"></i>
+                        <th class="sort-icon" data-sort="data_date">
+                            财务报表日期 <i class="bi bi-arrow-down-up" style="opacity: 0.5;"></i>
                         </th>
-                        <th class="sort-icon" data-sort="solvency_score">
-                            偿债能力 <i class="bi bi-arrow-down-up" style="opacity: 0.5;"></i>
-                        </th>
-                        <th class="sort-icon" data-sort="cashflow_score">
-                            现金流 <i class="bi bi-arrow-down-up" style="opacity: 0.5;"></i>
-                        </th>
-                        <th>投资建议</th>
-                        <th class="sort-icon" data-sort="calc_time">
+                        <th class="sort-icon" data-sort="updated_at">
                             计算时间 <i class="bi bi-arrow-down-up" style="opacity: 0.5;"></i>
                         </th>
+                        <th>详情</th>
                     </tr>
                 </thead>
             <tbody id="tableBody">

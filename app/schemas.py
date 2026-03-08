@@ -3,22 +3,21 @@ from typing import Optional, List, Dict, Any
 from datetime import datetime, date
 
 
-class StockFundamentalScreeningSchema(BaseModel):
+class FinancialScoresSchema(BaseModel):
     id: int
     stock_code: str
     stock_name: Optional[str] = None
     overall_score: Optional[float] = None
-    growth_score: Optional[float] = None
-    profitability_score: Optional[float] = None
-    solvency_score: Optional[float] = None
-    cashflow_score: Optional[float] = None
+    total_score: Optional[float] = None
+    grade: Optional[str] = None
     recommendation: Optional[str] = None
-    pass_filters: Optional[bool] = None
-    latest_quarter: Optional[date] = None
-    report_publ_date: Optional[date] = None
-    calc_time: Optional[datetime] = None
-    create_time: Optional[datetime] = None
-    update_time: Optional[datetime] = None
+    metrics_detail: Optional[str] = None
+    metrics_detail_parsed: List[Dict[str, Any]] = Field(default_factory=list, description="解析后的指标详情")
+    completeness_ratio: Optional[float] = None
+    sector_name: Optional[str] = None
+    data_date: Optional[str] = None
+    created_at: Optional[str] = None
+    updated_at: Optional[str] = None
     
     class Config:
         from_attributes = True
@@ -29,6 +28,7 @@ class ScreeningFilterParams(BaseModel):
     page_size: int = Field(20, ge=1, le=100, description="每页数量")
     stock_code: Optional[str] = Field(None, description="股票代码")
     stock_name: Optional[str] = Field(None, description="股票名称")
+    sector_name: Optional[str] = Field(None, description="板块名称")
     search: Optional[str] = Field(None, description="搜索关键词（代码或名称，OR逻辑）")
     min_overall_score: Optional[float] = Field(None, ge=0, le=100, description="最小综合得分")
     max_overall_score: Optional[float] = Field(None, ge=0, le=100, description="最大综合得分")
@@ -39,8 +39,8 @@ class ScreeningFilterParams(BaseModel):
 
 
 class ScreeningResponse(BaseModel):
-    top3: List[StockFundamentalScreeningSchema] = Field(default_factory=list, description="Top 3推荐")
-    data: List[StockFundamentalScreeningSchema] = Field(default_factory=list, description="当前页数据")
+    top3: List[FinancialScoresSchema] = Field(default_factory=list, description="Top 3推荐")
+    data: List[FinancialScoresSchema] = Field(default_factory=list, description="当前页数据")
     total: int = Field(0, description="总数据量")
     page: int = Field(1, description="当前页")
     page_size: int = Field(20, description="每页数量")
@@ -50,6 +50,9 @@ class ScreeningResponse(BaseModel):
 class SearchSuggestionItem(BaseModel):
     stock_code: str = Field(..., description="股票代码")
     stock_name: Optional[str] = Field(None, description="股票名称")
+    overall_score: Optional[float] = Field(None, description="综合得分")
+    grade: Optional[str] = Field(None, description="评级")
+    sector_name: Optional[str] = Field(None, description="板块名称")
 
 
 class SearchSuggestionsResponse(BaseModel):

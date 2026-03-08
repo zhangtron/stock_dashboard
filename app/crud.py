@@ -1,13 +1,13 @@
-from typing import List, Optional, Tuple
+import json
+from typing import List, Optional, Tuple, Dict, Any
 from datetime import datetime
 from sqlalchemy.orm import Session
 from sqlalchemy import desc, asc, or_
 from app.models import (
-    StockFundamentalScreening,
-    StockFundamentalScreeningCache,
-    MacroDataCache,
-    BondChinaYieldCache,
-    MarketBreadthMetricsCache
+    FinancialScoresCache,
+    MarketBreadthMetricsCache,
+    EtfClusterSelection,
+    EtfClusterSelectionCache
 )
 from app.schemas import ScreeningFilterParams
 
@@ -15,217 +15,179 @@ from app.schemas import ScreeningFilterParams
 def get_screening_list(
     db: Session,
     params: ScreeningFilterParams
-) -> Tuple[List[StockFundamentalScreeningCache], int]:
+) -> Tuple[List[Dict[str, Any]], int]:
     """
     从本地缓存获取基本面选股数据列表
     返回: (数据列表, 总数)
     """
-    query = db.query(StockFundamentalScreeningCache)
+    query = db.query(FinancialScoresCache)
     
+    # 处理搜索参数
     if params.search:
         query = query.filter(
             or_(
-                StockFundamentalScreeningCache.stock_code.like(f"%{params.search}%"),
-                StockFundamentalScreeningCache.stock_name.like(f"%{params.search}%")
+                FinancialScoresCache.stock_code.like(f"%{params.search}%"),
+                FinancialScoresCache.stock_name.like(f"%{params.search}%")
             )
         )
-    else:
-        if params.stock_code:
-            query = query.filter(StockFundamentalScreeningCache.stock_code.like(f"%{params.stock_code}%"))
-        
-        if params.stock_name:
-            query = query.filter(StockFundamentalScreeningCache.stock_name.like(f"%{params.stock_name}%"))
     
+    # 处理其他筛选参数（这些参数可以与搜索参数组合使用）
+    if params.stock_code and not params.search:
+        query = query.filter(FinancialScoresCache.stock_code.like(f"%{params.stock_code}%"))
+    
+    if params.stock_name and not params.search:
+        query = query.filter(FinancialScoresCache.stock_name.like(f"%{params.stock_name}%"))
+    
+    # 板块筛选应该可以与搜索参数组合使用
+    if params.sector_name:
+        query = query.filter(FinancialScoresCache.sector_name == params.sector_name)
+    
+    # 映射字段名：overall_score -> total_score
     if params.min_overall_score is not None:
-        query = query.filter(StockFundamentalScreeningCache.overall_score >= params.min_overall_score)
+        query = query.filter(FinancialScoresCache.total_score >= params.min_overall_score)
     
     if params.max_overall_score is not None:
-        query = query.filter(StockFundamentalScreeningCache.overall_score <= params.max_overall_score)
+        query = query.filter(FinancialScoresCache.total_score <= params.max_overall_score)
     
-    if params.pass_filters is not None:
-        query = query.filter(StockFundamentalScreeningCache.pass_filters == params.pass_filters)
+    # pass_filters字段在新的financial_scores表中不存在，跳过
+    # if params.pass_filters is not None:
+    #     query = query.filter(FinancialScoresCache.pass_filters == params.pass_filters)
     
+    # 映射字段名：recommendation -> grade
     if params.recommendation:
-        query = query.filter(StockFundamentalScreeningCache.recommendation == params.recommendation)
+        query = query.filter(FinancialScoresCache.grade == params.recommendation)
     
     total = query.count()
     
-    if params.sort_by and hasattr(StockFundamentalScreeningCache, params.sort_by):
-        sort_column = getattr(StockFundamentalScreeningCache, params.sort_by)
+    # 映射排序字段
+    sort_by = params.sort_by
+    if sort_by == 'overall_score':
+        sort_by = 'total_score'
+    
+    if sort_by and hasattr(FinancialScoresCache, sort_by):
+        sort_column = getattr(FinancialScoresCache, sort_by)
         if params.sort_order == 'desc':
             query = query.order_by(desc(sort_column))
         else:
             query = query.order_by(asc(sort_column))
     
     offset = (params.page - 1) * params.page_size
-    data = query.offset(offset).limit(params.page_size).all()
+    raw_data = query.offset(offset).limit(params.page_size).all()
+    
+    # 处理数据，解析metrics_detail并添加板块名称
+    data = []
+    for item in raw_data:
+        # 解析metrics_detail JSON
+        metrics_detail_parsed = []
+        if item.metrics_detail:
+            try:
+                metrics_dict = json.loads(item.metrics_detail)
+                metrics_detail_parsed = [
+                    {"key": key, "value": value}
+                    for key, value in metrics_dict.items()
+                ]
+            except (json.JSONDecodeError, TypeError):
+                metrics_detail_parsed = []
+        
+        data.append({
+            "id": item.id,
+            "stock_code": item.stock_code,
+            "stock_name": item.stock_name,
+            "overall_score": float(item.total_score) if item.total_score is not None else None,
+            "total_score": float(item.total_score) if item.total_score is not None else None,
+            "grade": item.grade,
+            "recommendation": item.grade,  # 兼容前端字段名
+            "metrics_detail": item.metrics_detail,
+            "metrics_detail_parsed": metrics_detail_parsed,
+            "completeness_ratio": float(item.completeness_ratio) if item.completeness_ratio is not None else None,
+            "sector_name": item.sector_name,
+            "data_date": item.data_date.isoformat() if item.data_date else None,
+            "created_at": item.created_at.isoformat() if item.created_at else None,
+            "updated_at": item.updated_at.isoformat() if item.updated_at else None
+        })
     
     return data, total
 
 
-def get_top3_by_overall_score(db: Session) -> List[StockFundamentalScreeningCache]:
+def get_top3_by_overall_score(db: Session) -> List[Dict[str, Any]]:
     """
     从本地缓存获取综合得分前3的股票
     """
-    top3 = db.query(StockFundamentalScreeningCache)\
-        .order_by(desc(StockFundamentalScreeningCache.overall_score))\
+    top3 = db.query(FinancialScoresCache)\
+        .order_by(desc(FinancialScoresCache.total_score))\
         .limit(3)\
         .all()
-    return top3
+    
+    # 处理数据
+    result = []
+    for item in top3:
+        result.append({
+            "id": item.id,
+            "stock_code": item.stock_code,
+            "stock_name": item.stock_name,
+            "overall_score": float(item.total_score) if item.total_score is not None else None,
+            "total_score": float(item.total_score) if item.total_score is not None else None,
+            "grade": item.grade,
+            "recommendation": item.grade,  # 兼容前端字段名
+            "sector_name": item.sector_name,
+            "data_date": item.data_date.isoformat() if item.data_date else None
+        })
+    
+    return result
 
 
-def search_stock_suggestions(db: Session, query: str, limit: int = 10) -> List[StockFundamentalScreeningCache]:
+def search_stock_suggestions(db: Session, query: str, limit: int = 10) -> List[Dict[str, Any]]:
     """
     搜索股票代码或名称的建议（OR逻辑，模糊匹配）
     返回: 建议列表
     """
-    search_query = db.query(StockFundamentalScreeningCache).filter(
+    search_query = db.query(FinancialScoresCache).filter(
         or_(
-            StockFundamentalScreeningCache.stock_code.like(f"%{query}%"),
-            StockFundamentalScreeningCache.stock_name.like(f"%{query}%")
+            FinancialScoresCache.stock_code.like(f"%{query}%"),
+            FinancialScoresCache.stock_name.like(f"%{query}%")
         )
     )
     
     suggestions = search_query.order_by(
-        StockFundamentalScreeningCache.overall_score.desc()
+        FinancialScoresCache.total_score.desc()
     ).limit(limit).all()
     
-    return suggestions
+    # 处理数据
+    result = []
+    for item in suggestions:
+        result.append({
+            "stock_code": item.stock_code,
+            "stock_name": item.stock_name,
+            "overall_score": float(item.total_score) if item.total_score is not None else None,
+            "grade": item.grade,
+            "sector_name": item.sector_name
+        })
+    
+    return result
 
 
-def get_top_stocks_by_overall_score(db: Session, limit: int = 8) -> List[StockFundamentalScreeningCache]:
+def get_top_stocks_by_overall_score(db: Session, limit: int = 8) -> List[Dict[str, Any]]:
     """
     从本地缓存获取综合得分前N名的股票
     返回: 前N名股票列表
     """
-    top_stocks = db.query(StockFundamentalScreeningCache)\
-        .order_by(desc(StockFundamentalScreeningCache.overall_score))\
+    top_stocks = db.query(FinancialScoresCache)\
+        .order_by(desc(FinancialScoresCache.total_score))\
         .limit(limit)\
         .all()
-    return top_stocks
-
-
-def get_macro_analysis(db: Session) -> Optional[dict]:
-    """
-    从本地缓存获取宏观数据分析结果
-    返回: 宏观数据分析字典，如果没有数据返回None
-    """
-    latest_bond = db.query(BondChinaYieldCache)\
-        .filter(BondChinaYieldCache.curve_name == '中债国债收益率曲线')\
-        .order_by(desc(BondChinaYieldCache.date))\
-        .first()
     
-    latest_macro = db.query(MacroDataCache)\
-        .order_by(desc(MacroDataCache.date))\
-        .first()
+    # 处理数据
+    result = []
+    for item in top_stocks:
+        result.append({
+            "stock_code": item.stock_code,
+            "stock_name": item.stock_name,
+            "overall_score": float(item.total_score) if item.total_score is not None else None,
+            "grade": item.grade,
+            "sector_name": item.sector_name
+        })
     
-    if not latest_bond or not latest_macro:
-        return None
-    
-    sig1 = latest_bond.one_year_signal
-    sig2 = latest_bond.ten_year_signal
-    
-    # 判断货币周期状态
-    if sig1 and sig2:
-        monetary_status = '宽货币'  # 货币宽松
-        monetary_msg = '宽松，投资高风险'
-    else:
-        monetary_status = '紧货币'  # 货币紧缩
-        monetary_msg = '紧缩，投资低风险'
-    
-    # 判断信用周期状态
-    credit_cycle_value = latest_macro.credit_cycle
-    if credit_cycle_value >= 2:
-        credit_status = '宽信用'   # 信用宽松
-        credit_msg = '宽松，利好大市值'
-        market_cap_bias = '利好大市值'
-    else:
-        credit_status = '紧信用'   # 信用紧缩
-        credit_msg = '紧缩，利好小市值'
-        market_cap_bias = '利好小市值'
-    
-    # 根据货币+信用组合确定投资策略
-    combination = f"{monetary_status} + {credit_status}"
-    investment_strategy = ""
-    asset_allocation = ""
-    
-    if monetary_status == '宽货币' and credit_status == '宽信用':
-        investment_strategy = "买股票"
-        asset_allocation = "复苏启动，风险资产领涨"
-    elif monetary_status == '宽货币' and credit_status == '紧信用':
-        investment_strategy = "买债券"
-        asset_allocation = "经济差，政策托底"
-    elif monetary_status == '紧货币' and credit_status == '宽信用':
-        investment_strategy = "买商品+周期股"
-        asset_allocation = "经济热，通胀起"
-    elif monetary_status == '紧货币' and credit_status == '紧信用':
-        investment_strategy = "持现金"
-        asset_allocation = "全面收缩，防御为主"
-    
-    bond_data = db.query(BondChinaYieldCache)\
-        .filter(BondChinaYieldCache.curve_name == '中债国债收益率曲线')\
-        .order_by(BondChinaYieldCache.date)\
-        .all()
-    
-    macro_data = db.query(MacroDataCache)\
-        .order_by(MacroDataCache.date)\
-        .all()
-    
-    raw_data = {
-        'bond_1y': [
-            {
-                'date': b.date.strftime('%Y-%m-%d') if b.date else '',
-                'value': float(b.one_year) if b.one_year else None,
-                'ma_3m': float(b.one_year_3m_avg) if b.one_year_3m_avg else None,
-                'ma_6m': float(b.one_year_6m_avg) if b.one_year_6m_avg else None
-            }
-            for b in bond_data
-        ],
-        'bond_10y': [
-            {
-                'date': b.date.strftime('%Y-%m-%d') if b.date else '',
-                'value': float(b.ten_year) if b.ten_year else None,
-                'ma_3m': float(b.ten_year_3m_avg) if b.ten_year_3m_avg else None,
-                'ma_6m': float(b.ten_year_6m_avg) if b.ten_year_6m_avg else None
-            }
-            for b in bond_data
-        ],
-        'm1_data': [
-            {'date': m.date.strftime('%Y-%m-%d') if m.date else '', 'value': float(m.M1_yoy)}
-            for m in macro_data if m.M1_yoy is not None
-        ],
-        'gdp_data': [
-            {'date': m.date.strftime('%Y-%m-%d') if m.date else '', 'value': float(m.GDP_growth)}
-            for m in macro_data if m.GDP_growth is not None
-        ],
-        'ppi_data': [
-            {'date': m.date.strftime('%Y-%m-%d') if m.date else '', 'value': float(m.PPI_yoy)}
-            for m in macro_data if m.PPI_yoy is not None
-        ],
-        'loan_data': [
-            {'date': m.date.strftime('%Y-%m-%d') if m.date else '', 'value': float(m.loan_yoy)}
-            for m in macro_data if m.loan_yoy is not None
-        ]
-    }
-    
-    max_date = max(
-        latest_bond.date if latest_bond.date else datetime.min,
-        latest_macro.date if latest_macro.date else datetime.min
-    )
-    
-    return {
-        'monetary_cycle': monetary_msg,
-        'credit_cycle': credit_msg,
-        'market_cap_bias': market_cap_bias,
-        'calc_time': max_date.isoformat() if max_date != datetime.min else None,
-        'raw_data': raw_data,
-        # 新增字段
-        'monetary_status': monetary_status,
-        'credit_status': credit_status,
-        'combination': combination,
-        'investment_strategy': investment_strategy,
-        'asset_allocation': asset_allocation
-    }
+    return result
 
 
 def get_market_breadth_data(
@@ -255,9 +217,20 @@ def get_market_breadth_data(
     if not records:
         return None
 
-    # 获取所有唯一日期
-    dates = [r.trade_date for r in records]
-    
+    # 获取所有唯一日期，并格式化为 YYYY-MM-DD
+    dates = []
+    for r in records:
+        date_str = r.trade_date
+        if date_str:
+            # 去掉时间部分，只保留日期
+            if ' ' in date_str:
+                date_str = date_str.split(' ')[0]
+            elif 'T' in date_str:
+                date_str = date_str.split('T')[0]
+            dates.append(date_str)
+        else:
+            dates.append(date_str)
+
     # 从所有记录中收集所有行业
     all_industries = set()
     for record in records:
@@ -267,7 +240,7 @@ def get_market_breadth_data(
                 all_industries.update(industries_dict.keys())
             except (json.JSONDecodeError, TypeError):
                 continue
-    
+
     industries_list = sorted(all_industries)
 
     # 如果用户指定了行业筛选，应用筛选
@@ -276,12 +249,13 @@ def get_market_breadth_data(
 
     # 构建数据矩阵（宽格式）
     # 行：日期
-    # 列：各行业 + index_all + sum
+    # 列：各行业
     data = []  # BIAS>0比例数据
+    total_breadth_data = []  # 全市场上涨家数总和
 
-    for record in records:
+    for i, record in enumerate(records):
         row = []
-        
+
         # 解析JSON数据
         industries_dict = {}
         if record.industries_data:
@@ -289,32 +263,27 @@ def get_market_breadth_data(
                 industries_dict = json.loads(record.industries_data)
             except (json.JSONDecodeError, TypeError):
                 industries_dict = {}
-        
-        # 添加各行业的值
+
+        # 只添加各行业的值，不添加 index_all 和 sum
         for industry in industries_list:
             value = industries_dict.get(industry, 0)
             # 如果是浮点数，四舍五入取整
             if isinstance(value, float):
                 value = int(round(value))
             row.append(int(value) if value is not None else 0)
-        
-        # 添加 market_breadth 列（全市场汇总）
-        market_breadth_value = record.market_breadth if record.market_breadth is not None else 0
-        if isinstance(market_breadth_value, float):
-            market_breadth_value = int(round(market_breadth_value))
-        row.append(int(market_breadth_value))
-        
-        # 添加 total_breadth 列（各行业值总和）
-        total_breadth_value = record.total_breadth if record.total_breadth is not None else 0
-        row.append(int(total_breadth_value))
-        
+
         data.append(row)
 
-    # 列名：各行业 + index_all + sum
-    columns = industries_list + ['index_all', 'sum']
+        # 添加 total_breadth 数据（用于趋势图）
+        total_breadth_value = record.total_breadth if record.total_breadth is not None else 0
+        total_breadth_data.append(int(total_breadth_value))
+
+    # 列名：只包含各行业
+    columns = industries_list
 
     # 计算统计数据
-    industry_values = [v for row in data for v in row[:-2]]  # 只统计行业数据，不包括 index_all 和 sum
+    industry_values = [v for row in data for v in row]  # 所有数据都是行业数据
+
     statistics = {
         'total_records': len(records),
         'date_range': f"{dates[-1]} to {dates[0]}" if dates else None,
@@ -336,8 +305,9 @@ def get_market_breadth_data(
         'dates': dates,
         'columns': columns,
         'data': data,
+        'total_breadth_data': total_breadth_data,  # 用于趋势图的全市场上涨家数总和
         'statistics': statistics,
-        'last_update': last_update.isoformat() if last_update else None
+        'last_update': last_update if last_update else None
     }
 
 
@@ -358,3 +328,57 @@ def get_market_breadth_industries(db: Session) -> List[str]:
                 continue
     
     return sorted(list(all_industries))
+
+
+def get_etf_cluster_selection_latest(db: Session) -> Optional[Dict[str, Any]]:
+    """
+    从本地缓存获取最新一天的ETF聚类选股数据
+    返回按cluster_name分组的数据，每个cluster包含5个基金
+    """
+    from sqlalchemy import func
+
+    # 获取缓存中最新的update_date
+    latest_date = db.query(
+        func.max(EtfClusterSelectionCache.update_date)
+    ).scalar()
+
+    if not latest_date:
+        return None
+
+    # 查询最新日期的所有数据，按cluster_name和rank排序
+    records = db.query(EtfClusterSelectionCache)\
+        .filter(EtfClusterSelectionCache.update_date == latest_date)\
+        .order_by(EtfClusterSelectionCache.cluster_name, EtfClusterSelectionCache.rank)\
+        .all()
+
+    if not records:
+        return None
+
+    # 按cluster_name分组数据
+    clusters = {}
+    for record in records:
+        cluster_name = record.cluster_name or '未分类'
+        if cluster_name not in clusters:
+            clusters[cluster_name] = []
+
+        clusters[cluster_name].append({
+            'fund_code': record.fund_code,
+            'fund_name': record.fund_name,
+            'rank': record.rank,
+            'score': record.score
+        })
+
+    # 格式化返回数据
+    result = {
+        'update_date': latest_date,
+        'clusters': []
+    }
+
+    # 转换为列表格式，保持cluster_name的顺序
+    for cluster_name in sorted(clusters.keys()):
+        result['clusters'].append({
+            'cluster_name': cluster_name,
+            'funds': clusters[cluster_name]
+        })
+
+    return result

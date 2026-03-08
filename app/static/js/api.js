@@ -3,7 +3,7 @@
  * 处理所有与后端 API 的通信
  */
 class API {
-  static BASE_URL = '';  // 使用相对路径，自动适应当前域名
+  static BASE_URL = 'http://localhost:8000';  // 本地开发服务器地址
   static TIMEOUT = 30000;
   
   /**

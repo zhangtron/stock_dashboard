@@ -82,7 +82,7 @@ class Components {
     if (!data || data.length === 0) {
       tbody.innerHTML = `
         <tr>
-          <td colspan="9" class="text-center text-muted">
+          <td colspan="8" class="text-center text-muted">
             暂无数据
           </td>
         </tr>
@@ -90,19 +90,64 @@ class Components {
       return;
     }
     
-    tbody.innerHTML = data.map(item => `
-      <tr>
-        <td><a href="#" class="stock-code-link" data-stock-code="${item.stock_code || ''}"><strong>${item.stock_code || '-'}</strong></a></td>
-        <td>${item.stock_name || '-'}</td>
-        <td class="${this.getScoreClass(item.overall_score)}">${item.overall_score || '-'}</td>
-        <td>${item.growth_score || '-'}</td>
-        <td>${item.profitability_score || '-'}</td>
-        <td>${item.solvency_score || '-'}</td>
-        <td>${item.cashflow_score || '-'}</td>
-        <td><span class="card-tag ${this.getRecommendationClass(item.recommendation)}">${this.getRecommendationText(item.recommendation)}</span></td>
-        <td><small class="text-muted">${item.calc_time ? item.calc_time.slice(0, 10) : '-'}</small></td>
-      </tr>
-    `).join('');
+    tbody.innerHTML = data.map(item => {
+      // 格式化日期
+      const dataDate = item.data_date ? item.data_date.slice(0, 10) : '-';
+      const updatedAt = item.updated_at ? item.updated_at.slice(0, 10) : '-';
+      
+      // 解析metrics_detail字段
+      let metricsDetail = '';
+      try {
+        if (item.metrics_detail_parsed && Array.isArray(item.metrics_detail_parsed)) {
+          // metrics_detail_parsed是数组格式：[{"key": key, "value": value}, ...]
+          metricsDetail = item.metrics_detail_parsed
+            .map(metric => `<div><strong>${metric.key || ''}:</strong> ${metric.value || ''}</div>`)
+            .join('');
+        } else if (item.metrics_detail_parsed && typeof item.metrics_detail_parsed === 'string') {
+          // 如果是字符串，尝试解析为JSON
+          const metrics = JSON.parse(item.metrics_detail_parsed);
+          if (Array.isArray(metrics)) {
+            metricsDetail = metrics
+              .map(metric => `<div><strong>${metric.key || ''}:</strong> ${metric.value || ''}</div>`)
+              .join('');
+          } else if (typeof metrics === 'object') {
+            metricsDetail = Object.entries(metrics)
+              .map(([key, value]) => `<div><strong>${key}:</strong> ${value}</div>`)
+              .join('');
+          }
+        }
+      } catch (e) {
+        console.error('指标详情解析失败:', e);
+        metricsDetail = '<div class="text-muted">指标详情解析失败</div>';
+      }
+      
+      return `
+        <tr data-stock-code="${item.stock_code || ''}">
+          <td><a href="#" class="stock-code-link" data-stock-code="${item.stock_code || ''}"><strong>${item.stock_code || '-'}</strong></a></td>
+          <td>${item.stock_name || '-'}</td>
+          <td>${item.sector_name || '-'}</td>
+          <td class="${this.getScoreClass(item.total_score)}">${item.total_score || '-'}</td>
+          <td><span class="card-tag ${this.getRecommendationClass(item.grade)}">${this.getRecommendationText(item.grade)}</span></td>
+          <td><small class="text-muted">${dataDate}</small></td>
+          <td><small class="text-muted">${updatedAt}</small></td>
+          <td>
+            <button class="btn-detail" data-stock-code="${item.stock_code || ''}">
+              <i class="bi bi-chevron-right"></i>
+            </button>
+          </td>
+        </tr>
+        <tr class="detail-row" id="detail-${item.stock_code || ''}" style="display: none;">
+          <td colspan="8">
+            <div class="detail-content">
+              <h6>指标详情</h6>
+              <div class="metrics-detail">
+                ${metricsDetail || '<div class="text-muted">暂无指标详情</div>'}
+              </div>
+            </div>
+          </td>
+        </tr>
+      `;
+    }).join('');
   }
   
   /**

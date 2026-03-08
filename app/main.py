@@ -2,7 +2,8 @@ from fastapi import FastAPI, Request
 from fastapi.responses import HTMLResponse
 from fastapi.staticfiles import StaticFiles
 from fastapi.templating import Jinja2Templates
-from app.routers import screening, macro_analysis, market_breadth
+from fastapi.middleware.cors import CORSMiddleware
+from app.routers import screening, market_breadth, fund_analysis
 from app.config import settings
 from app.data_sync import init_cache_db, sync_data_from_remote, get_sync_status
 from app.sync_scheduler import init_scheduler, shutdown_scheduler, get_scheduler_status
@@ -18,9 +19,18 @@ app = FastAPI(
     version="2.0.0"
 )
 
+# 配置 CORS
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"],  # 生产环境应该限制具体域名
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
+
 app.include_router(screening.router, prefix="/api")
-app.include_router(macro_analysis.router, prefix="/api")
 app.include_router(market_breadth.router, prefix="/api")
+app.include_router(fund_analysis.router, prefix="/api")
 
 base_dir = os.path.dirname(os.path.abspath(__file__))
 static_dir = os.path.join(base_dir, "static")
@@ -95,16 +105,16 @@ async def about_page(request: Request):
     return templates.TemplateResponse("about.html", {"request": request})
 
 
-@app.get("/macro-analysis", response_class=HTMLResponse, summary="宏观分析页面")
-async def macro_analysis_page(request: Request):
-    """宏观分析页面"""
-    return templates.TemplateResponse("macro_analysis.html", {"request": request})
-
-
 @app.get("/market-breadth", response_class=HTMLResponse, summary="市场宽度分析页面")
 async def market_breadth_page(request: Request):
     """市场宽度分析页面"""
     return templates.TemplateResponse("market_breadth.html", {"request": request})
+
+
+@app.get("/fund-analysis", response_class=HTMLResponse, summary="基金分析页面")
+async def fund_analysis_page(request: Request):
+    """基金分析页面"""
+    return templates.TemplateResponse("fund_analysis.html", {"request": request})
 
 
 @app.get("/health", summary="健康检查")

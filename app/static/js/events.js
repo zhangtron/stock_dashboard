@@ -9,6 +9,8 @@ class Events {
     sortOrder: 'desc',
     searchKeyword: '',
     searchDebounceTimer: null,
+    sectorFilter: null, // 新增：板块筛选状态
+    isSyncing: false, // 同步状态
   };
   
   /**
@@ -22,6 +24,9 @@ class Events {
     this.bindTopNavEvents();
     this.bindMobileMenuEvents();
     this.cloneNavLinksToMobileMenu();
+    this.bindDetailEvents();
+    this.bindSectorDoubleClickEvents(); // 新增：双击板块筛选事件
+    this.bindSyncButton(); // 新增：同步按钮事件
   }
 
   /**
@@ -231,14 +236,19 @@ class Events {
       if (stockName) params.stock_name = stockName;
     }
     
+    // 添加板块筛选
+    if (this.state.sectorFilter) {
+      params.sector_name = this.state.sectorFilter;
+    }
+    
     const minScore = document.getElementById('minScore')?.value;
     if (minScore) params.min_overall_score = minScore;
     
     const maxScore = document.getElementById('maxScore')?.value;
     if (maxScore) params.max_overall_score = maxScore;
     
-    const recommendation = document.getElementById('recommendation')?.value;
-    if (recommendation) params.recommendation = recommendation;
+    const grade = document.getElementById('grade')?.value;
+    if (grade) params.recommendation = grade;
     
     return params;
   }
@@ -279,7 +289,7 @@ class Events {
     const stockName = document.getElementById('stockName');
     const minScore = document.getElementById('minScore');
     const maxScore = document.getElementById('maxScore');
-    const recommendation = document.getElementById('recommendation');
+    const grade = document.getElementById('grade');
     const headerSearch = document.getElementById('headerSearch');
     const searchClear = document.getElementById('searchClear');
     
@@ -287,12 +297,13 @@ class Events {
     if (stockName) stockName.value = '';
     if (minScore) minScore.value = '';
     if (maxScore) maxScore.value = '';
-    if (recommendation) recommendation.value = '';
+    if (grade) grade.value = '';
     
     if (headerSearch) headerSearch.value = '';
     if (searchClear) searchClear.style.display = 'none';
     
     this.state.searchKeyword = '';
+    this.state.sectorFilter = null; // 清除板块筛选
     this.state.currentPage = 1;
     this.fetchData();
   }
@@ -475,6 +486,301 @@ class Events {
     this.state.searchKeyword = '';
     this.state.currentPage = 1;
     this.fetchData();
+  }
+  
+  /**
+   * 绑定详情展开事件
+   */
+  static bindDetailEvents() {
+    document.addEventListener('click', (e) => {
+      const detailBtn = e.target.closest('.btn-detail');
+      
+      if (detailBtn) {
+        e.preventDefault();
+        const stockCode = detailBtn.dataset.stockCode;
+        const detailRow = document.getElementById(`detail-${stockCode}`);
+        const icon = detailBtn.querySelector('i');
+        
+        if (detailRow) {
+          if (detailRow.style.display === 'none') {
+            // 展开详情
+            detailRow.style.display = 'table-row';
+            if (icon) {
+              icon.className = 'bi bi-chevron-down';
+            }
+          } else {
+            // 收起详情
+            detailRow.style.display = 'none';
+            if (icon) {
+              icon.className = 'bi bi-chevron-right';
+            }
+          }
+        }
+      }
+    });
+  }
+  
+  /**
+   * 绑定双击板块名称筛选事件
+   */
+  static bindSectorDoubleClickEvents() {
+    document.addEventListener('dblclick', (e) => {
+      // 检查是否双击了板块名称单元格（表格第3列）
+      const sectorCell = e.target.closest('.stock-table td:nth-child(3)');
+
+      if (sectorCell) {
+        const sectorName = sectorCell.textContent.trim();
+
+        // 如果板块名称有效且不是"-"
+        if (sectorName && sectorName !== '-') {
+          console.log('双击了板块:', sectorName); // 调试日志
+          this.applySectorFilter(sectorName);
+
+          // 添加视觉反馈
+          this.highlightSectorCell(sectorCell);
+        }
+      }
+    });
+  }
+  
+  /**
+   * 应用板块筛选
+   * @param {string} sectorName - 板块名称
+   */
+  static applySectorFilter(sectorName) {
+    this.state.sectorFilter = sectorName;
+    this.state.currentPage = 1;
+    this.fetchData();
+    
+    // 显示筛选状态提示
+    this.showSectorFilterToast(sectorName);
+  }
+  
+  /**
+   * 高亮显示被双击的板块单元格
+   * @param {HTMLElement} cell - 板块单元格元素
+   */
+  static highlightSectorCell(cell) {
+    // 移除之前的高亮
+    document.querySelectorAll('.stock-table td.sector-highlight').forEach(td => {
+      td.classList.remove('sector-highlight');
+    });
+    
+    // 添加新的高亮
+    cell.classList.add('sector-highlight');
+    
+    // 3秒后移除高亮
+    setTimeout(() => {
+      cell.classList.remove('sector-highlight');
+    }, 3000);
+  }
+  
+  /**
+   * 显示板块筛选状态提示
+   * @param {string} sectorName - 板块名称
+   */
+  static showSectorFilterToast(sectorName) {
+    // 移除现有的提示
+    const existingToast = document.querySelector('.sector-filter-toast');
+    if (existingToast) {
+      existingToast.remove();
+    }
+
+    // 创建提示元素
+    const toast = document.createElement('div');
+    toast.className = 'sector-filter-toast';
+    toast.innerHTML = `
+      <div class="sector-filter-toast-content">
+        <span class="sector-filter-toast-icon">📊</span>
+        <div class="sector-filter-toast-text">
+          <strong>已筛选板块：${sectorName}</strong>
+          <span class="sector-filter-toast-message">点击"重置"按钮可清除筛选</span>
+        </div>
+        <button class="sector-filter-toast-close" onclick="this.parentElement.parentElement.remove()">
+          <i class="bi bi-x"></i>
+        </button>
+      </div>
+    `;
+
+    document.body.appendChild(toast);
+
+    console.log('Toast 已创建，准备显示'); // 调试日志
+
+    // 显示提示
+    setTimeout(() => {
+      toast.classList.add('show');
+      console.log('Toast 已显示'); // 调试日志
+    }, 10);
+
+    // 5秒后自动消失
+    setTimeout(() => {
+      toast.classList.remove('show');
+      setTimeout(() => {
+        toast.remove();
+      }, 300);
+    }, 5000);
+  }
+
+  /**
+   * 绑定同步按钮事件
+   */
+  static bindSyncButton() {
+    const syncBtn = document.getElementById('syncBtn');
+    if (syncBtn) {
+      syncBtn.addEventListener('click', () => {
+        this.syncScreeningData();
+      });
+    }
+    // 页面加载时获取同步状态
+    this.loadSyncStatus();
+  }
+
+  /**
+   * 同步选股数据
+   */
+  static async syncScreeningData() {
+    if (this.state.isSyncing) {
+      return;
+    }
+
+    const syncBtn = document.getElementById('syncBtn');
+    const syncBtnText = document.getElementById('syncBtnText');
+    const syncBtnIcon = syncBtn.querySelector('i');
+
+    this.state.isSyncing = true;
+    syncBtn.disabled = true;
+    syncBtnIcon.classList.add('spin-icon');
+    syncBtnText.textContent = '同步中...';
+
+    try {
+      const result = await API.triggerSync(false); // 使用增量同步
+
+      if (result.success) {
+        this.showSuccessToast(`同步成功！共同步 ${result.record_count || 0} 条记录`);
+        // 重新加载数据
+        await this.fetchData();
+        // 更新同步状态
+        await this.loadSyncStatus();
+      } else {
+        this.showErrorToast('同步失败：' + (result.error || '未知错误'));
+      }
+    } catch (error) {
+      this.showErrorToast('同步失败：' + error.message);
+      console.error('同步选股数据失败:', error);
+    } finally {
+      this.state.isSyncing = false;
+      syncBtn.disabled = false;
+      syncBtnIcon.classList.remove('spin-icon');
+      syncBtnText.textContent = '同步数据';
+    }
+  }
+
+  /**
+   * 加载同步状态
+   */
+  static async loadSyncStatus() {
+    try {
+      const response = await API.getSyncStatus();
+      // API返回格式: {sync: {stock: {...}, market_breadth: {...}}, scheduler: {...}}
+      const status = response.sync || response;
+      this.updateSyncStatusDisplay(status);
+    } catch (error) {
+      console.error('获取同步状态失败:', error);
+      const timeEl = document.getElementById('lastUpdateTime');
+      if (timeEl) {
+        timeEl.innerHTML = '<i class="bi bi-clock"></i> 状态未知';
+      }
+    }
+  }
+
+  /**
+   * 更新同步状态显示
+   * @param {Object} status - 同步状态对象
+   */
+  static updateSyncStatusDisplay(status) {
+    const timeEl = document.getElementById('lastUpdateTime');
+    if (!timeEl) return;
+
+    // API返回格式: {stock: {last_sync_time: 'ISO格式字符串', ...}}
+    if (status && status.stock && status.stock.last_sync_time) {
+      const lastSync = new Date(status.stock.last_sync_time);
+      const now = new Date();
+      const diffMs = now - lastSync;
+      const diffMins = Math.floor(diffMs / 60000);
+
+      let timeText;
+      if (diffMins < 1) {
+        timeText = '刚刚';
+      } else if (diffMins < 60) {
+        timeText = `${diffMins} 分钟前`;
+      } else if (diffMins < 1440) {
+        timeText = `${Math.floor(diffMins / 60)} 小时前`;
+      } else {
+        timeText = lastSync.toLocaleDateString('zh-CN');
+      }
+
+      timeEl.innerHTML = `<i class="bi bi-clock"></i> 更新时间：${timeText}`;
+    } else {
+      timeEl.innerHTML = '<i class="bi bi-clock"></i> 暂无数据';
+    }
+  }
+
+  /**
+   * 显示成功提示
+   * @param {string} message - 成功消息
+   */
+  static showSuccessToast(message) {
+    this.showToast(message, 'success');
+  }
+
+  /**
+   * 显示错误提示
+   * @param {string} message - 错误消息
+   */
+  static showErrorToast(message) {
+    this.showToast(message, 'error');
+  }
+
+  /**
+   * 显示提示消息
+   * @param {string} message - 消息内容
+   * @param {string} type - 消息类型 (success/error)
+   */
+  static showToast(message, type = 'success') {
+    // 移除现有的 toast
+    const existingToast = document.querySelector('.sync-toast');
+    if (existingToast) {
+      existingToast.remove();
+    }
+
+    // 创建 toast 元素
+    const toast = document.createElement('div');
+    toast.className = `sync-toast sync-toast-${type}`;
+    const icon = type === 'success' ? '✓' : '⚠';
+    toast.innerHTML = `
+      <div class="sync-toast-content">
+        <span class="sync-toast-icon">${icon}</span>
+        <div class="sync-toast-text">${message}</div>
+        <button class="sync-toast-close" onclick="this.parentElement.parentElement.remove()">
+          <i class="bi bi-x"></i>
+        </button>
+      </div>
+    `;
+
+    document.body.appendChild(toast);
+
+    // 显示提示
+    setTimeout(() => {
+      toast.classList.add('show');
+    }, 10);
+
+    // 3秒后自动消失
+    setTimeout(() => {
+      toast.classList.remove('show');
+      setTimeout(() => {
+        toast.remove();
+      }, 300);
+    }, 3000);
   }
 }
 

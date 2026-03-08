@@ -14,6 +14,7 @@ async def get_screening_data(
     page_size: int = Query(20, ge=1, le=100, description="每页数量"),
     stock_code: Optional[str] = Query(None, description="股票代码"),
     stock_name: Optional[str] = Query(None, description="股票名称"),
+    sector_name: Optional[str] = Query(None, description="板块名称"),
     search: Optional[str] = Query(None, description="搜索关键词（代码或名称，OR逻辑）"),
     min_overall_score: Optional[float] = Query(None, ge=0, le=100, description="最小综合得分"),
     max_overall_score: Optional[float] = Query(None, ge=0, le=100, description="最大综合得分"),
@@ -30,6 +31,7 @@ async def get_screening_data(
     - **page_size**: 每页数量，1-100
     - **stock_code**: 股票代码（模糊搜索）
     - **stock_name**: 股票名称（模糊搜索）
+    - **sector_name**: 板块名称（精确匹配）
     - **search**: 搜索关键词（代码或名称，OR逻辑）
     - **min_overall_score**: 最小综合得分
     - **max_overall_score**: 最大综合得分
@@ -43,6 +45,7 @@ async def get_screening_data(
         page_size=page_size,
         stock_code=stock_code if stock_code else None,
         stock_name=stock_name if stock_name else None,
+        sector_name=sector_name if sector_name else None,
         search=search if search else None,
         min_overall_score=min_overall_score,
         max_overall_score=max_overall_score,
