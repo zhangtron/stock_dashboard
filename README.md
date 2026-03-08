@@ -1,11 +1,11 @@
 # 先信投资 - 数据驱动的投资探索
 
-**版本**：v2.1.0
+**版本**：v2.1.1
 **状态**：已上线 🟢
 **在线地址**：https://cicpa.fun
 **GitHub**: https://github.com/zhangtron/stock_dashboard
 
-基于FastAPI + MySQL + SQLite + Bootstrap 5构建的股票基本面选股与基金分析展示系统，支持三主题切换。
+基于FastAPI + MySQL + SQLite + Bootstrap 5构建的股票基本面选股与基金分析展示系统，支持三主题切换和多种部署方式（Windows服务器/Docker）。
 
 ## 功能特性
 
@@ -235,99 +235,361 @@ POST /api/sync/trigger?force=false
 **查询参数：**
 - `force`: 是否强制全量同步（true/false，默认：false）
 
-## 部署到Zeabur
+## 部署到Windows服务器
 
-### 前置准备
-1. GitHub账号
-2. Zeabur账号（免费注册：https://zeabur.com）
-3. 自定义域名 cicpa.fun
+### 方式一：使用uvicorn直接运行（开发/测试环境）
 
-### 部署步骤
+#### 前置准备
+1. **安装Python 3.8+**
+   - 下载地址：https://www.python.org/downloads/
+   - 安装时勾选"Add Python to PATH"
 
-1. **推送代码到GitHub**
+2. **安装Git**（可选，用于克隆代码）
+   - 下载地址：https://git-scm.com/downloads
+
+3. **准备数据库**
+   - 确保可以访问远程MySQL数据库（mysql.sqlpub.com）
+   - 或者配置本地MySQL数据库
+
+#### 部署步骤
+
+1. **下载代码**
 ```bash
-git init
-git add .
-git commit -m "Initial commit"
-git branch -M main
-git remote add origin <your-github-repo>
-git push -u origin main
+# 方式1：使用Git克隆
+git clone https://github.com/zhangtron/stock_dashboard.git
+cd stock_dashboard
+
+# 方式2：直接下载ZIP解压
+# 访问 https://github.com/zhangtron/stock_dashboard
+# 点击 "Code" -> "Download ZIP"
+# 解压到目标目录
 ```
 
-2. **在Zeabur创建新项目**
-   - 登录 https://zeabur.com
-   - 点击"New Project"
-   - 选择"Deploy from GitHub"
-   - 授权并选择你的GitHub仓库
-   - 选择"stock-dashboard"目录
+2. **创建虚拟环境**
+```bash
+cd stock_dashboard
+python -m venv venv
 
-3. **配置环境变量**
-   在Zeabur项目设置中添加以下环境变量：
-   ```
-   DB_PASSWORD = your_database_password
-   ```
-   其他配置已在 zeabur.yaml 中预设。
+# Windows激活虚拟环境
+venv\Scripts\activate
+```
 
-4. **启动部署**
-   - Zeabur会自动检测 zeabur.yaml 配置
-   - 自动构建和部署
-   - 部署完成后获得应用URL
+3. **安装依赖**
+```bash
+pip install -r requirements.txt
+```
 
-5. **绑定自定义域名**
-   - 在Zeabur项目设置中点击"Domains"
-   - 点击"Add Custom Domain"
-   - 输入域名：cicpa.fun
-   - 获取DNS配置信息
+4. **配置环境变量**
 
-6. **配置DNS**
-   - 在域名服务商处添加CNAME记录：
-   ```
-   类型：CNAME
-   主机记录：@
-   记录值：<zeabur提供的CNAME>
-   TTL：600
-   ```
+创建 `.env` 文件：
+```bash
+# 数据库配置
+DB_HOST=mysql.sqlpub.com
+DB_PORT=3306
+DB_USER=chase_zhang
+DB_PASSWORD=your_database_password
+DB_NAME=stock_review
 
-7. **验证HTTPS**
-   - Zeabur会自动申请Let's Encrypt证书
-   - 几分钟后访问 https://cicpa.fun 验证
+# 应用配置
+APP_NAME=Stock Dashboard
+APP_ENV=production
+DEBUG=False
 
-### Zeabur配置说明
+# 服务器配置
+HOST=0.0.0.0
+PORT=8000
+```
 
-zeabur.yaml 文件配置了：
-- Python运行环境
-- 自动安装依赖（requirements.txt）
-- 启动命令：`uvicorn app.main:app --host 0.0.0.0 --port $PORT`
-- 环境变量配置
-- 免费套餐（512MB RAM，0.5GB存储）
+5. **启动应用**
+```bash
+# 开发模式（支持热重载）
+uvicorn app.main:app --reload --host 0.0.0.0 --port 8000
 
-## 常见问题
+# 生产模式（推荐）
+uvicorn app.main:app --host 0.0.0.0 --port 8000 --workers 4
+```
+
+6. **访问应用**
+- 本地访问：http://localhost:8000
+- 局域网访问：http://[服务器IP]:8000
+
+### 方式二：使用Windows服务（生产环境）
+
+#### 使用NSSM将应用注册为Windows服务
+
+1. **下载NSSM**
+   - 下载地址：https://nssm.cc/download
+   - 解压到例如 `C:\nssm`
+
+2. **安装Python服务**
+```bash
+# 打开命令提示符（管理员）
+cd C:\nssm
+
+# 安装服务
+nssm install StockDashboard C:\stock_dashboard\venv\Scripts\python.exe
+nssm set StockDashboard AppDirectory C:\stock_dashboard
+nssm set StockDashboard AppParameters -m uvicorn app.main:app --host 0.0.0.0 --port 8000 --workers 4
+nssm set StockDashboard AppEnvironmentExtra "DB_HOST=mysql.sqlpub.com" "DB_PORT=3306" "DB_USER=chase_zhang" "DB_PASSWORD=your_password" "DB_NAME=stock_review"
+nssm set StockDashboard AppEnvironmentExtra "APP_NAME=Stock Dashboard" "APP_ENV=production" "DEBUG=False"
+nssm set StockDashboard DisplayName 先信投资数据看板
+nssm set StockDashboard Description 股票基本面选股与基金分析系统
+nssm set StockDashboard Start SERVICE_AUTO_START
+
+# 启动服务
+nssm start StockDashboard
+```
+
+3. **管理服务**
+```bash
+# 查看服务状态
+nssm status StockDashboard
+
+# 停止服务
+nssm stop StockDashboard
+
+# 重启服务
+nssm restart StockDashboard
+
+# 编辑服务配置
+nssm edit StockDashboard
+
+# 卸载服务
+nssm remove StockDashboard confirm
+```
+
+### 方式三：使用IIS部署（企业环境）
+
+#### 前置准备
+1. 安装IIS（控制面板 -> 程序 -> 启用或关闭Windows功能）
+2. 安装CGI功能（IIS -> 万维网服务 -> 应用程序开发功能）
+3. 安装Python和wfastcgi
+
+#### 部署步骤
+
+1. **安装wfastcgi**
+```bash
+pip install wfastcgi
+```
+
+2. **启用wfastcgi**
+```bash
+# 启用wfastcgi
+wfastcgi-enable
+
+# 查看配置
+wfastcgi-dispatch-list
+```
+
+3. **创建FastAPI应用启动文件**
+
+创建 `app/asgi.py`：
+```python
+import uvicorn
+from app.main import app
+
+if __name__ == "__main__":
+    uvicorn.run(app, host="0.0.0.0", port=8000)
+```
+
+4. **在IIS中配置网站**
+   - 打开IIS管理器
+   - 添加网站
+   - 物理路径：指向项目目录
+   - 绑定：HTTP端口80
+   - 应用程序池：.NET CLR v4.0（无托管代码）
+
+5. **配置FastCGI处理程序映射**
+   - 打开网站 -> 处理程序映射 -> 添加模块映射
+   - 模块：FastCgiModule
+   - 可执行文件：`C:\stock_dashboard\venv\Scripts\python.exe`
+   - 参数：`C:\stock_dashboard\venv\Scripts\wfastcgi.py`
+
+### 方式四：使用Docker（跨平台）
+
+#### 1. 创建Dockerfile
+
+在项目根目录创建 `Dockerfile`：
+```dockerfile
+FROM python:3.11-slim
+
+WORKDIR /app
+
+# 安装系统依赖
+RUN apt-get update && apt-get install -y \
+    gcc \
+    default-libmysqlclient-dev \
+    pkg-config \
+    && rm -rf /var/lib/apt/lists/*
+
+# 复制依赖文件
+COPY requirements.txt .
+RUN pip install --no-cache-dir -r requirements.txt
+
+# 复制应用代码
+COPY . .
+
+# 暴露端口
+EXPOSE 8000
+
+# 启动命令
+CMD ["uvicorn", "app.main:app", "--host", "0.0.0.0", "--port", "8000"]
+```
+
+#### 2. 创建docker-compose.yml
+
+```yaml
+version: '3.8'
+
+services:
+  stock-dashboard:
+    build: .
+    ports:
+      - "8000:8000"
+    environment:
+      - DB_HOST=mysql.sqlpub.com
+      - DB_PORT=3306
+      - DB_USER=chase_zhang
+      - DB_PASSWORD=${DB_PASSWORD}
+      - DB_NAME=stock_review
+      - APP_NAME=Stock Dashboard
+      - APP_ENV=production
+      - DEBUG=False
+    restart: unless-stopped
+```
+
+#### 3. 构建和运行
+```bash
+# 构建镜像
+docker build -t stock-dashboard .
+
+# 运行容器
+docker run -d -p 8000:8000 --name stock-dashboard stock-dashboard
+
+# 或使用docker-compose
+docker-compose up -d
+
+# 查看日志
+docker logs -f stock-dashboard
+
+# 停止容器
+docker stop stock-dashboard
+```
+
+### 防火墙配置
+
+确保Windows防火墙允许8000端口访问：
+
+```powershell
+# 以管理员身份运行PowerShell
+New-NetFirewallRule -DisplayName "Stock Dashboard" -Direction Inbound -LocalPort 8000 -Protocol TCP -Action Allow
+```
+
+或通过GUI配置：
+1. 控制面板 -> Windows Defender 防火墙 -> 高级设置
+2. 入站规则 -> 新建规则
+3. 规则类型：端口
+4. 协议：TCP
+5. 特定本地端口：8000
+6. 操作：允许连接
+
+### 域名配置（可选）
+
+如果有域名，可以使用Nginx作为反向代理：
+
+1. **下载Nginx for Windows**
+   - 下载地址：http://nginx.org/en/docs/windows.html
+
+2. **配置nginx.conf**
+```nginx
+server {
+    listen 80;
+    server_name your-domain.com;
+
+    location / {
+        proxy_pass http://127.0.0.1:8000;
+        proxy_set_header Host $host;
+        proxy_set_header X-Real-IP $remote_addr;
+        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+        proxy_set_header X-Forwarded-Proto $scheme;
+    }
+}
+```
+
+3. **启动Nginx**
+```bash
+cd C:\nginx
+start nginx
+```
+
+### 监控和日志
+
+#### 查看应用日志
+```bash
+# 如果直接运行uvicorn，日志会在控制台输出
+# 建议配置日志输出到文件
+
+# 使用日志重定向
+uvicorn app.main:app --host 0.0.0.0 --port 8000 > app.log 2>&1
+```
+
+#### 性能监控
+- 使用任务管理器查看Python进程资源占用
+- 配置日志轮转，避免日志文件过大
+- 定期清理 `app/static/data/stock_cache.db` 缓存文件
+
+### 自动启动配置
+
+#### 使用任务计划程序
+
+1. 打开任务计划程序（taskschd.msc）
+2. 创建基本任务
+3. 触发器：计算机启动时
+4. 操作：启动程序
+   - 程序：`C:\stock_dashboard\venv\Scripts\python.exe`
+   - 参数：`-m uvicorn app.main:app --host 0.0.0.0 --port 8000 --workers 4`
+   - 起始于：`C:\stock_dashboard`
+
+### 常见问题
 
 ### 1. 数据库连接失败
 - 检查 .env 文件中的数据库配置是否正确
-- 确认MySQL服务是否可访问
+- 确认服务器可以访问远程MySQL（mysql.sqlpub.com:3306）
+- 检查防火墙是否允许出站连接
+- 尝试telnet测试：`telnet mysql.sqlpub.com 3306`
+
+### 2. 端口被占用
+```bash
+# 查看8000端口占用
+netstat -ano | findstr :8000
+
+# 结束占用进程
+taskkill /PID [进程ID] /F
+```
+
+### 3. 依赖安装失败
+```bash
+# 使用国内镜像源
+pip install -r requirements.txt -i https://pypi.tuna.tsinghua.edu.cn/simple
+```
+
+### 4. 应用无法访问
+- 确认应用已启动
 - 检查防火墙设置
+- 尝试本地访问：http://localhost:8000
+- 检查服务器IP和端口配置
 
-### 2. API返回空数据
-- 确认数据库表中有数据
-- 检查筛选条件是否过于严格
-- 查看服务器日志排查错误
+### 5. 数据同步失败
+- 检查数据库连接是否正常
+- 查看应用日志排查错误
+- 手动触发同步：访问 http://localhost:8000/api/sync/trigger
 
-### 3. 部署后无法访问
-- 检查Zeabur部署状态是否为"Running"
-- 确认DNS配置是否正确生效
-- 查看Zeabur日志排查错误
-
-### 4. 页面样式异常
-- 清除浏览器缓存
-- 检查网络连接是否正常
-- CDN可能需要时间加载
-
-### 5. 性能优化建议
-- 数据库已添加索引（stock_code, calc_time）
-- 使用连接池（pool_size=5, max_overflow=10）
-- 分页查询避免加载全部数据
-- 预期响应时间：<500ms（10,000条数据）
+### 6. 性能优化建议
+- 生产环境使用 `--workers 4` 启动多进程
+- 配置反向代理（Nginx）
+- 启用缓存数据库
+- 定期清理缓存数据
+- 预期响应时间：<200ms（SQLite缓存）
 
 ## 项目结构
 
