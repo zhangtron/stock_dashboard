@@ -1,11 +1,12 @@
 # 先信投资 - 数据驱动的投资探索
 
-**版本**：v2.1.1
+**版本**：v2.1.2
 **状态**：已上线 🟢
 **在线地址**：https://cicpa.fun
 **GitHub**: https://github.com/zhangtron/stock_dashboard
+**部署环境**：阿里云 ECS + Caddy + 自动 HTTPS
 
-基于FastAPI + MySQL + SQLite + Bootstrap 5构建的股票基本面选股与基金分析展示系统，支持三主题切换和多种部署方式（Windows服务器/Docker）。
+基于FastAPI + MySQL + SQLite + Bootstrap 5构建的股票基本面选股与基金分析展示系统，支持三主题切换和多种部署方式（Windows服务器/阿里云/Docker）。
 
 ## 功能特性
 
@@ -65,7 +66,7 @@
 - **定时任务**：APScheduler 3.10.4
 - **前端**：Bootstrap 5.3.0 + Jinja2 + Bootstrap Icons
 - **主题**：CSS Variables + Vanilla JavaScript
-- **部署**：Zeabur（免费托管）
+- **部署**：阿里云 ECS + Caddy（自动 HTTPS）+ NSSM Windows 服务
 
 ## 数据库配置
 
@@ -358,7 +359,359 @@ nssm edit StockDashboard
 nssm remove StockDashboard confirm
 ```
 
-### 方式三：使用IIS部署（企业环境）
+### 方式三：阿里云服务器部署 + Caddy 自动 HTTPS（生产环境推荐）⭐
+
+本节记录了在阿里云 Windows ECS 服务器上部署应用并配置自动 HTTPS 的完整过程。
+
+#### 实际部署环境
+
+- **服务器**：阿里云 ECS Windows Server 2022
+- **公网IP**：101.132.136.153
+- **域名**：cicpa.fun
+- **Python环境**：Miniconda3 (C:\ProgramData\miniconda3)
+- **反向代理**：Caddy（自动获取 Let's Encrypt 证书）
+- **最终访问**：https://cicpa.fun
+
+#### 部署架构
+
+```
+用户浏览器
+    ↓
+https://cicpa.fun (443端口) ← Caddy反向代理（自动HTTPS）
+    ↓
+localhost:8000 ← StockDashboard服务（NSSM Windows服务）
+    ↓
+SQLite缓存数据库 + 远程MySQL
+```
+
+#### 部署步骤
+
+##### 1. 服务器环境准备
+
+```powershell
+# 1. 安装 Miniconda（Python环境管理）
+# 下载：https://docs.conda.io/en/latest/miniconda.html
+# 安装到：C:\ProgramData\miniconda3
+
+# 2. 安装 NSSM（Windows服务管理）
+# 使用 Chocolatey 安装
+choco install nssm
+
+# 或手动下载：https://nssm.cc/download
+# 解压到：C:\ProgramData\chocolatey\lib\nssm\tools
+```
+
+##### 2. 克隆代码并配置
+
+```powershell
+# 克隆代码
+cd C:\
+git clone https://github.com/zhangtron/stock_dashboard.git
+cd stock_dashboard
+
+# 创建 .env 文件（复制 .env.example）
+Copy-Item .env.example .env
+
+# 编辑 .env 填写数据库配置
+notepad .env
+```
+
+`.env` 文件内容：
+```env
+DB_HOST=mysql.sqlpub.com
+DB_PORT=3306
+DB_USER=chase_zhang
+DB_PASSWORD=your_database_password
+DB_NAME=stock_review
+APP_NAME=Stock Dashboard
+APP_ENV=production
+DEBUG=False
+HOST=0.0.0.0
+PORT=8000
+```
+
+##### 3. 创建启动脚本（适配 Miniconda）
+
+创建 `C:\stock-dashboard\start_service.bat`：
+```batch
+@echo off
+call C:\ProgramData\miniconda3\Scripts\activate.bat base
+cd /d C:\stock-dashboard
+uvicorn app.main:app --host 0.0.0.0 --port 8000
+```
+
+**重要**：必须激活 conda 环境，否则找不到 uvicorn 命令。
+
+##### 4. 注册为 Windows 服务（使用 NSSM）
+
+```powershell
+# 打开管理员 PowerShell
+cd C:\ProgramData\chocolatey\lib\nssm\tools
+
+# 安装服务（使用批处理脚本）
+nssm.exe install StockDashboard C:\stock-dashboard\start_service.bat
+nssm.exe set StockDashboard AppDirectory C:\stock-dashboard
+nssm.exe set StockDashboard DisplayName "Stock Dashboard API"
+nssm.exe set StockDashboard Description "Stock Fundamental Screening Dashboard"
+
+# 设置服务日志重定向（便于排查问题）
+nssm.exe set StockDashboard AppStdout C:\stock-dashboard\service-output.log
+nssm.exe set StockDashboard AppStderr C:\stock-dashboard\service-error.log
+
+# 启动服务
+nssm.exe start StockDashboard
+
+# 验证服务状态
+nssm.exe status StockDashboard
+```
+
+##### 5. 配置阿里云安全组
+
+在阿里云控制台配置安全组规则：
+
+1. 登录阿里云控制台
+2. 进入 **ECS 实例** → 找到您的服务器
+3. 点击 **安全组** → **配置规则** → **手动添加**
+4. 添加以下入站规则：
+
+| 协议类型 | 端口范围 | 授权对象 | 描述 |
+|---------|---------|---------|------|
+| TCP | 8000/8000 | 0.0.0.0/0 | 应用端口（测试用） |
+| TCP | 80/80 | 0.0.0.0/0 | HTTP（Caddy） |
+| TCP | 443/443 | 0.0.0.0/0 | HTTPS（Caddy） |
+
+**注意**：配置 Caddy 后，可以关闭 8000 端口的外网访问。
+
+##### 6. 配置域名解析
+
+在阿里云 DNS 解析添加记录：
+
+1. 登录阿里云控制台
+2. 进入 **云解析 DNS** → 找到域名 `cicpa.fun`
+3. 添加解析记录：
+
+| 主机记录 | 记录类型 | 记录值 | TTL |
+|---------|---------|--------|-----|
+| @ | A | 101.132.136.153 | 600 |
+
+4. 验证解析：
+```powershell
+nslookup cicpa.fun
+# 应返回 101.132.136.153
+```
+
+##### 7. 安装 Caddy（反向代理 + 自动 HTTPS）
+
+```powershell
+# 1. 下载 Caddy
+Invoke-WebRequest -Uri "https://caddyserver.com/api/download?os=windows&arch=amd64" -OutFile "C:\caddy.exe"
+
+# 2. 创建 Caddyfile 配置
+@"
+cicpa.fun {
+    reverse_proxy localhost:8000
+}
+"@ | Out-File -FilePath "C:\Caddyfile" -Encoding UTF8
+
+# 3. 测试配置
+& C:\caddy.exe validate --config C:\Caddyfile
+
+# 4. 开放防火墙端口
+netsh advfirewall firewall add rule name="Caddy HTTP" dir=in action=allow protocol=TCP localport=80 profile=any
+netsh advfirewall firewall add rule name="Caddy HTTPS" dir=in action=allow protocol=TCP localport=443 profile=any
+```
+
+**Caddy 配置说明**：
+- `cicpa.fun`：您的域名
+- `reverse_proxy localhost:8000`：反向代理到应用端口
+- Caddy 会自动从 Let's Encrypt 获取 SSL 证书
+- 自动将 HTTP 重定向到 HTTPS
+
+##### 8. 安装 Caddy 为 Windows 服务
+
+```powershell
+cd C:\ProgramData\chocolatey\lib\nssm\tools
+
+# 安装服务
+nssm.exe install Caddy C:\caddy.exe run --config C:\Caddyfile
+nssm.exe set Caddy DisplayName "Caddy Web Server"
+nssm.exe set Caddy Description "Reverse proxy with automatic HTTPS"
+
+# 启动服务
+nssm.exe start Caddy
+
+# 验证服务状态
+nssm.exe status Caddy
+```
+
+##### 9. 验证部署
+
+1. **测试端口监听**：
+```powershell
+netstat -ano | findstr :80
+netstat -ano | findstr :443
+# 应显示 LISTENING 状态
+```
+
+2. **测试服务状态**：
+```powershell
+nssm.exe status StockDashboard
+nssm.exe status Caddy
+# 都应显示 SERVICE_RUNNING
+```
+
+3. **测试 Web 访问**：
+- 访问 `http://cicpa.fun` → 自动跳转到 `https://cicpa.fun`
+- 浏览器地址栏显示锁图标 🔒
+- 检查控制台无错误
+
+4. **测试 API**：
+```powershell
+# 本地测试
+curl http://localhost:8000/health
+
+# 远程测试（从外部电脑）
+curl https://cicpa.fun/api/screening?page=1&page_size=5
+```
+
+#### 服务管理命令
+
+```powershell
+# StockDashboard 服务管理
+nssm.exe status StockDashboard    # 查看状态
+nssm.exe start StockDashboard     # 启动服务
+nssm.exe stop StockDashboard      # 停止服务
+nssm.exe restart StockDashboard   # 重启服务
+nssm.exe edit StockDashboard      # 编辑配置
+
+# Caddy 服务管理
+nssm.exe status Caddy             # 查看状态
+nssm.exe start Caddy              # 启动服务
+nssm.exe stop Caddy               # 停止服务
+nssm.exe restart Caddy            # 重启服务
+
+# 查看服务日志
+Get-Content C:\stock-dashboard\service-error.log -Tail 50
+```
+
+#### 更新代码
+
+```powershell
+# 1. 拉取最新代码
+cd C:\stock-dashboard
+git pull origin main
+
+# 2. 重启服务（应用新代码）
+nssm.exe restart StockDashboard
+
+# 3. 清除浏览器缓存并刷新
+# 按 Ctrl + Shift + R 强制刷新
+```
+
+#### 常见问题排查
+
+##### 1. 服务无法启动（SERVICE_STOPPED）
+
+**检查日志**：
+```powershell
+Get-Content C:\stock-dashboard\service-error.log
+```
+
+**常见原因**：
+- conda 环境路径错误 → 检查 `start_service.bat` 中的路径
+- .env 文件缺失 → 创建并配置 .env 文件
+- 数据库连接失败 → 检查网络和数据库配置
+
+##### 2. 前端 API 请求失败（ERR_CONNECTION_REFUSED）
+
+**问题**：浏览器控制台显示 `ERR_CONNECTION_REFUSED`
+
+**原因**：前端 JavaScript 硬编码了 `localhost:8000`
+
+**解决**：确保 `app/static/js/api.js` 使用 `window.location.origin`：
+```javascript
+static BASE_URL = window.location.origin;  // 自动适配域名
+```
+
+##### 3. Caddy 无法获取 SSL 证书
+
+**检查**：
+- 域名解析是否生效：`nslookup cicpa.fun`
+- 80 端口是否开放：检查阿里云安全组
+- 防火墙是否允许 80 端口
+
+**手动测试**：
+```powershell
+# 停止 Caddy 服务
+nssm.exe stop Caddy
+
+# 前台运行查看错误
+C:\caddy.exe run --config C:\Caddyfile
+```
+
+##### 4. 外网无法访问
+
+**排查顺序**：
+1. 本地访问：`http://localhost:8000` ✅
+2. 内网IP访问：`http://172.17.131.55:8000`（服务器内网IP）
+3. 公网IP访问：`http://101.132.136.153:8000`
+4. 域名访问：`https://cicpa.fun`
+
+每一步失败都对应不同的配置问题。
+
+#### 性能和监控
+
+##### 1. 查看服务资源占用
+
+```powershell
+# 查看 Python 进程
+tasklist | findstr python
+
+# 查看内存占用
+Get-Process python | Select-Object ProcessName, Id, WorkingSet
+```
+
+##### 2. 配置日志监控
+
+```powershell
+# 实时监控服务日志
+Get-Content C:\stock-dashboard\service-output.log -Wait -Tail 20
+
+# 监控错误日志
+Get-Content C:\stock-dashboard\service-error.log -Wait -Tail 20
+```
+
+##### 3. 定期维护任务
+
+- 每周检查一次磁盘空间
+- 每月检查一次 SSL 证书有效期（Caddy 自动续期）
+- 定期检查服务日志大小
+- 监控数据库连接状态
+
+#### 备份和恢复
+
+##### 1. 备份配置文件
+
+```powershell
+# 备份关键配置
+Copy-Item C:\stock-dashboard\.env C:\backup\.env
+Copy-Item C:\Caddyfile C:\backup\Caddyfile
+```
+
+##### 2. 恢复服务
+
+```powershell
+# 如果服务崩溃，重启服务
+nssm.exe restart StockDashboard
+nssm.exe restart Caddy
+
+# 如果需要完全重置
+nssm.exe remove StockDashboard confirm
+nssm.exe remove Caddy confirm
+# 重新执行安装步骤
+```
+
+### 方式四：使用 IIS（企业环境）
 
 #### 前置准备
 1. 安装IIS（控制面板 -> 程序 -> 启用或关闭Windows功能）
@@ -641,7 +994,6 @@ stock-dashboard/
 ├── .env.example               # 环境变量示例
 ├── .gitignore                 # Git忽略文件
 ├── requirements.txt           # Python依赖
-├── zeabur.yaml               # Zeabur部署配置
 ├── README.md                 # 项目文档
 ├── CLAUDE.md                 # Claude Code开发指南
 └── reset_cache_db.py         # 重置缓存数据库脚本
