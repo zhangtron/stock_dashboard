@@ -186,4 +186,10 @@
 {% block extra_js %}
 <script src="https://cdn.jsdelivr.net/npm/echarts@5.4.3/dist/echarts.min.js"></script>
 <script src="/static/js/market_breadth.js"></script>
+<script>
+    // 初始化市场宽度分析模块
+    document.addEventListener('DOMContentLoaded', function() {
+        new MarketBreadth();
+    });
+</script>
 {% endblock %}
