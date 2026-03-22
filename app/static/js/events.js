@@ -499,20 +499,22 @@ class Events {
         e.preventDefault();
         const stockCode = detailBtn.dataset.stockCode;
         const detailRow = document.getElementById(`detail-${stockCode}`);
-        const icon = detailBtn.querySelector('i');
+        const caret = detailBtn.querySelector('.btn-detail-caret');
         
         if (detailRow) {
           if (detailRow.style.display === 'none') {
             // 展开详情
             detailRow.style.display = 'table-row';
-            if (icon) {
-              icon.className = 'bi bi-chevron-down';
+            detailBtn.classList.add('is-open');
+            if (caret) {
+              caret.className = 'bi bi-chevron-right btn-detail-caret';
             }
           } else {
             // 收起详情
             detailRow.style.display = 'none';
-            if (icon) {
-              icon.className = 'bi bi-chevron-right';
+            detailBtn.classList.remove('is-open');
+            if (caret) {
+              caret.className = 'bi bi-chevron-right btn-detail-caret';
             }
           }
         }

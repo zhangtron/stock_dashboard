@@ -1,0 +1,182 @@
+{% extends "base.html" %}
+
+{% block header_actions %}
+<div class="header-actions">
+    <div class="mobile-menu-dropdown" id="mobileMenuDropdown">
+        <div class="nav-links mobile-nav-links"></div>
+    </div>
+    <div class="theme-toggle-container">
+        <button id="theme-toggle-desktop" class="theme-toggle-desktop">
+            <i class="bi bi-palette"></i>
+        </button>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="/static/css/l2_analysis.css">
+{% endblock %}
+
+{% block content %}
+<div class="container-fluid px-4 py-3">
+    <div class="row mb-4">
+        <div class="col-12">
+            <div class="d-flex justify-content-between align-items-center mb-3">
+                <h2 class="section-title mb-0">
+                    <i class="bi bi-graph-up-arrow section-icon"></i>
+                    主力分析 (L2)
+                </h2>
+                <div class="d-flex align-items-center gap-2">
+                    <button id="syncBtn" class="btn btn-sm btn-outline-primary">
+                        <i class="bi bi-arrow-clockwise"></i>
+                        <span id="syncBtnText">同步数据</span>
+                    </button>
+                    <span id="lastUpdateTime" class="text-muted small">
+                        <i class="bi bi-clock"></i>
+                        最后更新时间: ...
+                    </span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Part 1: Top股票矩阵表格 -->
+    <div class="row mb-4">
+        <div class="col-12">
+            <div class="card">
+                <div class="card-header d-flex justify-content-between align-items-center">
+                    <h6 class="mb-0">
+                        <i class="bi bi-trophy"></i>
+                        主力分析 (最近30天Top 8)
+                    </h6>
+                    <div class="d-flex gap-2">
+                        <select id="sectorFilter" class="form-select form-select-sm" style="width: 150px;">
+                            <option value="">全部板块</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="card-body">
+                    <div id="topStocksMatrix" class="top-stocks-matrix">
+                        <p class="text-muted text-center">加载中...</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Part 2: 股票详情图表 -->
+    <div id="stockChartsSection" style="display: none;">
+        <div class="stock-charts-dialog" role="dialog" aria-modal="true" aria-labelledby="stockChartTitle">
+            <div class="card stock-charts-card">
+                <div class="card-header stock-charts-header">
+                    <div class="stock-charts-title">
+                        <i class="bi bi-graph-up"></i>
+                        <span id="stockChartTitle">主力详情</span>
+                    </div>
+                    <button type="button" class="stock-charts-close" id="closeStockCharts" aria-label="关闭">×</button>
+                </div>
+                <div class="card-body stock-charts-body">
+                    <!-- 合并图表：VWAP、成交额、评分 -->
+                    <div id="vwapChart" class="stock-chart-canvas"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Part 3: 全市场明细表格 -->
+    <div class="row mb-4">
+        <div class="col-12">
+            <div class="card">
+                <div class="card-header">
+                    <h6 class="mb-0">
+                        <i class="bi bi-list-ul"></i>
+                        全市场明细
+                    </h6>
+                </div>
+                <div class="card-body">
+                    <!-- 筛选器 -->
+                    <div class="row mb-3">
+                        <div class="col-md-3">
+                            <label for="marketDateSelect" class="form-label small">交易日期</label>
+                            <select id="marketDateSelect" class="form-select form-select-sm">
+                                <option value="">加载中...</option>
+                            </select>
+                        </div>
+                        <div class="col-md-3">
+                            <label for="marketSectorSelect" class="form-label small">板块</label>
+                            <select id="marketSectorSelect" class="form-select form-select-sm">
+                                <option value="">全部板块</option>
+                            </select>
+                        </div>
+                        <div class="col-md-2">
+                            <label for="minScoreInput" class="form-label small">最小评分</label>
+                            <input type="number" id="minScoreInput" class="form-control form-control-sm" min="0" max="100" step="0.01" placeholder="0">
+                        </div>
+                        <div class="col-md-2">
+                            <label for="maxScoreInput" class="form-label small">最大评分</label>
+                            <input type="number" id="maxScoreInput" class="form-control form-control-sm" min="0" max="100" step="0.01" placeholder="100">
+                        </div>
+                        <div class="col-md-2 d-flex align-items-end">
+                            <button id="applyFiltersBtn" class="btn btn-sm btn-primary w-100">
+                                <i class="bi bi-funnel"></i> 筛选
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- 数据表格 -->
+                    <div class="table-container glass l2-market-table-container">
+                        <table class="stock-table l2-market-table">
+                            <thead>
+                                <tr>
+                                    <th>股票代码</th>
+                                    <th>股票名称</th>
+                                    <th>板块</th>
+                                    <th>综合评分</th>
+                                    <th>操作建议</th>
+                                    <th>操作</th>
+                                </tr>
+                            </thead>
+                            <tbody id="marketListTable">
+                                <tr>
+                                    <td colspan="6" class="text-center text-muted">加载中...</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <!-- 分页 -->
+                    <nav id="paginationNav" class="pagination-container">
+                        <ul class="pagination justify-content-center pagination-sm">
+                            <li class="page-item disabled">
+                                <a class="page-link" href="#" tabindex="-1">上一页</a>
+                            </li>
+                            <li class="page-item active">
+                                <a class="page-link" href="#">1</a>
+                            </li>
+                            <li class="page-item">
+                                <a class="page-link" href="#">下一页</a>
+                            </li>
+                        </ul>
+                    </nav>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div id="errorToast" class="toast error-toast" style="display: none;">
+    <i class="bi bi-exclamation-triangle-fill"></i>
+    <span id="errorMessage"></span>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script src="https://unpkg.com/echarts@5.4.3/dist/echarts.min.js"></script>
+<script src="/static/js/l2_analysis.js"></script>
+<script>
+    // 初始化L2分析模块
+    document.addEventListener('DOMContentLoaded', function() {
+        window.l2Analysis = window.l2Analysis || new L2Analysis();
+    });
+</script>
+{% endblock %}

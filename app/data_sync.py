@@ -8,6 +8,7 @@ from app.cache_database import SessionLocal as CacheSessionLocal, engine as cach
 from app.models import FinancialScores, FinancialScoresCache, StockDetails, StockDetailsCache, SyncMetadata
 from app.market_breadth_sync import init_market_breadth_cache_db, sync_market_breadth_data_from_remote, get_market_breadth_sync_status
 from app.etf_cluster_sync import init_etf_cluster_cache_db, sync_etf_cluster_data_from_remote, get_etf_cluster_sync_status
+from app.l2_analysis_sync import init_l2_analysis_cache_db, sync_l2_analysis_data_from_remote, get_l2_analysis_sync_status
 
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
@@ -19,6 +20,7 @@ def init_cache_db():
         CacheBase.metadata.create_all(bind=cache_engine)
         init_market_breadth_cache_db()
         init_etf_cluster_cache_db()
+        init_l2_analysis_cache_db()
         logger.info("本地缓存数据库表结构初始化完成")
     except Exception as e:
         logger.error(f"初始化缓存数据库失败: {e}")
@@ -224,9 +226,18 @@ def sync_data_from_remote() -> dict:
         if not etf_result['success']:
             logger.error(f"ETF聚类选股数据同步失败: {etf_result.get('error')}")
             result['etf_cluster_sync_error'] = etf_result.get('error')
+
+        logger.info("开始同步L2分析数据...")
+        l2_result = sync_l2_analysis_data_from_remote()
+        result['l2_analysis_sync'] = l2_result
+
+        if not l2_result['success']:
+            logger.error(f"L2分析数据同步失败: {l2_result.get('error')}")
+            result['l2_analysis_sync_error'] = l2_result.get('error')
     else:
         result['market_breadth_sync'] = None
         result['etf_cluster_sync'] = None
+        result['l2_analysis_sync'] = None
 
     return result
 
@@ -278,9 +289,11 @@ def get_sync_status() -> dict:
 
     market_breadth_sync_status = get_market_breadth_sync_status()
     etf_cluster_sync_status = get_etf_cluster_sync_status()
+    l2_analysis_sync_status = get_l2_analysis_sync_status()
 
     return {
         'stock': stock_sync_status,
         'market_breadth': market_breadth_sync_status,
-        'etf_cluster': etf_cluster_sync_status
+        'etf_cluster': etf_cluster_sync_status,
+        'l2_analysis': l2_analysis_sync_status
     }

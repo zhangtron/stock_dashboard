@@ -3,7 +3,7 @@ from fastapi.responses import HTMLResponse
 from fastapi.staticfiles import StaticFiles
 from fastapi.templating import Jinja2Templates
 from fastapi.middleware.cors import CORSMiddleware
-from app.routers import screening, market_breadth, fund_analysis
+from app.routers import screening, market_breadth, fund_analysis, l2_analysis
 from app.config import settings
 from app.data_sync import init_cache_db, sync_data_from_remote, get_sync_status
 from app.sync_scheduler import init_scheduler, shutdown_scheduler, get_scheduler_status
@@ -31,6 +31,7 @@ app.add_middleware(
 app.include_router(screening.router, prefix="/api")
 app.include_router(market_breadth.router, prefix="/api")
 app.include_router(fund_analysis.router, prefix="/api")
+app.include_router(l2_analysis.router, prefix="/api")
 
 base_dir = os.path.dirname(os.path.abspath(__file__))
 static_dir = os.path.join(base_dir, "static")
@@ -115,6 +116,12 @@ async def market_breadth_page(request: Request):
 async def fund_analysis_page(request: Request):
     """基金分析页面"""
     return templates.TemplateResponse("fund_analysis.html", {"request": request})
+
+
+@app.get("/l2-analysis", response_class=HTMLResponse, summary="L2分析页面")
+async def l2_analysis_page(request: Request):
+    """L2分析页面"""
+    return templates.TemplateResponse("l2_analysis.html", {"request": request})
 
 
 @app.get("/health", summary="健康检查")

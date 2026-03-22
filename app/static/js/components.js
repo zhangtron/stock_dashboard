@@ -132,7 +132,9 @@ class Components {
           <td><small class="text-muted">${updatedAt}</small></td>
           <td>
             <button class="btn-detail" data-stock-code="${item.stock_code || ''}">
-              <i class="bi bi-chevron-right"></i>
+              <i class="bi bi-graph-up btn-detail-icon"></i>
+              <span>详情</span>
+              <i class="bi bi-chevron-right btn-detail-caret"></i>
             </button>
           </td>
         </tr>
@@ -413,5 +415,13 @@ window.addEventListener('themechange', (event) => {
   const headerIcons = document.querySelectorAll('.stock-table th i');
   headerIcons.forEach(icon => {
     icon.style.opacity = '0.5';
+  });
+});
+
+window.addEventListener('themechange', () => {
+  document.querySelectorAll('.card-tag, [class*="recommendation-"]').forEach((tag) => {
+    tag.style.removeProperty('background');
+    tag.style.removeProperty('color');
+    tag.style.removeProperty('border-color');
   });
 });

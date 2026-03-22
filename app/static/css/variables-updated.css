@@ -5,6 +5,7 @@
   --primary-color: #00BFA5;
   --primary-dark: #00A992;
   --primary-light: rgba(0, 191, 165, 0.1);
+  --primary-color-rgb: 0, 191, 165;
 
   /* 渐变背景 */
   --bg-gradient-start: #e0f7fa;
@@ -153,6 +154,7 @@
   --primary-color: #E53935;
   --primary-dark: #C62828;
   --primary-light: rgba(229, 57, 53, 0.1);
+  --primary-color-rgb: 229, 57, 53;
 
   /* 渐变背景 */
   --bg-gradient-start: #ffebee;
@@ -222,6 +224,7 @@
   --primary-color: #f00b50;
   --primary-dark: #FE585C;
   --primary-light: rgba(191, 0, 134, 0.15);
+  --primary-color-rgb: 240, 11, 80;
 
   /* 表头三色渐变 - Dark主题 */
   --header-gradient: linear-gradient(90deg, #7937cf84 0%, #ea29607b 50%, #f00b5084 100%);
@@ -269,6 +272,7 @@
   --primary-color: #B65EBA;
   --primary-dark: #9A4B9E;
   --primary-light: rgba(182, 94, 186, 0.1);
+  --primary-color-rgb: 182, 94, 186;
 
   /* 渐变背景 - 紫色系 */
   --bg-gradient-start: #F3E5F5;
@@ -316,6 +320,7 @@
   --primary-color: #2E8DE1;
   --primary-dark: #1E7BCE;
   --primary-light: rgba(46, 141, 225, 0.1);
+  --primary-color-rgb: 46, 141, 225;
 
   /* 渐变背景 - 蓝色系 */
   --bg-gradient-start: #E3F2FD;
@@ -363,6 +368,7 @@
   --primary-color: #FFA62E;
   --primary-dark: #FF9800;
   --primary-light: rgba(255, 166, 46, 0.1);
+  --primary-color-rgb: 255, 166, 46;
 
   /* 纯色渐变背景 - 日落色 */
   --bg-gradient-start: #FFF3E0;
@@ -410,6 +416,7 @@
   --primary-color: #00FFED;
   --primary-dark: #00E5D4;
   --primary-light: rgba(0, 255, 237, 0.1);
+  --primary-color-rgb: 0, 255, 237;
 
   /* 深色纯色背景 - 突出霓虹效果 */
   --bg-gradient-start: #121212;
@@ -475,6 +482,7 @@
   --primary-color: #3a3985;
   --primary-dark: #2A2975;
   --primary-light: rgba(58, 57, 133, 0.1);
+  --primary-color-rgb: 58, 57, 133;
 
   /* 深色纯色渐变 */
   --bg-gradient-start: #1A1A2E;
@@ -540,6 +548,7 @@
   --primary-color: #00bbba;
   --primary-dark: #00A5A4;
   --primary-light: rgba(0, 187, 186, 0.1);
+  --primary-color-rgb: 0, 187, 186;
 
   /* 渐变背景 - 绿色系 */
   --bg-gradient-start: #E8F5E9;
@@ -587,6 +596,7 @@
   --primary-color: #f00b51;
   --primary-dark: #D90047;
   --primary-light: rgba(240, 11, 81, 0.1);
+  --primary-color-rgb: 240, 11, 81;
 
   /* 纯色渐变背景 - 红色系 */
   --bg-gradient-start: #FFEBEE;

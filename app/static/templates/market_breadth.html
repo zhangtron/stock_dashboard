@@ -189,7 +189,9 @@
 <script>
     // 初始化市场宽度分析模块
     document.addEventListener('DOMContentLoaded', function() {
-        new MarketBreadth();
+        if (!window.marketBreadth) {
+            window.marketBreadth = new MarketBreadth();
+        }
     });
 </script>
 {% endblock %}

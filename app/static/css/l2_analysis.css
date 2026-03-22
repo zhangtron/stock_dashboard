@@ -1,0 +1,837 @@
+/* L2 Analysis Page Styles */
+
+/* Top Stocks Matrix Table */
+.top-stocks-matrix {
+    width: 100%;
+}
+
+.top-stocks-matrix .table-responsive,
+.matrix-table-scroll {
+    width: 100%;
+    overflow-x: auto;
+    overflow-y: visible;
+}
+
+.matrix-table {
+    width: 100%;
+    margin-bottom: 0;
+    table-layout: fixed;
+    font-size: clamp(0.74rem, 0.14vw + 0.72rem, 0.9rem);
+}
+
+.matrix-table--compact {
+    width: max(100%, 760px);
+}
+
+.matrix-table .rank-column {
+    width: clamp(68px, 7vw, 92px);
+    min-width: clamp(68px, 7vw, 92px);
+    background-color: var(--table-header-bg);
+    font-weight: 600;
+    position: sticky;
+    left: 0;
+    z-index: 10;
+}
+
+.matrix-table .date-header {
+    background-color: var(--table-header-bg);
+    color: var(--text-color);
+    text-align: center;
+    min-width: 0;
+    white-space: nowrap;
+}
+
+.matrix-table th,
+.matrix-table td {
+    text-align: center;
+    vertical-align: middle;
+    padding: clamp(0.32rem, 0.45vw, 0.5rem);
+    border: 1px solid var(--border-color);
+}
+
+.matrix-table thead th {
+    background-color: var(--table-header-bg);
+    color: var(--text-color);
+}
+
+.matrix-date-label {
+    display: block;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.matrix-table--medium .date-header,
+.matrix-table--compact .date-header {
+    font-size: 0.72rem;
+}
+
+/* Stock Cell */
+.stock-cell {
+    min-width: 0;
+    width: auto;
+    height: clamp(72px, 8.5vw, 98px);
+    transition: background-color 0.2s;
+}
+
+.stock-cell:hover {
+    background-color: var(--hover-bg);
+    transform: scale(1.05);
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.stock-cell .stock-code {
+    font-weight: 600;
+    color: var(--primary-color);
+    font-size: clamp(0.72rem, 0.14vw + 0.7rem, 0.88rem);
+}
+
+.stock-cell .stock-name {
+    font-size: clamp(0.6rem, 0.12vw + 0.58rem, 0.76rem);
+    color: var(--text-muted);
+    margin-top: 0.15rem;
+    line-height: 1.12;
+    white-space: normal;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    max-width: none;
+}
+
+.stock-cell .stock-sector {
+    font-size: clamp(0.56rem, 0.12vw + 0.54rem, 0.7rem);
+    color: var(--text-muted);
+    opacity: 0.8;
+    margin-top: 0.15rem;
+    line-height: 1.1;
+    white-space: normal;
+    display: -webkit-box;
+    -webkit-line-clamp: 1;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    max-width: none;
+}
+
+.stock-cell .stock-score {
+    font-size: clamp(0.62rem, 0.12vw + 0.6rem, 0.76rem);
+    font-weight: 600;
+    margin-top: 0.18rem;
+}
+
+.empty-cell {
+    color: var(--text-muted);
+    font-style: italic;
+}
+
+/* Advice Classes */
+.advice-buy {
+    background-color: rgba(25, 135, 84, 0.1) !important;
+    border-left: 3px solid #198754;
+}
+
+.advice-sell {
+    background-color: rgba(220, 53, 69, 0.1) !important;
+    border-left: 3px solid #dc3545;
+}
+
+.advice-hold {
+    background-color: rgba(255, 193, 7, 0.1) !important;
+    border-left: 3px solid #ffc107;
+}
+
+/* Chart Styles */
+.chart-subtitle {
+    font-size: 0.9rem;
+    color: var(--text-muted);
+    margin-bottom: 1rem;
+    padding-left: 0.5rem;
+    border-left: 3px solid var(--primary-color);
+}
+
+#stockChartsSection {
+    position: fixed;
+    inset: 0;
+    z-index: 1200;
+    display: none;
+    align-items: center;
+    justify-content: center;
+    padding: 24px;
+    background: rgba(7, 12, 20, 0.58);
+    animation: chartFadeIn 0.2s ease-out;
+}
+
+#stockChartsSection.is-open {
+    display: flex !important;
+}
+
+.stock-charts-dialog {
+    width: min(1100px, calc(100vw - 48px));
+    max-height: calc(100vh - 48px);
+}
+
+.stock-charts-card {
+    margin: 0;
+    box-shadow: 0 24px 60px rgba(0, 0, 0, 0.28);
+    overflow: hidden;
+}
+
+.stock-charts-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+    padding: 0.8rem 1rem;
+}
+
+.stock-charts-title {
+    display: flex;
+    align-items: center;
+    gap: 0.65rem;
+    min-width: 0;
+    font-weight: 600;
+}
+
+.stock-charts-title i {
+    font-size: 1rem;
+}
+
+#stockChartTitle {
+    display: inline-block;
+    min-width: 0;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.stock-charts-close {
+    flex-shrink: 0;
+    width: 32px;
+    height: 32px;
+    border: 0;
+    border-radius: 999px;
+    background: rgba(255, 255, 255, 0.08);
+    color: var(--text-color);
+    font-size: 1.35rem;
+    line-height: 1;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: background-color 0.2s ease, transform 0.2s ease;
+}
+
+.stock-charts-close:hover {
+    background: rgba(255, 255, 255, 0.14);
+    transform: scale(1.04);
+}
+
+.stock-charts-close:focus {
+    outline: 2px solid rgba(255, 255, 255, 0.22);
+    outline-offset: 2px;
+}
+
+.stock-charts-body {
+    padding: 0.85rem 1rem 1rem;
+}
+
+.stock-chart-canvas {
+    width: 100%;
+    height: 460px;
+}
+
+body.stock-charts-open {
+    overflow: hidden;
+}
+
+@keyframes chartFadeIn {
+    from {
+        opacity: 0;
+        transform: scale(0.98);
+    }
+    to {
+        opacity: 1;
+        transform: scale(1);
+    }
+}
+
+/* Market List Table - 优化自适应宽度和居中显示 */
+.l2-market-table-container {
+    padding: var(--spacing-lg);
+    width: 100%;
+    max-width: 100%;
+    margin: 0 auto;
+    overflow-x: auto;
+    background: var(--glass-bg);
+    backdrop-filter: blur(var(--glass-blur-light));
+    -webkit-backdrop-filter: blur(var(--glass-blur-light));
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    border-radius: var(--radius-lg);
+    box-shadow: var(--shadow-md);
+}
+
+/* 表格自适应宽度设置 */
+.l2-market-table {
+    width: 100%;
+    table-layout: auto;
+    min-width: 800px;
+    border-collapse: collapse;
+    font-size: 14px;
+    background: transparent;
+}
+
+/* 表头样式 */
+.l2-market-table thead tr {
+    background: var(--header-gradient);
+    backdrop-filter: blur(var(--glass-blur-light));
+    -webkit-backdrop-filter: blur(var(--glass-blur-light));
+}
+
+.l2-market-table th {
+    background: transparent;
+    color: var(--table-header-color);
+    padding: 12px 8px;
+    font-weight: 700;
+    text-align: left;
+    position: sticky;
+    top: 0;
+    z-index: 10;
+    border-bottom: 2px solid var(--border-color);
+    white-space: nowrap;
+}
+
+.l2-market-table td {
+    padding: 10px 8px;
+    border-bottom: 1px solid var(--border-color);
+    color: var(--text-primary);
+    font-weight: 500;
+    vertical-align: middle;
+}
+
+/* 表格行悬停效果 */
+.l2-market-table tbody tr {
+    transition: all var(--transition-fast);
+}
+
+.l2-market-table tbody tr:hover {
+    background: var(--table-row-hover-bg);
+    cursor: pointer;
+}
+
+/* 优化列宽设置 - 使用更灵活的宽度 */
+.l2-market-table th:nth-child(1),
+.l2-market-table td:nth-child(1) {
+    width: 12%;
+    min-width: 90px;
+    max-width: 120px;
+}
+
+.l2-market-table th:nth-child(2),
+.l2-market-table td:nth-child(2) {
+    width: 18%;
+    min-width: 120px;
+    max-width: 180px;
+}
+
+.l2-market-table th:nth-child(3),
+.l2-market-table td:nth-child(3) {
+    width: 14%;
+    min-width: 100px;
+    max-width: 140px;
+}
+
+.l2-market-table th:nth-child(4),
+.l2-market-table td:nth-child(4) {
+    width: 12%;
+    min-width: 90px;
+    max-width: 120px;
+    text-align: center;
+    font-weight: 600;
+}
+
+.l2-market-table th:nth-child(5),
+.l2-market-table td:nth-child(5) {
+    width: 20%;
+    min-width: 140px;
+    max-width: 200px;
+    text-align: center;
+}
+
+.l2-market-table th:nth-child(6),
+.l2-market-table td:nth-child(6) {
+    width: 12%;
+    min-width: 100px;
+    max-width: 140px;
+    text-align: center;
+}
+
+/* 操作列居中 */
+.l2-market-table th:nth-child(6),
+.l2-market-table td:nth-child(6) {
+    text-align: center;
+}
+
+/* 数字列右对齐 */
+.l2-market-table td:nth-child(4) {
+    text-align: center;
+    font-variant-numeric: tabular-nums;
+    font-weight: 600;
+}
+
+.market-ratio-cell {
+    color: var(--text-primary);
+    font-weight: 700;
+}
+
+#marketListTable .stock-code {
+    font-weight: 600;
+    color: var(--primary-color);
+}
+
+/* 加载状态样式 */
+#marketListTable .text-center.text-muted {
+    padding: 40px 0;
+    font-size: 14px;
+    color: var(--text-muted);
+}
+
+/* 响应式设计 */
+@media (max-width: 992px) {
+    .l2-market-table {
+        min-width: 700px;
+        font-size: 13px;
+    }
+    
+    .l2-market-table th,
+    .l2-market-table td {
+        padding: 8px 6px;
+    }
+}
+
+@media (max-width: 768px) {
+    .l2-market-table-container {
+        padding: var(--spacing-md);
+        margin: 0 -12px;
+        width: calc(100% + 24px);
+        border-radius: 0;
+        border-left: none;
+        border-right: none;
+    }
+    
+    .l2-market-table {
+        min-width: 600px;
+        font-size: 12px;
+    }
+    
+    .l2-market-table th,
+    .l2-market-table td {
+        padding: 6px 4px;
+    }
+    
+    /* 在小屏幕上隐藏板块列 */
+    .l2-market-table th:nth-child(3),
+    .l2-market-table td:nth-child(3) {
+        display: none;
+    }
+    
+    /* 调整其他列宽度 */
+    .l2-market-table th:nth-child(1),
+    .l2-market-table td:nth-child(1) {
+        width: 15%;
+        min-width: 80px;
+    }
+    
+    .l2-market-table th:nth-child(2),
+    .l2-market-table td:nth-child(2) {
+        width: 25%;
+        min-width: 100px;
+    }
+    
+    .l2-market-table th:nth-child(4),
+    .l2-market-table td:nth-child(4) {
+        width: 15%;
+        min-width: 80px;
+    }
+    
+    .l2-market-table th:nth-child(5),
+    .l2-market-table td:nth-child(5) {
+        width: 25%;
+        min-width: 120px;
+    }
+    
+    .l2-market-table th:nth-child(6),
+    .l2-market-table td:nth-child(6) {
+        width: 20%;
+        min-width: 90px;
+    }
+}
+
+@media (max-width: 480px) {
+    .l2-market-table {
+        min-width: 500px;
+        font-size: 11px;
+    }
+    
+    .l2-market-table th,
+    .l2-market-table td {
+        padding: 4px 3px;
+    }
+    
+    /* 在超小屏幕上进一步调整 */
+    .l2-market-table th:nth-child(1),
+    .l2-market-table td:nth-child(1) {
+        width: 18%;
+        min-width: 70px;
+    }
+    
+    .l2-market-table th:nth-child(2),
+    .l2-market-table td:nth-child(2) {
+        width: 30%;
+        min-width: 90px;
+    }
+    
+    .l2-market-table th:nth-child(4),
+    .l2-market-table td:nth-child(4) {
+        width: 17%;
+        min-width: 70px;
+    }
+    
+    .l2-market-table th:nth-child(5),
+    .l2-market-table td:nth-child(5) {
+        width: 20%;
+        min-width: 100px;
+    }
+    
+    .l2-market-table th:nth-child(6),
+    .l2-market-table td:nth-child(6) {
+        width: 15%;
+        min-width: 80px;
+    }
+}
+
+#marketListTable .view-chart-btn {
+    color: var(--primary-color);
+    text-decoration: none;
+    transition: color 0.2s;
+}
+
+#marketListTable .view-chart-btn:hover {
+    color: var(--primary-hover);
+}
+
+#marketListTable .view-chart-btn:focus {
+    outline: none;
+    box-shadow: none;
+}
+
+/* Badge Classes */
+.badge.bg-success {
+    background-color: #198754 !important;
+}
+
+.badge.bg-primary {
+    background-color: #0d6efd !important;
+}
+
+.badge.bg-warning {
+    background-color: #ffc107 !important;
+    color: #000;
+}
+
+.badge.bg-danger {
+    background-color: #dc3545 !important;
+}
+
+.badge.bg-secondary {
+    background-color: #6c757d !important;
+}
+
+/* Pagination */
+.pagination {
+    margin-top: 1rem;
+}
+
+.pagination .page-link {
+    color: var(--primary-color);
+    border-color: var(--border-color);
+    background-color: var(--glass-bg);
+}
+
+.pagination .page-link:hover {
+    color: var(--primary-hover);
+    background-color: var(--hover-bg);
+    border-color: var(--border-color);
+}
+
+.pagination .page-item.active .page-link {
+    background-color: var(--primary-color);
+    border-color: var(--primary-color);
+}
+
+/* Spinner animation */
+.spin-icon {
+    animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+    from {
+        transform: rotate(0deg);
+    }
+    to {
+        transform: rotate(360deg);
+    }
+}
+
+/* Toast Messages */
+.toast {
+    position: fixed;
+    top: 80px;
+    right: 20px;
+    min-width: 300px;
+    padding: 1rem;
+    border-radius: 8px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+    z-index: 9999;
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    animation: slideInRight 0.3s ease-out;
+}
+
+.toast.error-toast {
+    background-color: var(--danger-bg);
+    color: var(--danger-color);
+    border-left: 4px solid #dc3545;
+}
+
+.toast.success-toast {
+    background-color: var(--success-bg);
+    color: var(--success-color);
+    border-left: 4px solid #198754;
+}
+
+@keyframes slideInRight {
+    from {
+        opacity: 0;
+        transform: translateX(100px);
+    }
+    to {
+        opacity: 1;
+        transform: translateX(0);
+    }
+}
+
+/* Responsive Adjustments */
+@media (max-width: 768px) {
+    .matrix-table {
+        font-size: 0.68rem;
+    }
+
+    .stock-cell {
+        height: 74px;
+    }
+
+    .stock-cell .stock-code {
+        font-size: 0.72rem;
+    }
+
+    .stock-cell .stock-name {
+        font-size: 0.62rem;
+    }
+
+    .stock-cell .stock-sector {
+        font-size: 0.58rem;
+    }
+
+    .stock-cell .stock-score {
+        font-size: 0.65rem;
+    }
+
+    .matrix-table .rank-column {
+        width: 64px;
+        min-width: 64px;
+    }
+
+    .matrix-table .date-header,
+    .matrix-date-label {
+        font-size: 0.66rem;
+    }
+
+    .stock-cell:hover {
+        transform: none;
+    }
+
+    .chart-subtitle {
+        font-size: 0.8rem;
+    }
+
+    #stockChartsSection {
+        padding: 12px;
+    }
+
+    .stock-charts-dialog {
+        width: calc(100vw - 24px);
+        max-height: calc(100vh - 24px);
+    }
+
+    .stock-charts-header {
+        padding: 0.7rem 0.85rem;
+    }
+
+    .stock-charts-body {
+        padding: 0.7rem 0.75rem 0.8rem;
+    }
+
+    .stock-chart-canvas {
+        height: 320px;
+    }
+
+    /* 移除重复的表格响应式样式，已在前面专门处理 */
+    /* .l2-market-table th,
+    .l2-market-table td {
+        display: none;
+    }
+
+    .l2-market-table th:nth-child(1),
+    .l2-market-table td:nth-child(1),
+    .l2-market-table th:nth-child(2),
+    .l2-market-table td:nth-child(2),
+    .l2-market-table th:nth-child(4),
+    .l2-market-table td:nth-child(4),
+    .l2-market-table th:nth-child(5),
+    .l2-market-table td:nth-child(5),
+    .l2-market-table th:nth-child(6),
+    .l2-market-table td:nth-child(6) {
+        display: table-cell;
+    }
+
+    .l2-market-table th:nth-child(4),
+    .l2-market-table td:nth-child(4) {
+        width: 18%;
+    }
+
+    .l2-market-table th:nth-child(5),
+    .l2-market-table td:nth-child(5) {
+        width: 22%;
+    } */
+}
+
+/* Theme-specific adjustments */
+[data-theme="dark"] .matrix-table thead th {
+    background-color: #2c3e50;
+}
+
+[data-theme="dark"] .stock-cell:hover {
+    background-color: rgba(52, 152, 219, 0.1);
+}
+
+[data-theme="dark"] .toast {
+    background-color: #2c3e50;
+    color: #ecf0f1;
+}
+
+/* Red theme adjustments */
+[data-theme="red"] .stock-cell .stock-code {
+    color: var(--primary-color, #f5465f);
+}
+
+[data-theme="red"] .pagination .page-link {
+    color: var(--primary-color, #f5465f);
+}
+
+[data-theme="red"] .pagination .page-item.active .page-link {
+    background-color: var(--primary-color, #f5465f);
+    border-color: var(--primary-color, #f5465f);
+}
+
+/* Table row hover effects */
+.table tbody tr {
+    transition: background-color 0.2s;
+}
+
+.table tbody tr:hover {
+    background-color: var(--hover-bg);
+}
+
+/* Form controls styling */
+.form-select,
+.form-control {
+    background-color: var(--input-bg);
+    border-color: var(--border-color);
+    color: var(--text-color);
+}
+
+.form-select:focus,
+.form-control:focus {
+    background-color: var(--input-bg);
+    border-color: var(--primary-color);
+    color: var(--text-color);
+    box-shadow: 0 0 0 0.2rem rgba(13, 110, 253, 0.25);
+}
+
+/* Button styling */
+.btn-primary {
+    background-color: var(--primary-color);
+    border-color: var(--primary-color);
+}
+
+.btn-primary:hover,
+.btn-primary:focus {
+    background-color: var(--primary-hover);
+    border-color: var(--primary-hover);
+}
+
+.btn-outline-primary {
+    color: var(--primary-color);
+    border-color: var(--primary-color);
+}
+
+.btn-outline-primary:hover,
+.btn-outline-primary:focus {
+    background-color: var(--primary-color);
+    border-color: var(--primary-color);
+}
+
+/* Card styling */
+.card {
+    background: var(--glass-bg-xl);
+    backdrop-filter: blur(var(--glass-blur));
+    -webkit-backdrop-filter: blur(var(--glass-blur));
+    border: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+.card-header {
+    background: var(--glass-bg);
+    border-bottom: 1px solid var(--border-color);
+}
+
+/* Small labels */
+.form-label.small {
+    font-size: 0.8rem;
+    color: var(--text-muted);
+}
+
+/* Frequency Classes - 股票出现次数越多，颜色越深 */
+.freq-level-1 {
+    background-color: rgba(var(--primary-color-rgb, 0, 191, 165), 0.1) !important;
+    border-left-width: 5px !important;
+}
+
+.freq-level-2 {
+    background-color: rgba(var(--primary-color-rgb, 0, 191, 165), 0.25) !important;
+    border-left-width: 7px !important;
+}
+
+.freq-level-3 {
+    background-color: rgba(var(--primary-color-rgb, 0, 191, 165), 0.4) !important;
+    border-left-width: 9px !important;
+}
+
+.freq-level-4 {
+    background-color: rgba(var(--primary-color-rgb, 0, 191, 165), 0.55) !important;
+    border-left-width: 11px !important;
+    font-weight: 600;
+}
+

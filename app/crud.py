@@ -7,7 +7,8 @@ from app.models import (
     FinancialScoresCache,
     MarketBreadthMetricsCache,
     EtfClusterSelection,
-    EtfClusterSelectionCache
+    EtfClusterSelectionCache,
+    L2AnalysisResultsCache
 )
 from app.schemas import ScreeningFilterParams
 
@@ -382,3 +383,335 @@ def get_etf_cluster_selection_latest(db: Session) -> Optional[Dict[str, Any]]:
         })
 
     return result
+
+
+def get_l2_top_stocks_by_date(
+    db: Session,
+    days: int = 6,
+    limit_per_day: int = 8,
+    sector: Optional[str] = None
+) -> List[Dict[str, Any]]:
+    """
+    获取最近N天每天Top N股票数据（用于矩阵展示）
+    返回格式: [{"date": "2024-01-01", "stocks": [...]}, ...]
+    """
+    from sqlalchemy import func
+
+    # 获取最近的N个交易日期
+    dates_query = db.query(L2AnalysisResultsCache.date)\
+        .distinct()\
+        .order_by(L2AnalysisResultsCache.date.desc())\
+        .limit(days)
+
+    dates = [d[0] for d in dates_query.all()]
+
+    if not dates:
+        return []
+
+    result = []
+
+    for date in dates:
+        query = db.query(L2AnalysisResultsCache)\
+            .filter(L2AnalysisResultsCache.date == date)
+
+        if sector:
+            query = query.filter(L2AnalysisResultsCache.sector_name == sector)
+
+        stocks = query\
+            .order_by(L2AnalysisResultsCache.score.desc())\
+            .limit(limit_per_day)\
+            .all()
+
+        stock_list = []
+        for stock in stocks:
+            stock_list.append({
+                'stock_code': stock.stock_code,
+                'stock_name': stock.stock_name,
+                'sector_name': stock.sector_name,
+                'score': float(stock.score) if stock.score is not None else None,
+                'operation_advice': stock.operation_advice
+            })
+
+        result.append({
+            'date': date,
+            'stocks': stock_list
+        })
+
+    # 按日期正序排列
+    result.reverse()
+    return result
+
+
+def get_l2_stock_history(
+    db: Session,
+    stock_code: str,
+    days: int = 30
+) -> Optional[Dict[str, Any]]:
+    """
+    获取单个股票的历史数据（用于图表展示）
+    返回格式: {
+        "stock_code": "...",
+        "stock_name": "...",
+        "dates": [...],
+        "vwap": {"level1": [...], "level2": [...], "level3": [...]},
+        "amount": {"level1": [...], "level2": [...], "level3": [...]},
+        "scores": [...]
+    }
+    """
+    records = db.query(L2AnalysisResultsCache)\
+        .filter(L2AnalysisResultsCache.stock_code == stock_code)\
+        .order_by(L2AnalysisResultsCache.date.desc())\
+        .limit(days)\
+        .all()
+
+    if not records:
+        return None
+
+    # 反转以按时间正序排列
+    records.reverse()
+
+    dates = []
+    vwap_data = {
+        'vwap': [],
+        'super_large_vwap': [],
+        'large_vwap': [],
+        'medium_vwap': [],
+        'others_vwap': [],
+        'close_price': []
+    }
+    amount_data = {
+        'super_large_amount': [],
+        'large_amount': [],
+        'medium_amount': [],
+        'others_amount': [],
+        'total_amount': []
+    }
+    scores = []
+
+    for record in records:
+        dates.append(record.date)
+
+        # 解析VWAP JSON数据 - 支持新的6字段格式
+        if record.vwap:
+            try:
+                vwap_dict = json.loads(record.vwap)
+                # 如果是新的6字段格式
+                if 'vwap' in vwap_dict or 'super_large_vwap' in vwap_dict:
+                    vwap_data['vwap'].append(float(vwap_dict.get('vwap')) if vwap_dict.get('vwap') is not None else None)
+                    vwap_data['super_large_vwap'].append(float(vwap_dict.get('super_large_vwap')) if vwap_dict.get('super_large_vwap') is not None else None)
+                    vwap_data['large_vwap'].append(float(vwap_dict.get('large_vwap')) if vwap_dict.get('large_vwap') is not None else None)
+                    vwap_data['medium_vwap'].append(float(vwap_dict.get('medium_vwap')) if vwap_dict.get('medium_vwap') is not None else None)
+                    vwap_data['others_vwap'].append(float(vwap_dict.get('others_vwap')) if vwap_dict.get('others_vwap') is not None else None)
+                    vwap_data['close_price'].append(float(vwap_dict.get('close_price')) if vwap_dict.get('close_price') is not None else None)
+                else:
+                    # 兼容旧的level格式
+                    for level in ['level1', 'level2', 'level3']:
+                        level_data = vwap_dict.get(level, [])
+                        val = float(level_data[-1]) if level_data else None
+                        if level == 'level1':
+                            vwap_data['vwap'].append(val)
+                            vwap_data['large_vwap'].append(val)
+                        elif level == 'level2':
+                            vwap_data['medium_vwap'].append(val)
+                        else:
+                            vwap_data['others_vwap'].append(val)
+                        vwap_data['super_large_vwap'].append(None)
+                        vwap_data['close_price'].append(None)
+            except (json.JSONDecodeError, TypeError, ValueError):
+                for key in vwap_data:
+                    vwap_data[key].append(None)
+        else:
+            for key in vwap_data:
+                vwap_data[key].append(None)
+
+        # 解析成交额 JSON数据 - 支持新的格式
+        if record.amount:
+            try:
+                amount_dict = json.loads(record.amount)
+                # 如果是新的字段格式
+                if 'super_large_amount' in amount_dict or 'large_amount' in amount_dict or 'total_amount' in amount_dict:
+                    amount_data['super_large_amount'].append(float(amount_dict.get('super_large_amount')) if amount_dict.get('super_large_amount') is not None else None)
+                    amount_data['large_amount'].append(float(amount_dict.get('large_amount')) if amount_dict.get('large_amount') is not None else None)
+                    amount_data['medium_amount'].append(float(amount_dict.get('medium_amount')) if amount_dict.get('medium_amount') is not None else None)
+                    amount_data['others_amount'].append(float(amount_dict.get('others_amount')) if amount_dict.get('others_amount') is not None else None)
+                    amount_data['total_amount'].append(float(amount_dict.get('total_amount')) if amount_dict.get('total_amount') is not None else None)
+                else:
+                    # 兼容旧的level格式
+                    for level in ['level1', 'level2', 'level3']:
+                        level_data = amount_dict.get(level, [])
+                        val = float(level_data[-1]) if level_data else None
+                        if level == 'level1':
+                            amount_data['large_amount'].append(val)
+                        elif level == 'level2':
+                            amount_data['medium_amount'].append(val)
+                        else:
+                            amount_data['others_amount'].append(val)
+                        amount_data['super_large_amount'].append(None)
+                        amount_data['total_amount'].append(None)
+            except (json.JSONDecodeError, TypeError, ValueError):
+                for key in amount_data:
+                    amount_data[key].append(None)
+        else:
+            for key in amount_data:
+                amount_data[key].append(None)
+
+        scores.append(float(record.score) if record.score is not None else None)
+
+    return {
+        'stock_code': records[0].stock_code,
+        'stock_name': records[0].stock_name,
+        'sector_name': records[0].sector_name,
+        'dates': dates,
+        'vwap': vwap_data,
+        'amount': amount_data,
+        'scores': scores
+    }
+
+
+def get_l2_market_list(
+    db: Session,
+    date: Optional[str] = None,
+    sector: Optional[str] = None,
+    stock_code: Optional[str] = None,
+    stock_name: Optional[str] = None,
+    min_score: Optional[float] = None,
+    max_score: Optional[float] = None,
+    sort_by: str = "score",
+    sort_order: str = "desc",
+    page: int = 1,
+    page_size: int = 20
+) -> Tuple[List[Dict[str, Any]], int]:
+    """
+    获取全市场分页列表数据
+    返回: (数据列表, 总数)
+    """
+    # 如果未指定日期，使用最新日期
+    if not date:
+        latest_date = db.query(L2AnalysisResultsCache.date)\
+            .order_by(L2AnalysisResultsCache.date.desc())\
+            .first()
+        if latest_date:
+            date = latest_date[0]
+        else:
+            return [], 0
+
+    query = db.query(L2AnalysisResultsCache).filter(L2AnalysisResultsCache.date == date)
+
+    if sector:
+        query = query.filter(L2AnalysisResultsCache.sector_name == sector)
+
+    if stock_code:
+        query = query.filter(L2AnalysisResultsCache.stock_code.like(f"%{stock_code}%"))
+
+    if stock_name:
+        query = query.filter(L2AnalysisResultsCache.stock_name.like(f"%{stock_name}%"))
+
+    if min_score is not None:
+        query = query.filter(L2AnalysisResultsCache.score >= min_score)
+
+    if max_score is not None:
+        query = query.filter(L2AnalysisResultsCache.score <= max_score)
+
+    records = query.all()
+
+    def parse_json_field(raw_value: Optional[str]) -> Dict[str, Any]:
+        if not raw_value:
+            return {}
+
+        try:
+            parsed = json.loads(raw_value)
+            return parsed if isinstance(parsed, dict) else {}
+        except (TypeError, ValueError, json.JSONDecodeError):
+            return {}
+
+    def to_float(value: Any) -> Optional[float]:
+        try:
+            if value is None:
+                return None
+            number = float(value)
+            return number
+        except (TypeError, ValueError):
+            return None
+
+    def safe_ratio(numerator: Optional[float], denominator: Optional[float]) -> Optional[float]:
+        if numerator is None or denominator in (None, 0):
+            return None
+        return numerator / denominator
+
+    data = []
+    for record in records:
+        vwap_data = parse_json_field(record.vwap)
+        amount_data = parse_json_field(record.amount)
+
+        close_price = to_float(vwap_data.get('close_price'))
+        vwap_value = to_float(vwap_data.get('vwap'))
+        super_large_amount = to_float(amount_data.get('super_large_amount'))
+        large_amount = to_float(amount_data.get('large_amount'))
+        medium_amount = to_float(amount_data.get('medium_amount'))
+        others_amount = to_float(amount_data.get('others_amount'))
+        total_amount = to_float(amount_data.get('total_amount'))
+        if total_amount is None:
+            amount_parts = [super_large_amount, large_amount, medium_amount, others_amount]
+            if any(part is not None for part in amount_parts):
+                total_amount = sum(part or 0.0 for part in amount_parts)
+        large_order_amount = None
+        if super_large_amount is not None or large_amount is not None:
+            large_order_amount = (super_large_amount or 0.0) + (large_amount or 0.0)
+
+        data.append({
+            'stock_code': record.stock_code,
+            'stock_name': record.stock_name,
+            'sector_name': record.sector_name,
+            'score': float(record.score) if record.score is not None else None,
+            'operation_advice': record.operation_advice,
+            'price_close_vwap_ratio': safe_ratio(close_price, vwap_value),
+            'large_total_amount_ratio': safe_ratio(large_order_amount, total_amount)
+        })
+
+    sort_key_map = {
+        'stock_code': lambda item: (item.get('stock_code') or '').lower(),
+        'stock_name': lambda item: (item.get('stock_name') or '').lower(),
+        'sector_name': lambda item: (item.get('sector_name') or '').lower(),
+        'score': lambda item: item.get('score'),
+        'price_close_vwap_ratio': lambda item: item.get('price_close_vwap_ratio'),
+        'large_total_amount_ratio': lambda item: item.get('large_total_amount_ratio'),
+    }
+
+    key_func = sort_key_map.get(sort_by, sort_key_map['score'])
+    reverse = sort_order == 'desc'
+
+    sortable_items = [item for item in data if key_func(item) is not None]
+    unsortable_items = [item for item in data if key_func(item) is None]
+    sortable_items.sort(key=key_func, reverse=reverse)
+    data = sortable_items + unsortable_items
+
+    total = len(data)
+    offset = (page - 1) * page_size
+    paged_data = data[offset:offset + page_size]
+
+    return paged_data, total
+
+
+def get_l2_available_dates(db: Session) -> List[str]:
+    """
+    获取所有可用的交易日期列表（按时间倒序）
+    """
+    dates = db.query(L2AnalysisResultsCache.date)\
+        .distinct()\
+        .order_by(L2AnalysisResultsCache.date.desc())\
+        .all()
+
+    return [d[0] for d in dates]
+
+
+def get_l2_available_sectors(db: Session) -> List[str]:
+    """
+    获取所有可用的板块列表
+    """
+    sectors = db.query(L2AnalysisResultsCache.sector_name)\
+        .filter(L2AnalysisResultsCache.sector_name.isnot(None))\
+        .distinct()\
+        .order_by(L2AnalysisResultsCache.sector_name)\
+        .all()
+
+    return [s[0] for s in sectors if s[0]]

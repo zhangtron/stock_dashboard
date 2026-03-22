@@ -104,14 +104,20 @@
 }
 
 .card-tag {
-  display: inline-block;
-  padding: var(--spacing-xs) var(--spacing-sm);
-  background: var(--card-tag-bg);
-  color: var(--card-tag-color);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 5px 10px;
+  background: rgba(var(--primary-color-rgb, 0, 191, 165), 0.12);
+  color: var(--primary-color);
   border-radius: var(--radius-full);
   font-size: 12px;
-  font-weight: 500;
-  border: 1px solid rgba(255, 255, 255, 0.2);
+  font-weight: 700;
+  line-height: 1.2;
+  border: 1px solid rgba(var(--primary-color-rgb, 0, 191, 165), 0.22);
+  box-shadow: 0 8px 18px rgba(var(--primary-color-rgb, 0, 191, 165), 0.12);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
 }
 
 /* 筛选容器 - 毛玻璃效果 */
@@ -422,25 +428,29 @@ select:focus {
 }
 
 /* 推荐标签 */
-/* .recommendation-strong-buy {
+.recommendation-strong-buy {
   background: var(--primary-light);
   color: var(--primary-color);
+  border: 1px solid rgba(0, 191, 165, 0.24);
 }
 
 .recommendation-buy {
   background: var(--recommendation-buy-bg);
   color: var(--recommendation-buy-text);
+  border: 1px solid rgba(229, 57, 53, 0.24);
 }
 
 .recommendation-hold {
   background: var(--recommendation-hold-bg);
   color: var(--recommendation-hold-text);
+  border: 1px solid rgba(255, 138, 101, 0.28);
 }
 
 .recommendation-avoid {
   background: var(--recommendation-avoid-bg);
   color: var(--recommendation-avoid-text);
-} */
+  border: 1px solid rgba(144, 164, 174, 0.28);
+}
 
 /* 分页 */
 .pagination-container {
@@ -701,29 +711,48 @@ select:focus {
 
 /* 详情按钮样式 */
 .btn-detail {
-  background: transparent;
-  border: 1px solid rgba(255, 255, 255, 0.3);
-  border-radius: var(--radius-md);
-  color: var(--text-secondary);
+  background: rgba(0, 191, 165, 0.08);
+  border: 1px solid rgba(0, 191, 165, 0.22);
+  border-radius: 999px;
+  color: var(--primary-color);
   cursor: pointer;
-  padding: var(--spacing-xs) var(--spacing-sm);
+  padding: 6px 12px;
   transition: all var(--transition-fast);
-  display: flex;
+  display: inline-flex;
   align-items: center;
   justify-content: center;
-  width: 32px;
-  height: 32px;
+  gap: 6px;
+  min-height: 32px;
+  white-space: nowrap;
+  font-size: 13px;
+  font-weight: 600;
 }
 
 .btn-detail:hover {
-  background: var(--primary-light);
+  background: rgba(0, 191, 165, 0.16);
   border-color: var(--primary-color);
   color: var(--primary-color);
+  transform: translateY(-1px);
+  box-shadow: 0 10px 24px rgba(0, 191, 165, 0.12);
 }
 
 .btn-detail i {
   font-size: 14px;
-  transition: transform var(--transition-fast);
+  transition: transform var(--transition-fast), opacity var(--transition-fast);
+}
+
+.btn-detail .btn-detail-icon {
+  font-size: 13px;
+}
+
+.btn-detail .btn-detail-caret {
+  font-size: 12px;
+  opacity: 0.7;
+}
+
+.btn-detail.is-open .btn-detail-caret {
+  transform: rotate(90deg);
+  opacity: 1;
 }
 
 /* 详情行样式 */
@@ -781,8 +810,9 @@ select:focus {
   }
   
   .btn-detail {
-    width: 28px;
-    height: 28px;
+    min-height: 28px;
+    padding: 5px 10px;
+    font-size: 12px;
   }
 }
 
@@ -836,6 +866,46 @@ select:focus {
 }
 
 /* 板块筛选相关样式 */
+.stock-list-hint {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin: 0 0 var(--spacing-sm) 0;
+  padding: 10px 14px;
+  background: rgba(0, 191, 165, 0.08);
+  border: 1px solid rgba(0, 191, 165, 0.14);
+  border-radius: var(--radius-md);
+  color: var(--text-secondary);
+  font-size: 13px;
+}
+
+.stock-list-hint i {
+  color: var(--primary-color);
+  flex-shrink: 0;
+}
+
+.stock-list-hint strong {
+  color: var(--text-primary);
+}
+
+.stock-table th:last-child,
+.stock-table td:last-child {
+  width: 10%;
+  min-width: 96px;
+}
+
+@media (max-width: 768px) {
+  .stock-table th:last-child,
+  .stock-table td:last-child {
+    min-width: 84px;
+  }
+
+  .stock-list-hint {
+    align-items: flex-start;
+    font-size: 12px;
+  }
+}
+
 .stock-table td.sector-highlight {
   background: var(--primary-light) !important;
   color: var(--primary-color) !important;

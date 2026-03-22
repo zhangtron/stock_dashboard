@@ -118,3 +118,37 @@ class EtfClusterSelectionCache(CacheBase):
     rank = Column(Integer, nullable=False, index=True, comment='排名')
     score = Column(Float, comment='得分')
     created_at = Column(DateTime, comment='创建时间')
+
+
+class L2AnalysisResults(Base):
+    """L2分析结果表（远程MySQL）"""
+    __tablename__ = 'l2_analysis_results'
+
+    id = Column(Integer, primary_key=True, autoincrement=True, comment='ID')
+    date = Column(Date, nullable=False, index=True, comment='交易日期')
+    stock_code = Column(String(20), nullable=False, comment='股票代码')
+    stock_name = Column(String(100), comment='股票名称')
+    sector_name = Column(String(50), comment='板块名称')
+    score = Column(DECIMAL(5, 2), comment='综合评分')
+    operation_advice = Column(String(50), comment='操作建议')
+    vwap = Column(Text, comment='VWAP分层数据(JSON格式): {"level1": [...], "level2": [...], "level3": [...]}')
+    amount = Column(Text, comment='成交额分层数据(JSON格式): {"level1": [...], "level2": [...], "level3": [...]}')
+    created_at = Column(DateTime, default=datetime.now, comment='创建时间')
+    updated_at = Column(DateTime, default=datetime.now, onupdate=datetime.now, comment='更新时间')
+
+
+class L2AnalysisResultsCache(CacheBase):
+    """L2分析结果缓存表（本地SQLite）"""
+    __tablename__ = 'l2_analysis_results_cache'
+
+    id = Column(Integer, primary_key=True, comment='ID')
+    date = Column(String(50), nullable=False, index=True, comment='交易日期')
+    stock_code = Column(String(20), nullable=False, comment='股票代码')
+    stock_name = Column(String(100), comment='股票名称')
+    sector_name = Column(String(50), comment='板块名称')
+    score = Column(DECIMAL(5, 2), comment='综合评分')
+    operation_advice = Column(String(50), comment='操作建议')
+    vwap = Column(Text, comment='VWAP分层数据(JSON格式): {"level1": [...], "level2": [...], "level3": [...]}')
+    amount = Column(Text, comment='成交额分层数据(JSON格式): {"level1": [...], "level2": [...], "level3": [...]}')
+    created_at = Column(DateTime, comment='创建时间')
+    updated_at = Column(String(50), comment='更新时间')

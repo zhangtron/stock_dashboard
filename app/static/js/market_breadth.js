@@ -30,6 +30,101 @@ class MarketBreadth {
         this.echartsLoaded = true;
     }
 
+    getCurrentTheme() {
+        return document.documentElement.getAttribute('data-theme') || 'dark';
+    }
+
+    getChartThemeConfig() {
+        const theme = this.getCurrentTheme();
+        const rootStyle = getComputedStyle(document.documentElement);
+        const primaryColor = rootStyle.getPropertyValue('--primary-color').trim() || '#00BFA5';
+        const primaryColorRgb = rootStyle.getPropertyValue('--primary-color-rgb').trim() || '0, 191, 165';
+        const textPrimary = rootStyle.getPropertyValue('--text-primary').trim() || '#0f172a';
+        const textSecondary = rootStyle.getPropertyValue('--text-secondary').trim() || 'rgba(15, 23, 42, 0.68)';
+        const borderColor = rootStyle.getPropertyValue('--border-color').trim() || 'rgba(148, 163, 184, 0.18)';
+        const isDarkTheme = ['dark', 'dark-elegant', 'neon'].includes(theme);
+
+        const paletteMap = {
+            teal: {
+                heatmap: ['#effcf8', '#cbf4ea', '#95e6d4', '#5cd4c1', '#1fb9aa', '#0d9488', '#0f766e'],
+                trendMain: '#14b8a6',
+                trendAccent: '#0f766e'
+            },
+            red: {
+                heatmap: ['#fff1f2', '#ffd9de', '#ffb1be', '#ff8099', '#ef476f', '#d62857', '#9d174d'],
+                trendMain: '#ef476f',
+                trendAccent: '#d62857'
+            },
+            dark: {
+                heatmap: ['#0f172a', '#123b43', '#0f766e', '#14b8a6', '#2dd4bf', '#67e8f9', '#ccfbf1'],
+                trendMain: '#2dd4bf',
+                trendAccent: '#67e8f9'
+            },
+            'purple-dream': {
+                heatmap: ['#faf5ff', '#eedcff', '#d8b4fe', '#b794f4', '#9f67ff', '#7c3aed', '#5b21b6'],
+                trendMain: '#9f67ff',
+                trendAccent: '#7c3aed'
+            },
+            'ocean-blue': {
+                heatmap: ['#f3f8ff', '#dbeafe', '#93c5fd', '#60a5fa', '#38bdf8', '#2563eb', '#1d4ed8'],
+                trendMain: '#38bdf8',
+                trendAccent: '#2563eb'
+            },
+            'sunset-orange': {
+                heatmap: ['#fff7ed', '#ffedd5', '#fdba74', '#fb923c', '#f97316', '#ea580c', '#c2410c'],
+                trendMain: '#f97316',
+                trendAccent: '#c2410c'
+            },
+            neon: {
+                heatmap: ['#020617', '#082f49', '#0e7490', '#06b6d4', '#22d3ee', '#67e8f9', '#a5f3fc'],
+                trendMain: '#22d3ee',
+                trendAccent: '#67e8f9'
+            },
+            'dark-elegant': {
+                heatmap: ['#111827', '#1f2937', '#312e81', '#4f46e5', '#6366f1', '#818cf8', '#c7d2fe'],
+                trendMain: '#818cf8',
+                trendAccent: '#6366f1'
+            },
+            'fresh-green': {
+                heatmap: ['#f7fee7', '#dcfce7', '#bbf7d0', '#86efac', '#4ade80', '#22c55e', '#15803d'],
+                trendMain: '#4ade80',
+                trendAccent: '#15803d'
+            },
+            'passion-red': {
+                heatmap: ['#fff1f2', '#ffe4e6', '#fecdd3', '#fda4af', '#fb7185', '#f43f5e', '#be123c'],
+                trendMain: '#fb7185',
+                trendAccent: '#be123c'
+            }
+        };
+
+        const palette = paletteMap[theme] || paletteMap.teal;
+
+        return {
+            primaryColor,
+            primaryColorRgb,
+            textPrimary,
+            textSecondary,
+            borderColor,
+            isDarkTheme,
+            heatmapColors: palette.heatmap,
+            trendMain: palette.trendMain,
+            trendAccent: palette.trendAccent,
+            tooltipBackground: isDarkTheme ? 'rgba(15, 23, 42, 0.92)' : 'rgba(255, 255, 255, 0.96)',
+            tooltipBorder: isDarkTheme ? 'rgba(148, 163, 184, 0.24)' : 'rgba(15, 23, 42, 0.08)',
+            splitLineColor: isDarkTheme ? 'rgba(148, 163, 184, 0.16)' : 'rgba(148, 163, 184, 0.12)',
+            splitAreaColors: isDarkTheme
+                ? ['rgba(255, 255, 255, 0.015)', 'rgba(255, 255, 255, 0.04)']
+                : ['rgba(15, 23, 42, 0.015)', 'rgba(15, 23, 42, 0.035)'],
+            zoomBackground: isDarkTheme ? 'rgba(148, 163, 184, 0.10)' : 'rgba(15, 23, 42, 0.05)',
+            zoomDataBackground: isDarkTheme ? 'rgba(148, 163, 184, 0.22)' : 'rgba(148, 163, 184, 0.14)',
+            zoomFiller: `rgba(${primaryColorRgb}, 0.18)`,
+            zoomHandle: `rgba(${primaryColorRgb}, 0.92)`,
+            trendAreaStart: `rgba(${primaryColorRgb}, ${isDarkTheme ? '0.34' : '0.24'})`,
+            trendAreaEnd: `rgba(${primaryColorRgb}, ${isDarkTheme ? '0.05' : '0.03'})`,
+            emphasisShadow: isDarkTheme ? 'rgba(15, 23, 42, 0.60)' : 'rgba(15, 23, 42, 0.18)'
+        };
+    }
+
     initFilters() {
         const filterForm = document.getElementById('filterForm');
         const resetBtn = document.getElementById('resetBtn');
@@ -261,6 +356,7 @@ class MarketBreadth {
         this.trendChart = echarts.init(el);
 
         const { dates, total_breadth_data } = this.currentData;
+        const chartTheme = this.getChartThemeConfig();
 
         // 提取 total_breadth 数据（全市场上涨家数总和）
         const totalBreadthValues = total_breadth_data || [];
@@ -282,6 +378,12 @@ class MarketBreadth {
                 axisPointer: {
                     type: 'cross'
                 },
+                backgroundColor: chartTheme.tooltipBackground,
+                borderColor: chartTheme.tooltipBorder,
+                borderWidth: 1,
+                textStyle: {
+                    color: chartTheme.textPrimary
+                },
                 formatter: (params) => {
                     const date = params[0].axisValue;
                     let result = `<strong>${date}</strong><br/>`;
@@ -300,13 +402,36 @@ class MarketBreadth {
             xAxis: {
                 type: 'category',
                 data: dates,
+                axisLine: {
+                    lineStyle: {
+                        color: chartTheme.borderColor
+                    }
+                },
                 axisLabel: {
                     rotate: 45,
-                    fontSize: 10
+                    fontSize: 10,
+                    color: chartTheme.textSecondary
                 }
             },
             yAxis: {
                 type: 'value',
+                nameTextStyle: {
+                    color: chartTheme.textSecondary
+                },
+                axisLine: {
+                    show: true,
+                    lineStyle: {
+                        color: chartTheme.borderColor
+                    }
+                },
+                axisLabel: {
+                    color: chartTheme.textSecondary
+                },
+                splitLine: {
+                    lineStyle: {
+                        color: chartTheme.splitLineColor
+                    }
+                },
                 name: '全市场上涨家数总和'
             },
             dataZoom: [
@@ -315,7 +440,32 @@ class MarketBreadth {
                     show: true,
                     start: 0,
                     end: 100,
-                    bottom: '10%'
+                    bottom: '10%',
+                    backgroundColor: chartTheme.zoomBackground,
+                    fillerColor: chartTheme.zoomFiller,
+                    borderColor: chartTheme.borderColor,
+                    dataBackground: {
+                        lineStyle: {
+                            color: chartTheme.zoomDataBackground
+                        },
+                        areaStyle: {
+                            color: chartTheme.zoomBackground
+                        }
+                    },
+                    selectedDataBackground: {
+                        lineStyle: {
+                            color: chartTheme.primaryColor
+                        },
+                        areaStyle: {
+                            color: chartTheme.zoomFiller
+                        }
+                    },
+                    handleStyle: {
+                        color: chartTheme.zoomHandle
+                    },
+                    textStyle: {
+                        color: chartTheme.textSecondary
+                    }
                 },
                 {
                     type: 'inside',
@@ -333,10 +483,10 @@ class MarketBreadth {
                     symbolSize: 6,
                     lineStyle: {
                         width: 2,
-                        color: '#f5465f'
+                        color: chartTheme.trendMain
                     },
                     itemStyle: {
-                        color: '#f5465f'
+                        color: chartTheme.trendMain
                     },
                     areaStyle: {
                         color: {
@@ -346,8 +496,8 @@ class MarketBreadth {
                             x2: 0,
                             y2: 1,
                             colorStops: [
-                                { offset: 0, color: 'rgba(245, 70, 95, 0.3)' },
-                                { offset: 1, color: 'rgba(245, 70, 95, 0.05)' }
+                                { offset: 0, color: chartTheme.trendAreaStart },
+                                { offset: 1, color: chartTheme.trendAreaEnd }
                             ]
                         }
                     }
@@ -361,10 +511,10 @@ class MarketBreadth {
                     lineStyle: {
                         width: 2,
                         type: 'dashed',
-                        color: '#11aac3'
+                        color: chartTheme.trendAccent
                     },
                     itemStyle: {
-                        color: '#11aac3'
+                        color: chartTheme.trendAccent
                     }
                 }
             ]
@@ -388,6 +538,7 @@ class MarketBreadth {
         this.heatmapChart = echarts.init(el);
 
         const { dates, columns, data } = this.currentData;
+        const chartTheme = this.getChartThemeConfig();
         // 只使用行业数据，排除 index_all 和 sum 列
         const industryColumns = columns.slice(0, -2);
 
@@ -450,7 +601,30 @@ class MarketBreadth {
                     height: 20,
                     handleSize: '80%',
                     textStyle: {
-                        fontSize: 10
+                        fontSize: 10,
+                        color: chartTheme.textSecondary
+                    },
+                    backgroundColor: chartTheme.zoomBackground,
+                    fillerColor: chartTheme.zoomFiller,
+                    borderColor: chartTheme.borderColor,
+                    dataBackground: {
+                        lineStyle: {
+                            color: chartTheme.zoomDataBackground
+                        },
+                        areaStyle: {
+                            color: chartTheme.zoomBackground
+                        }
+                    },
+                    selectedDataBackground: {
+                        lineStyle: {
+                            color: chartTheme.primaryColor
+                        },
+                        areaStyle: {
+                            color: chartTheme.zoomFiller
+                        }
+                    },
+                    handleStyle: {
+                        color: chartTheme.zoomHandle
                     },
                     zoomLock: false,
                     brushSelect: false
@@ -467,7 +641,30 @@ class MarketBreadth {
                     height: '75%',
                     handleSize: '100%',
                     textStyle: {
-                        fontSize: 9
+                        fontSize: 9,
+                        color: chartTheme.textSecondary
+                    },
+                    backgroundColor: chartTheme.zoomBackground,
+                    fillerColor: chartTheme.zoomFiller,
+                    borderColor: chartTheme.borderColor,
+                    dataBackground: {
+                        lineStyle: {
+                            color: chartTheme.zoomDataBackground
+                        },
+                        areaStyle: {
+                            color: chartTheme.zoomBackground
+                        }
+                    },
+                    selectedDataBackground: {
+                        lineStyle: {
+                            color: chartTheme.primaryColor
+                        },
+                        areaStyle: {
+                            color: chartTheme.zoomFiller
+                        }
+                    },
+                    handleStyle: {
+                        color: chartTheme.zoomHandle
                     },
                     zoomLock: false,
                     orient: 'vertical',
@@ -487,6 +684,12 @@ class MarketBreadth {
             ],
             tooltip: {
                 position: 'top',
+                backgroundColor: chartTheme.tooltipBackground,
+                borderColor: chartTheme.tooltipBorder,
+                borderWidth: 1,
+                textStyle: {
+                    color: chartTheme.textPrimary
+                },
                 formatter: (params) => {
                     const dateIndex = params.value[1];
                     const date = dates[dateIndex];
@@ -507,23 +710,41 @@ class MarketBreadth {
                 type: 'category',
                 data: industryColumns,
                 position: 'top',
+                axisLine: {
+                    lineStyle: {
+                        color: chartTheme.borderColor
+                    }
+                },
                 splitArea: {
-                    show: true
+                    show: true,
+                    areaStyle: {
+                        color: chartTheme.splitAreaColors
+                    }
                 },
                 axisLabel: {
                     rotate: 45,
                     interval: 'auto',
-                    fontSize: 10
+                    fontSize: 10,
+                    color: chartTheme.textSecondary
                 }
             },
             yAxis: {
                 type: 'category',
                 data: dates,
+                axisLine: {
+                    lineStyle: {
+                        color: chartTheme.borderColor
+                    }
+                },
                 splitArea: {
-                    show: true
+                    show: true,
+                    areaStyle: {
+                        color: chartTheme.splitAreaColors
+                    }
                 },
                 axisLabel: {
-                    fontSize: 9
+                    fontSize: 9,
+                    color: chartTheme.textSecondary
                 }
             },
             visualMap: {
@@ -563,6 +784,21 @@ class MarketBreadth {
             ]
         };
 
+        option.visualMap.textStyle = {
+            color: chartTheme.textSecondary
+        };
+        option.visualMap.inRange.color = chartTheme.heatmapColors;
+        option.series[0].itemStyle = {
+            borderColor: chartTheme.isDarkTheme ? 'rgba(15, 23, 42, 0.24)' : 'rgba(255, 255, 255, 0.72)',
+            borderWidth: 1
+        };
+        option.series[0].emphasis.itemStyle = {
+            shadowBlur: 18,
+            shadowColor: chartTheme.emphasisShadow,
+            borderColor: chartTheme.primaryColor,
+            borderWidth: 1.2
+        };
+
         this.heatmapChart.setOption(option);
     }
 
@@ -593,7 +829,7 @@ class MarketBreadth {
 window.addEventListener('DOMContentLoaded', () => {
     if (typeof echarts === 'undefined') {
         console.error('ECharts library not loaded');
-    } else {
+    } else if (!window.marketBreadth) {
         window.marketBreadth = new MarketBreadth();
     }
 });
@@ -601,5 +837,12 @@ window.addEventListener('DOMContentLoaded', () => {
 window.addEventListener('resize', () => {
     if (window.marketBreadth) {
         window.marketBreadth.resizeChart();
+    }
+});
+
+window.addEventListener('themechange', () => {
+    if (window.marketBreadth) {
+        window.marketBreadth.renderTrendChart();
+        window.marketBreadth.renderHeatmap();
     }
 });
