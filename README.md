@@ -366,7 +366,7 @@ nssm remove StockDashboard confirm
 #### 实际部署环境
 
 - **服务器**：阿里云 ECS Windows Server 2022
-- **公网IP**：101.132.136.153
+- **公网IP**：
 - **域名**：cicpa.fun
 - **Python环境**：Miniconda3 (C:\ProgramData\miniconda3)
 - **反向代理**：Caddy（自动获取 Let's Encrypt 证书）
